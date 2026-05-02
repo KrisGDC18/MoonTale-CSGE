@@ -1,17 +1,17 @@
 extends CharacterBody2D
 
-const MAX_SPEED = 75.0
-const JUMP_VELOCITY = 140
-const ACCR = 5.0
-const FRICTION = 6.0
+const MAX_SPEED = 150.0
+const JUMP_VELOCITY = 280
+const ACCR = 10.0
+const FRICTION = 12.0
 
-const WATER_MAX_SPEED = 40.0
-const WATER_JUMP_VELOCITY = 80.0
-const WATER_ACCR = 2.0
+const WATER_MAX_SPEED = 80.0
+const WATER_JUMP_VELOCITY = 140.0
+const WATER_ACCR = 4.0
 
 @onready var animator = $AnimatedSprite2D
 # Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity = 400
+var gravity = 800
 var currentGravity = gravity
 var jumpTime = 0.0
 var allowMovement = true
@@ -30,6 +30,7 @@ func _physics_process(delta):
 		velocity.y += currentGravity * delta
 		var direction = Input.get_axis("ui_left", "ui_right")
 		currentDirection = direction
+		# Si no esta en el suelo, entonces la animacion es de salto
 		if not is_on_floor():
 			anim = "Jump"
 			jumpTime = 0.0

@@ -1,0 +1,8 @@
+res://Scenes/first_cave.tscn
+res://Tiles/Cave.tres
+res://Entities/playerCite.tscn
+res://Entities/playerMovement.gd
+res://Scenes/StartPoint.tscn
+res://EventSystem/Game.tscn
+res://EventSystem/globals.gd
+res://Entities/player_cite.gd

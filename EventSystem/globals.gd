@@ -104,13 +104,13 @@ func MM_Event(event_number):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var playerNode = preload("res://Entities/playerCite.tscn")
+	#var playerNode = preload("res://Entities/playerCite.tscn")
 	var root = get_tree().root
 	LevelNode = root.get_child(root.get_child_count() - 1).get_child(0)
 	current_scene = root.get_child(root.get_child_count() - 1).get_child(0).get_child(0)
 	GameRoot = root.get_child(root.get_child_count() - 1)
-	playerInstance = playerNode.instantiate()
-	playerInstance.position = Vector2(8.0, -8.0)
+	#zplayerInstance = playerNode.instantiate()
+	#playerInstance.position = Vector2(8.0, -8.0)
 	GameRoot.add_child(playerInstance)
 	#print(current_scene.levelScript)
 	

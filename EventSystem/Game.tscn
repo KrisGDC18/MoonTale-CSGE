@@ -1,9 +1,10 @@
-[gd_scene load_steps=22 format=3 uid="uid://dda4xf56ny4km"]
+[gd_scene format=3 uid="uid://dda4xf56ny4km"]
 
-[ext_resource type="Script" path="res://EventSystem/GameRoot.gd" id="1_2nunq"]
+[ext_resource type="Script" uid="uid://c8toruomf3ptv" path="res://EventSystem/GameRoot.gd" id="1_2nunq"]
 [ext_resource type="PackedScene" uid="uid://bqjatb5hf34fo" path="res://Scenes/StartPoint.tscn" id="2_dhuug"]
-[ext_resource type="Script" path="res://FadeThingy.gd" id="3_gklk1"]
+[ext_resource type="Script" uid="uid://bvdmoajmyrnbp" path="res://FadeThingy.gd" id="3_gklk1"]
 [ext_resource type="Texture2D" uid="uid://m7c3lohaxyma" path="res://Sprites/Misc/Fade.png" id="4_aytjq"]
+[ext_resource type="PackedScene" uid="uid://sniu0w5cff26" path="res://Entities/playerCite.tscn" id="5_qvwhr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4glup"]
 atlas = ExtResource("4_aytjq")
@@ -125,7 +126,7 @@ animations = [{
 "speed": 20.0
 }]
 
-[node name="Game" type="Node"]
+[node name="Game" type="Node" unique_id=1873560569]
 script = ExtResource("1_2nunq")
 globalScript = "^0000^
 <END>
@@ -193,28 +194,30 @@ You were never seen again...<NOD><CLR>Want to retry?<YNJ>0049<CLO>
 ^0049^
 <CLO><FAO>0004<ESC>"
 
-[node name="Level" type="Node" parent="."]
+[node name="Level" type="Node" parent="." unique_id=226742020]
 
-[node name="StartPoint" parent="Level" instance=ExtResource("2_dhuug")]
+[node name="StartPoint" parent="Level" unique_id=1584688735 instance=ExtResource("2_dhuug")]
 
-[node name="FadeThingy" type="Camera2D" parent="."]
+[node name="Cite" parent="." unique_id=1798523650 instance=ExtResource("5_qvwhr")]
+position = Vector2(-1, -16)
+
+[node name="FadeThingy" type="Camera2D" parent="." unique_id=1372244966]
 position = Vector2(8, -16)
-zoom = Vector2(3.89, 3.89)
 script = ExtResource("3_gklk1")
 metadata/_edit_use_anchors_ = true
 
-[node name="Timer" type="Timer" parent="FadeThingy"]
+[node name="Timer" type="Timer" parent="FadeThingy" unique_id=42154385]
 
-[node name="Row1" type="Node" parent="FadeThingy"]
+[node name="Row1" type="Node" parent="FadeThingy" unique_id=633828273]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=661884075]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
 position = Vector2(-152, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=610952509]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -222,7 +225,7 @@ position = Vector2(-136, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.449656
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=2111140310]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -230,7 +233,7 @@ position = Vector2(-120, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.298226
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=831742033]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -238,7 +241,7 @@ position = Vector2(-104, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0182143
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=2112017931]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -246,7 +249,7 @@ position = Vector2(-88, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.904319
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=1484057688]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -254,7 +257,7 @@ position = Vector2(-72, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.727576
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=970489339]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -262,7 +265,7 @@ position = Vector2(-56, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.280869
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=595960194]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -270,7 +273,7 @@ position = Vector2(-40, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.198232
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=1629846620]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -278,7 +281,7 @@ position = Vector2(-24, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.883903
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=986962681]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -286,7 +289,7 @@ position = Vector2(-8, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=1937986199]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -294,7 +297,7 @@ position = Vector2(8, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=1321378971]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -302,7 +305,7 @@ position = Vector2(24, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=1453692731]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -310,7 +313,7 @@ position = Vector2(40, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=1143901468]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -318,7 +321,7 @@ position = Vector2(56, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=308532378]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -326,7 +329,7 @@ position = Vector2(72, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=388997265]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -334,7 +337,7 @@ position = Vector2(88, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.186982
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=945257827]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -342,7 +345,7 @@ position = Vector2(104, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=360146168]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -350,7 +353,7 @@ position = Vector2(120, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=871782152]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -358,7 +361,7 @@ position = Vector2(136, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=1754297512]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -366,7 +369,7 @@ position = Vector2(152, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row1"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row1" unique_id=1426357257]
 z_index = 20
 texture_filter = 1
 texture_repeat = 1
@@ -374,9 +377,9 @@ position = Vector2(168, 104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.625617
 
-[node name="Row2" type="Node" parent="FadeThingy"]
+[node name="Row2" type="Node" parent="FadeThingy" unique_id=1051340430]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=1890781992]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -384,7 +387,7 @@ position = Vector2(-152, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.435451
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=1971287467]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -392,7 +395,7 @@ position = Vector2(-136, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.198221
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=88759035]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -400,7 +403,7 @@ position = Vector2(-120, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0467908
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=275307525]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -408,7 +411,7 @@ position = Vector2(-104, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.766779
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=310496698]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -416,7 +419,7 @@ position = Vector2(-88, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.652885
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=1277103951]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -424,7 +427,7 @@ position = Vector2(-72, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.476141
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=414652620]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -432,7 +435,7 @@ position = Vector2(-56, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0294346
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=681729008]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -440,7 +443,7 @@ position = Vector2(-40, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.946797
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=961846403]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -448,7 +451,7 @@ position = Vector2(-24, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.632468
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=1740789063]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -456,7 +459,7 @@ position = Vector2(-8, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=1846312920]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -464,7 +467,7 @@ position = Vector2(8, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=1083896416]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -472,7 +475,7 @@ position = Vector2(24, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=684553454]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -480,7 +483,7 @@ position = Vector2(40, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=845958830]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -488,7 +491,7 @@ position = Vector2(56, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=1900134403]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -496,7 +499,7 @@ position = Vector2(72, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=1530171127]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -504,7 +507,7 @@ position = Vector2(88, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.935547
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=670906385]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -512,7 +515,7 @@ position = Vector2(104, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=274757995]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -520,7 +523,7 @@ position = Vector2(120, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=1753747805]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -528,7 +531,7 @@ position = Vector2(136, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=44936175]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -536,7 +539,7 @@ position = Vector2(152, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row2"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row2" unique_id=933533135]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -544,9 +547,9 @@ position = Vector2(168, 88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.374182
 
-[node name="Row3" type="Node" parent="FadeThingy"]
+[node name="Row3" type="Node" parent="FadeThingy" unique_id=949588745]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=1525689000]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -554,7 +557,7 @@ position = Vector2(-152, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.155737
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=1923635964]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -562,7 +565,7 @@ position = Vector2(-136, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.938242
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=596056657]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -570,7 +573,7 @@ position = Vector2(-120, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.786812
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=1554372843]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -578,7 +581,7 @@ position = Vector2(-104, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.5068
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=778404376]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -586,7 +589,7 @@ position = Vector2(-88, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.392906
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=149977676]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -594,7 +597,7 @@ position = Vector2(-72, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.216163
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=786966275]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -602,7 +605,7 @@ position = Vector2(-56, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.769456
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=1282770767]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -610,7 +613,7 @@ position = Vector2(-40, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.686818
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=1081594187]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -618,7 +621,7 @@ position = Vector2(-24, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.37249
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=581694369]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -626,7 +629,7 @@ position = Vector2(-8, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=129163862]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -634,7 +637,7 @@ position = Vector2(8, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=417670471]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -642,7 +645,7 @@ position = Vector2(24, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=556886204]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -650,7 +653,7 @@ position = Vector2(40, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=1276215258]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -658,7 +661,7 @@ position = Vector2(56, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=324058793]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -666,7 +669,7 @@ position = Vector2(72, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=1930191857]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -674,7 +677,7 @@ position = Vector2(88, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.675568
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=1168857001]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -682,7 +685,7 @@ position = Vector2(104, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=265078401]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -690,7 +693,7 @@ position = Vector2(120, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=260602274]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -698,7 +701,7 @@ position = Vector2(136, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=1737880786]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -706,7 +709,7 @@ position = Vector2(152, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row3"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row3" unique_id=2121274765]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -714,9 +717,9 @@ position = Vector2(168, 72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.114204
 
-[node name="Row4" type="Node" parent="FadeThingy"]
+[node name="Row4" type="Node" parent="FadeThingy" unique_id=1246338488]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=2006639664]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -724,7 +727,7 @@ position = Vector2(-152, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.907056
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=1654497901]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -732,7 +735,7 @@ position = Vector2(-136, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.198221
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=1650768603]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -740,7 +743,7 @@ position = Vector2(-120, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0467908
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=693911750]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -748,7 +751,7 @@ position = Vector2(-104, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.766779
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=149330586]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -756,7 +759,7 @@ position = Vector2(-88, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.652885
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=915360114]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -764,7 +767,7 @@ position = Vector2(-72, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.476141
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=187683226]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -772,7 +775,7 @@ position = Vector2(-56, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0294346
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=660487410]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -780,7 +783,7 @@ position = Vector2(-40, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.946797
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=964265444]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -788,7 +791,7 @@ position = Vector2(-24, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.632468
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=2043164231]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -796,7 +799,7 @@ position = Vector2(-8, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=843201165]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -804,7 +807,7 @@ position = Vector2(8, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=968711290]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -812,7 +815,7 @@ position = Vector2(24, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=1949908164]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -820,7 +823,7 @@ position = Vector2(40, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=1473109119]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -828,7 +831,7 @@ position = Vector2(56, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=484077060]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -836,7 +839,7 @@ position = Vector2(72, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=1657398851]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -844,7 +847,7 @@ position = Vector2(88, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.935547
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=1256291532]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -852,7 +855,7 @@ position = Vector2(104, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=653626067]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -860,7 +863,7 @@ position = Vector2(120, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=227648204]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -868,7 +871,7 @@ position = Vector2(136, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=341925199]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -876,7 +879,7 @@ position = Vector2(152, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row4"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row4" unique_id=262795168]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -884,9 +887,9 @@ position = Vector2(168, 56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.374182
 
-[node name="Row5" type="Node" parent="FadeThingy"]
+[node name="Row5" type="Node" parent="FadeThingy" unique_id=741690067]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=879021158]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -894,7 +897,7 @@ position = Vector2(-152, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.567445
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1554959858]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -902,7 +905,7 @@ position = Vector2(-136, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.592269
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=2132679406]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -910,7 +913,7 @@ position = Vector2(-120, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.440839
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1410183469]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -918,7 +921,7 @@ position = Vector2(-104, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.160827
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1938525218]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -926,7 +929,7 @@ position = Vector2(-88, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0469326
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1618524911]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -934,7 +937,7 @@ position = Vector2(-72, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.870189
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=112488723]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -942,7 +945,7 @@ position = Vector2(-56, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.423483
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1259256833]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -950,7 +953,7 @@ position = Vector2(-40, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.340845
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=264910608]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -958,7 +961,7 @@ position = Vector2(-24, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0265162
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1728372432]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -966,7 +969,7 @@ position = Vector2(-8, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1039937917]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -974,7 +977,7 @@ position = Vector2(8, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1923303556]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -982,7 +985,7 @@ position = Vector2(24, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1055247736]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -990,7 +993,7 @@ position = Vector2(40, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=345472512]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -998,7 +1001,7 @@ position = Vector2(56, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1046494675]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1006,7 +1009,7 @@ position = Vector2(72, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1714740742]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1014,7 +1017,7 @@ position = Vector2(88, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.329595
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=683225394]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1022,7 +1025,7 @@ position = Vector2(104, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=858614230]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1030,7 +1033,7 @@ position = Vector2(120, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=873991131]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1038,7 +1041,7 @@ position = Vector2(136, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=230164785]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1046,7 +1049,7 @@ position = Vector2(152, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row5"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row5" unique_id=1729950900]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1054,9 +1057,9 @@ position = Vector2(168, 40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.76823
 
-[node name="Row6" type="Node" parent="FadeThingy"]
+[node name="Row6" type="Node" parent="FadeThingy" unique_id=24439607]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=1935159166]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1064,7 +1067,7 @@ position = Vector2(-152, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.107836
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=781995929]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1072,7 +1075,7 @@ position = Vector2(-136, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.198221
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=1737349887]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1080,7 +1083,7 @@ position = Vector2(-120, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0467908
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=421603532]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1088,7 +1091,7 @@ position = Vector2(-104, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.766779
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=1115258551]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1096,7 +1099,7 @@ position = Vector2(-88, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.652885
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=2096310443]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1104,7 +1107,7 @@ position = Vector2(-72, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.476141
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=1439113449]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1112,7 +1115,7 @@ position = Vector2(-56, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0294346
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=892678581]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1120,7 +1123,7 @@ position = Vector2(-40, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.946797
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=103103122]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1128,7 +1131,7 @@ position = Vector2(-24, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.632468
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=1395248228]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1136,7 +1139,7 @@ position = Vector2(-8, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=983935219]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1144,7 +1147,7 @@ position = Vector2(8, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=457025061]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1152,7 +1155,7 @@ position = Vector2(24, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=599678001]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1160,7 +1163,7 @@ position = Vector2(40, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=812994892]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1168,7 +1171,7 @@ position = Vector2(56, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=286166512]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1176,7 +1179,7 @@ position = Vector2(72, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=1309188862]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1184,7 +1187,7 @@ position = Vector2(88, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.935547
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=1779305182]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1192,7 +1195,7 @@ position = Vector2(104, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=367882085]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1200,7 +1203,7 @@ position = Vector2(120, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=1760214757]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1208,7 +1211,7 @@ position = Vector2(136, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=14902690]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1216,7 +1219,7 @@ position = Vector2(152, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row6"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row6" unique_id=1484579460]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1224,9 +1227,9 @@ position = Vector2(168, 24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.374182
 
-[node name="Row7" type="Node" parent="FadeThingy"]
+[node name="Row7" type="Node" parent="FadeThingy" unique_id=1674605596]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=2080259408]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1234,7 +1237,7 @@ position = Vector2(-152, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.936763
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=320959037]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1242,7 +1245,7 @@ position = Vector2(-136, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.938242
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=1328243096]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1250,7 +1253,7 @@ position = Vector2(-120, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.786812
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=1551807546]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1258,7 +1261,7 @@ position = Vector2(-104, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.5068
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=247072600]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1266,7 +1269,7 @@ position = Vector2(-88, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.392906
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=1920194972]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1274,7 +1277,7 @@ position = Vector2(-72, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.216163
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=744630376]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1282,7 +1285,7 @@ position = Vector2(-56, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.769456
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=1501317791]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1290,7 +1293,7 @@ position = Vector2(-40, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.686818
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=201089368]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1298,7 +1301,7 @@ position = Vector2(-24, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.37249
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=1889500645]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1306,7 +1309,7 @@ position = Vector2(-8, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=29973946]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1314,7 +1317,7 @@ position = Vector2(8, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=174079041]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1322,7 +1325,7 @@ position = Vector2(24, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=1752336773]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1330,7 +1333,7 @@ position = Vector2(40, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=1239818801]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1338,7 +1341,7 @@ position = Vector2(56, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=1900640725]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1346,7 +1349,7 @@ position = Vector2(72, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=530643663]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1354,7 +1357,7 @@ position = Vector2(88, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.675568
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=1196054597]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1362,7 +1365,7 @@ position = Vector2(104, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=141854436]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1370,7 +1373,7 @@ position = Vector2(120, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=121950697]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1378,7 +1381,7 @@ position = Vector2(136, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=216116798]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1386,7 +1389,7 @@ position = Vector2(152, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row7"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row7" unique_id=1660883218]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1394,9 +1397,9 @@ position = Vector2(168, 8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.114204
 
-[node name="Row8" type="Node" parent="FadeThingy"]
+[node name="Row8" type="Node" parent="FadeThingy" unique_id=653304203]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=350392630]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1404,7 +1407,7 @@ position = Vector2(-152, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.145302
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=77215879]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1412,7 +1415,7 @@ position = Vector2(-136, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.198221
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=1444861906]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1420,7 +1423,7 @@ position = Vector2(-120, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0467908
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=614875874]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1428,7 +1431,7 @@ position = Vector2(-104, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.766779
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=633788274]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1436,7 +1439,7 @@ position = Vector2(-88, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.652885
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=1277466476]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1444,7 +1447,7 @@ position = Vector2(-72, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.476141
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=1234056473]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1452,7 +1455,7 @@ position = Vector2(-56, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0294346
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=1303818786]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1460,7 +1463,7 @@ position = Vector2(-40, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.946797
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=1955692060]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1468,7 +1471,7 @@ position = Vector2(-24, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.632468
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=1399321855]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1476,7 +1479,7 @@ position = Vector2(-8, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=948088345]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1484,7 +1487,7 @@ position = Vector2(8, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=1541102349]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1492,7 +1495,7 @@ position = Vector2(24, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=935053633]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1500,7 +1503,7 @@ position = Vector2(40, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=40094828]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1508,7 +1511,7 @@ position = Vector2(56, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=1386494237]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1516,7 +1519,7 @@ position = Vector2(72, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=367940619]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1524,7 +1527,7 @@ position = Vector2(88, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.935547
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=989689228]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1532,7 +1535,7 @@ position = Vector2(104, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=51152143]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1540,7 +1543,7 @@ position = Vector2(120, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=737033494]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1548,7 +1551,7 @@ position = Vector2(136, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=1796932917]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1556,7 +1559,7 @@ position = Vector2(152, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row8"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row8" unique_id=33253540]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1564,9 +1567,9 @@ position = Vector2(168, -8)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.374182
 
-[node name="Row9" type="Node" parent="FadeThingy"]
+[node name="Row9" type="Node" parent="FadeThingy" unique_id=2082324275]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=1455196624]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1574,7 +1577,7 @@ position = Vector2(-152, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0261661
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=224502549]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1582,7 +1585,7 @@ position = Vector2(-136, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.387303
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=1131874758]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1590,7 +1593,7 @@ position = Vector2(-120, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.235873
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=1487052955]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1598,7 +1601,7 @@ position = Vector2(-104, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.955861
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=1975411515]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1606,7 +1609,7 @@ position = Vector2(-88, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.841966
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=2139852552]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1614,7 +1617,7 @@ position = Vector2(-72, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.665222
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=421957186]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1622,7 +1625,7 @@ position = Vector2(-56, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.218516
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=111976130]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1630,7 +1633,7 @@ position = Vector2(-40, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.135879
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=1323314654]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1638,7 +1641,7 @@ position = Vector2(-24, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.821549
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=1737769275]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1646,7 +1649,7 @@ position = Vector2(-8, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=1696450799]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1654,7 +1657,7 @@ position = Vector2(8, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=1772723669]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1662,7 +1665,7 @@ position = Vector2(24, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=377058741]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1670,7 +1673,7 @@ position = Vector2(40, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=265494380]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1678,7 +1681,7 @@ position = Vector2(56, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=2056570479]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1686,7 +1689,7 @@ position = Vector2(72, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=1533631784]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1694,7 +1697,7 @@ position = Vector2(88, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.124629
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=16356577]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1702,7 +1705,7 @@ position = Vector2(104, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=900590263]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1710,7 +1713,7 @@ position = Vector2(120, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=236708346]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1718,7 +1721,7 @@ position = Vector2(136, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=1208787704]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1726,7 +1729,7 @@ position = Vector2(152, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row9"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row9" unique_id=1831153248]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1734,9 +1737,9 @@ position = Vector2(168, -24)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.563264
 
-[node name="Row10" type="Node" parent="FadeThingy"]
+[node name="Row10" type="Node" parent="FadeThingy" unique_id=1476088876]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=946151837]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1744,7 +1747,7 @@ position = Vector2(-152, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.373098
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=1309940650]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1752,7 +1755,7 @@ position = Vector2(-136, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.198221
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=1344717109]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1760,7 +1763,7 @@ position = Vector2(-120, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0467908
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=2141796694]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1768,7 +1771,7 @@ position = Vector2(-104, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.766779
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=1309389973]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1776,7 +1779,7 @@ position = Vector2(-88, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.652885
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=1176167940]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1784,7 +1787,7 @@ position = Vector2(-72, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.476141
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=2103633207]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1792,7 +1795,7 @@ position = Vector2(-56, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0294346
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=136313761]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1800,7 +1803,7 @@ position = Vector2(-40, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.946797
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=955045117]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1808,7 +1811,7 @@ position = Vector2(-24, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.632468
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=1686790066]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1816,7 +1819,7 @@ position = Vector2(-8, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=1002142333]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1824,7 +1827,7 @@ position = Vector2(8, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=1817422436]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1832,7 +1835,7 @@ position = Vector2(24, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=1110470485]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1840,7 +1843,7 @@ position = Vector2(40, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=456759944]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1848,7 +1851,7 @@ position = Vector2(56, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=552790599]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1856,7 +1859,7 @@ position = Vector2(72, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=620119897]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1864,7 +1867,7 @@ position = Vector2(88, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.935547
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=1039801512]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1872,7 +1875,7 @@ position = Vector2(104, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=427647574]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1880,7 +1883,7 @@ position = Vector2(120, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=624891962]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1888,7 +1891,7 @@ position = Vector2(136, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=1104433032]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1896,7 +1899,7 @@ position = Vector2(152, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row10"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row10" unique_id=1936097407]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1904,9 +1907,9 @@ position = Vector2(168, -40)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.374182
 
-[node name="Row11" type="Node" parent="FadeThingy"]
+[node name="Row11" type="Node" parent="FadeThingy" unique_id=1391941147]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=369706701]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1914,7 +1917,7 @@ position = Vector2(-152, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0933836
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=254388639]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1922,7 +1925,7 @@ position = Vector2(-136, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.938242
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=1677560150]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1930,7 +1933,7 @@ position = Vector2(-120, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.786812
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=1139603015]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1938,7 +1941,7 @@ position = Vector2(-104, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.5068
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=523095930]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1946,7 +1949,7 @@ position = Vector2(-88, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.392906
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=1613657161]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1954,7 +1957,7 @@ position = Vector2(-72, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.216163
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=27408044]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1962,7 +1965,7 @@ position = Vector2(-56, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.769456
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=1972227788]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1970,7 +1973,7 @@ position = Vector2(-40, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.686818
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=398115397]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1978,7 +1981,7 @@ position = Vector2(-24, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.37249
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=8808789]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1986,7 +1989,7 @@ position = Vector2(-8, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=1130277952]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -1994,7 +1997,7 @@ position = Vector2(8, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=817778612]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2002,7 +2005,7 @@ position = Vector2(24, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=1839915765]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2010,7 +2013,7 @@ position = Vector2(40, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=1339873993]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2018,7 +2021,7 @@ position = Vector2(56, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=674571789]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2026,7 +2029,7 @@ position = Vector2(72, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=317159799]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2034,7 +2037,7 @@ position = Vector2(88, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.675568
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=1026548229]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2042,7 +2045,7 @@ position = Vector2(104, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=1294063583]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2050,7 +2053,7 @@ position = Vector2(120, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=212867749]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2058,7 +2061,7 @@ position = Vector2(136, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=1389323100]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2066,7 +2069,7 @@ position = Vector2(152, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row11"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row11" unique_id=975152403]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2074,9 +2077,9 @@ position = Vector2(168, -56)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.114204
 
-[node name="Row12" type="Node" parent="FadeThingy"]
+[node name="Row12" type="Node" parent="FadeThingy" unique_id=1839617226]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1872451154]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2084,7 +2087,7 @@ position = Vector2(-152, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.844702
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1196161567]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2092,7 +2095,7 @@ position = Vector2(-136, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.198221
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1899653224]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2100,7 +2103,7 @@ position = Vector2(-120, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0467908
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=432175346]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2108,7 +2111,7 @@ position = Vector2(-104, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.766779
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1775588932]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2116,7 +2119,7 @@ position = Vector2(-88, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.652885
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1510757183]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2124,7 +2127,7 @@ position = Vector2(-72, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.476141
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1326868161]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2132,7 +2135,7 @@ position = Vector2(-56, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0294346
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1438936454]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2140,7 +2143,7 @@ position = Vector2(-40, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.946797
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=444648355]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2148,7 +2151,7 @@ position = Vector2(-24, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.632468
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1629407193]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2156,7 +2159,7 @@ position = Vector2(-8, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1305950927]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2164,7 +2167,7 @@ position = Vector2(8, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1320512814]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2172,7 +2175,7 @@ position = Vector2(24, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1232350661]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2180,7 +2183,7 @@ position = Vector2(40, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1885114781]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2188,7 +2191,7 @@ position = Vector2(56, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1653195803]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2196,7 +2199,7 @@ position = Vector2(72, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=532316959]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2204,7 +2207,7 @@ position = Vector2(88, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.935547
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1884421415]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2212,7 +2215,7 @@ position = Vector2(104, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=700467906]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2220,7 +2223,7 @@ position = Vector2(120, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=1541152585]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2228,7 +2231,7 @@ position = Vector2(136, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=808781655]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2236,7 +2239,7 @@ position = Vector2(152, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row12"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row12" unique_id=242722415]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2244,9 +2247,9 @@ position = Vector2(168, -72)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.374182
 
-[node name="Row13" type="Node" parent="FadeThingy"]
+[node name="Row13" type="Node" parent="FadeThingy" unique_id=912829863]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=1722920827]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2254,7 +2257,7 @@ position = Vector2(-152, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.505092
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=815490744]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2262,7 +2265,7 @@ position = Vector2(-136, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.592269
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=216535537]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2270,7 +2273,7 @@ position = Vector2(-120, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.440839
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=560210225]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2278,7 +2281,7 @@ position = Vector2(-104, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.160827
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=492896610]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2286,7 +2289,7 @@ position = Vector2(-88, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0469326
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=566115769]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2294,7 +2297,7 @@ position = Vector2(-72, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.870189
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=1430984067]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2302,7 +2305,7 @@ position = Vector2(-56, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.423483
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=418170546]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2310,7 +2313,7 @@ position = Vector2(-40, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.340845
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=1520150766]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2318,7 +2321,7 @@ position = Vector2(-24, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0265162
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=578807806]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2326,7 +2329,7 @@ position = Vector2(-8, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=984721308]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2334,7 +2337,7 @@ position = Vector2(8, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=1459742805]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2342,7 +2345,7 @@ position = Vector2(24, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=927520653]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2350,7 +2353,7 @@ position = Vector2(40, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=1880163202]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2358,7 +2361,7 @@ position = Vector2(56, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=2135773455]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2366,7 +2369,7 @@ position = Vector2(72, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=1826135536]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2374,7 +2377,7 @@ position = Vector2(88, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.329595
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=304735192]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2382,7 +2385,7 @@ position = Vector2(104, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=1783919646]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2390,7 +2393,7 @@ position = Vector2(120, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=1539455384]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2398,7 +2401,7 @@ position = Vector2(136, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=755978601]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2406,7 +2409,7 @@ position = Vector2(152, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row13"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row13" unique_id=904645522]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2414,9 +2417,9 @@ position = Vector2(168, -88)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.76823
 
-[node name="Row14" type="Node" parent="FadeThingy"]
+[node name="Row14" type="Node" parent="FadeThingy" unique_id=529203718]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=785499396]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2424,7 +2427,7 @@ position = Vector2(-152, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0454826
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=1729987091]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2432,7 +2435,7 @@ position = Vector2(-136, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.198221
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=899225115]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2440,7 +2443,7 @@ position = Vector2(-120, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0467908
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=1350824143]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2448,7 +2451,7 @@ position = Vector2(-104, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.766779
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=705852452]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2456,7 +2459,7 @@ position = Vector2(-88, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.652885
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=872446169]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2464,7 +2467,7 @@ position = Vector2(-72, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.476141
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=1425657219]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2472,7 +2475,7 @@ position = Vector2(-56, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0294346
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=252652467]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2480,7 +2483,7 @@ position = Vector2(-40, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.946797
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=1245497217]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2488,7 +2491,7 @@ position = Vector2(-24, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.632468
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=438296313]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2496,7 +2499,7 @@ position = Vector2(-8, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=1116082987]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2504,7 +2507,7 @@ position = Vector2(8, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=705405032]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2512,7 +2515,7 @@ position = Vector2(24, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=1711201600]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2520,7 +2523,7 @@ position = Vector2(40, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=1765562029]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2528,7 +2531,7 @@ position = Vector2(56, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=697679722]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2536,7 +2539,7 @@ position = Vector2(72, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=1315877958]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2544,7 +2547,7 @@ position = Vector2(88, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.935547
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=1879936294]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2552,7 +2555,7 @@ position = Vector2(104, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=842665651]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2560,7 +2563,7 @@ position = Vector2(120, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=2099612104]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2568,7 +2571,7 @@ position = Vector2(136, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=1253213877]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2576,7 +2579,7 @@ position = Vector2(152, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row14"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row14" unique_id=1719476994]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2584,9 +2587,9 @@ position = Vector2(168, -104)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.374182
 
-[node name="Row15" type="Node" parent="FadeThingy"]
+[node name="Row15" type="Node" parent="FadeThingy" unique_id=1203341969]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=1543338300]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2594,7 +2597,7 @@ position = Vector2(-152, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.874409
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=1509021611]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2602,7 +2605,7 @@ position = Vector2(-136, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.938242
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=2020490116]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2610,7 +2613,7 @@ position = Vector2(-120, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.786812
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=1398376740]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2618,7 +2621,7 @@ position = Vector2(-104, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.5068
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=7053893]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2626,7 +2629,7 @@ position = Vector2(-88, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.392906
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=1453367382]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2634,7 +2637,7 @@ position = Vector2(-72, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.216163
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=1586483404]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2642,7 +2645,7 @@ position = Vector2(-56, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.769456
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=1609115950]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2650,7 +2653,7 @@ position = Vector2(-40, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.686818
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=976191494]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2658,7 +2661,7 @@ position = Vector2(-24, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.37249
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=389085353]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2666,7 +2669,7 @@ position = Vector2(-8, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=122458286]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2674,7 +2677,7 @@ position = Vector2(8, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=1380914863]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2682,7 +2685,7 @@ position = Vector2(24, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=1354541496]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2690,7 +2693,7 @@ position = Vector2(40, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=690929241]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2698,7 +2701,7 @@ position = Vector2(56, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=14112835]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2706,7 +2709,7 @@ position = Vector2(72, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=324621793]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2714,7 +2717,7 @@ position = Vector2(88, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.675568
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=1466860126]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2722,7 +2725,7 @@ position = Vector2(104, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=1213701686]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2730,7 +2733,7 @@ position = Vector2(120, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=199526862]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2738,7 +2741,7 @@ position = Vector2(136, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=850181371]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2746,7 +2749,7 @@ position = Vector2(152, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row15"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row15" unique_id=1508057846]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2754,9 +2757,9 @@ position = Vector2(168, -120)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.114204
 
-[node name="Row16" type="Node" parent="FadeThingy"]
+[node name="Row16" type="Node" parent="FadeThingy" unique_id=1533708801]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=103910623]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2764,7 +2767,7 @@ position = Vector2(-152, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0829488
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=608681388]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2772,7 +2775,7 @@ position = Vector2(-136, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.198221
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=332043970]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2780,7 +2783,7 @@ position = Vector2(-120, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0467908
 
-[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D4" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=1376902604]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2788,7 +2791,7 @@ position = Vector2(-104, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.766779
 
-[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D5" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=1785063761]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2796,7 +2799,7 @@ position = Vector2(-88, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.652885
 
-[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D6" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=1645323347]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2804,7 +2807,7 @@ position = Vector2(-72, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.476141
 
-[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D7" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=286308341]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2812,7 +2815,7 @@ position = Vector2(-56, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0294346
 
-[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D8" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=1034381247]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2820,7 +2823,7 @@ position = Vector2(-40, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.946797
 
-[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D9" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=1304265753]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2828,7 +2831,7 @@ position = Vector2(-24, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.632468
 
-[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D10" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=1077758166]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2836,7 +2839,7 @@ position = Vector2(-8, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.469867
 
-[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D11" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=884740379]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2844,7 +2847,7 @@ position = Vector2(8, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.318438
 
-[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D12" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=232025077]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2852,7 +2855,7 @@ position = Vector2(24, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0384262
 
-[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D13" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=2111529603]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2860,7 +2863,7 @@ position = Vector2(40, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.924533
 
-[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D14" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=1697609267]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2868,7 +2871,7 @@ position = Vector2(56, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.74779
 
-[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D15" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=1818220058]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2876,7 +2879,7 @@ position = Vector2(72, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.301081
 
-[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D16" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=1285522680]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2884,7 +2887,7 @@ position = Vector2(88, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.935547
 
-[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D17" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=1038022039]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2892,7 +2895,7 @@ position = Vector2(104, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.117472
 
-[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D18" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=879125493]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2900,7 +2903,7 @@ position = Vector2(120, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.478607
 
-[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D19" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=339990286]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2908,7 +2911,7 @@ position = Vector2(136, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.327178
 
-[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D20" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=676155290]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
@@ -2916,7 +2919,7 @@ position = Vector2(152, -136)
 sprite_frames = SubResource("SpriteFrames_f07ce")
 frame_progress = 0.0471659
 
-[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row16"]
+[node name="AnimatedSprite2D21" type="AnimatedSprite2D" parent="FadeThingy/Row16" unique_id=370614302]
 z_index = 20
 texture_filter = 1
 texture_repeat = 2
