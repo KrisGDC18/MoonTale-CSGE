@@ -7,7 +7,7 @@
 [node name="First Cave" type="Node2D" unique_id=1056936284]
 script = ExtResource("1_gby17")
 levelScript = "^0090^
-<MNA><CMU>0003<FAI><PLG><END>
+<MNA><CMU>0003<PLG><END>
 
 ^0100^
 <PLS><FAO><TRA>Start Point:0090:8:-88:0001"

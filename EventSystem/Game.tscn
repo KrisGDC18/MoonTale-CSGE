@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://c8toruomf3ptv" path="res://EventSystem/GameRoot.gd" id="1_2nunq"]
 [ext_resource type="PackedScene" uid="uid://bqjatb5hf34fo" path="res://Scenes/StartPoint.tscn" id="2_dhuug"]
-[ext_resource type="Script" uid="uid://bvdmoajmyrnbp" path="res://FadeThingy.gd" id="3_gklk1"]
 [ext_resource type="Texture2D" uid="uid://m7c3lohaxyma" path="res://Sprites/Misc/Fade.png" id="4_aytjq"]
 [ext_resource type="PackedScene" uid="uid://sniu0w5cff26" path="res://Entities/playerCite.tscn" id="5_qvwhr"]
 
@@ -197,13 +196,23 @@ You were never seen again...<NOD><CLR>Want to retry?<YNJ>0049<CLO>
 [node name="Level" type="Node" parent="." unique_id=226742020]
 
 [node name="StartPoint" parent="Level" unique_id=1584688735 instance=ExtResource("2_dhuug")]
+levelScript = "^0090^
+<MNA><CMU>0003<END>
+
+^0100^
+<PRI><CNP>0100:0000:0000
+<SOU>0011<FAO>0001
+<TRA>0012:0090:0000:0008
+
+^0101^
+<PLS><FAO>0001
+<Swap Scene>First Cave:0090:0:8:0000"
 
 [node name="Cite" parent="." unique_id=1798523650 instance=ExtResource("5_qvwhr")]
 position = Vector2(-1, -16)
 
 [node name="FadeThingy" type="Camera2D" parent="." unique_id=1372244966]
 position = Vector2(8, -16)
-script = ExtResource("3_gklk1")
 metadata/_edit_use_anchors_ = true
 
 [node name="Timer" type="Timer" parent="FadeThingy" unique_id=42154385]

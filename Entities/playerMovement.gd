@@ -26,13 +26,13 @@ var currentDirection = 0
 func _physics_process(delta):
 	# Add the gravity.
 	if Globals.playerPlayable == true:
-		var anim = "Idle"
+		var anim = "IdleRight"
 		velocity.y += currentGravity * delta
 		var direction = Input.get_axis("ui_left", "ui_right")
 		currentDirection = direction
 		# Si no esta en el suelo, entonces la animacion es de salto
 		if not is_on_floor():
-			anim = "Jump"
+			anim = "JumpRight"
 			jumpTime = 0.0
 
 		# Handle jump.
@@ -50,7 +50,7 @@ func _physics_process(delta):
 			else:
 				velocity.x = move_toward(velocity.x, direction * MAX_SPEED, ACCR)
 			if is_on_floor():
-				anim = "Walk"
+				anim = "WalkRight"
 		else:
 			velocity.x = move_toward(velocity.x, 0, FRICTION)
 
