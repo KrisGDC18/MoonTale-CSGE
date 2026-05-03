@@ -24,6 +24,7 @@ func MM_Event(event_number):
 	var command = ""
 	var extras = ""
 	var done = false
+	
 	for n in completeScript:
 		if skip <= 0:
 			if n == "^" and correct_event == false:
@@ -111,7 +112,7 @@ func _ready():
 	GameRoot = root.get_child(root.get_child_count() - 1)
 	#zplayerInstance = playerNode.instantiate()
 	#playerInstance.position = Vector2(8.0, -8.0)
-	GameRoot.add_child(playerInstance)
+	#GameRoot.add_child(playerInstance)
 	#print(current_scene.levelScript)
 	
 

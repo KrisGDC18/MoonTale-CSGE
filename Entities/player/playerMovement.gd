@@ -1,8 +1,8 @@
 extends CharacterBody2D
 
-const MAX_SPEED = 150.0
+const MAX_SPEED = 200.0
 const JUMP_VELOCITY = 280
-const ACCR = 10.0
+const ACCR = 20.0
 const FRICTION = 12.0
 
 const WATER_MAX_SPEED = 80.0
@@ -11,7 +11,7 @@ const WATER_ACCR = 4.0
 
 @onready var animator = $AnimatedSprite2D
 # Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity = 800
+var gravity = 820
 var currentGravity = gravity
 var jumpTime = 0.0
 var allowMovement = true
@@ -28,7 +28,7 @@ func _physics_process(delta):
 	if Globals.playerPlayable == true:
 		var anim = "IdleRight"
 		velocity.y += currentGravity * delta
-		var direction = Input.get_axis("ui_left", "ui_right")
+		var direction = Input.get_axis("Left", "Right")
 		currentDirection = direction
 		# Si no esta en el suelo, entonces la animacion es de salto
 		if not is_on_floor():
@@ -37,8 +37,9 @@ func _physics_process(delta):
 
 		# Handle jump.
 		if Input.is_action_just_pressed("Jump") and is_on_floor():
-			currentGravity = gravity / 2
+			currentGravity = gravity / 1.9
 			velocity.y = jump_speed()
+			
 		if Input.is_action_just_released("Jump") or velocity.y > 0:
 			currentGravity = gravity
 
@@ -55,7 +56,8 @@ func _physics_process(delta):
 			velocity.x = move_toward(velocity.x, 0, FRICTION)
 
 		move_and_slide()
-		if Input.is_action_just_pressed("ui_down") and direction == 0 and is_on_floor():
+		
+		if Input.is_action_just_pressed("Down") and direction == 0 and is_on_floor():
 			checking = true
 		elif checking == true and (direction != 0 or not is_on_floor()):
 			checking = false
@@ -72,9 +74,10 @@ func _physics_process(delta):
 		handle_animation(anim, direction)
 	
 func jump_speed():
-	var speed_incr: float = 12.0
+	var speed_incr: float = 15.0
 	if wamder == false:
-		return -(JUMP_VELOCITY + speed_incr * int(abs(velocity.x) / 30))
+		# Se elimino lo siguiente * int(abs(velocity.x) / 30) para evitar sumar altura al saltar mientras te mueves. Lo que hace que sea mas preciso y similar a CS.
+		return -(JUMP_VELOCITY + speed_incr)
 	else:
 		return -(WATER_JUMP_VELOCITY + speed_incr * int(abs(velocity.x) / 30))
 	

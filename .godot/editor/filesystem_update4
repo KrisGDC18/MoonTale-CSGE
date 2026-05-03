@@ -1,8 +1,4 @@
-res://Entities/playerCite.tscn
-res://Tiles/Cave.tres
-res://Entities/player_cite.gd
-res://EventSystem/Game.tscn
+res://Entities/player/playerMovement.gd
 res://Scenes/first_cave.tscn
-res://Entities/playerMovement.gd
-res://EventSystem/GameRoot.gd
-res://EventSystem/LevelScript.gd
+res://Tiles/Cave.tres
+res://Entities/player/playerCite.tscn
