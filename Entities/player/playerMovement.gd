@@ -5,7 +5,7 @@ extends CharacterBody2D
 @export var damage_material: ShaderMaterial
 
 # ─── Velocidad y aceleración en el suelo ─────────────────────────────
-const MAX_SPEED           := 200.0  # velocidad horizontal máxima caminando
+const MAX_SPEED           := 180.0  # velocidad horizontal máxima caminando
 const JUMP_VELOCITY       := 295.0  # fuerza inicial del salto (hacia arriba)
 const ACCR                := 1200.0 # qué tan rápido llegas a MAX_SPEED en el suelo valor alto = respuesta casi inmediata al input
 const FRICTION            := 1000.0 # qué tan rápido frenas al soltar la dirección valor alto = paras rápido sin resbalar
@@ -52,6 +52,16 @@ var _is_jumping      := false         # true desde que salta hasta que toca el s
 var _coyote_timer    := 0.0           # contador regresivo del coyote time
 var _jump_buffer_timer := 0.0         # contador regresivo del jump buffer
 var _current_anim: String = "IdleRight" # NUEVO: guarda la animación activa
+@onready var jump_sfx  = $jump_sfx   # sonido de salto
+@onready var step_sfx  = $step_sfx   # sonido de pasos
+@onready var land_sfx  = $land_sfx   # sonido de aterrizaje
+@onready var water_sfx = $water_sfx  # sonido al entrar/salir del agua
+
+var _was_on_floor  := true   # estado del suelo en el frame anterior
+							  # para detectar el momento exacto de aterrizaje
+var _step_timer    := 0.0    # contador para espaciar los pasos
+const STEP_INTERVAL := 0.28  # segundos entre cada paso (~Cave Story)
+							  # ajusta según la velocidad de tu animación
 
 
 func _ready():
@@ -74,7 +84,7 @@ func _physics_process(delta):
 	move_and_slide()            # 6. mover el personaje y detectar colisiones
 	_handle_check_action()      # 7. lógica de agacharse e inspeccionar
 	handle_animation(anim)      # 8. elegir y reproducir la animación correcta
-
+	_handle_sounds(delta)   # NUEVO: después de move_and_slide para leer is_on_floor() correcto
 
 func _update_coyote_time(delta: float) -> void:
 	if is_on_floor():
@@ -140,6 +150,7 @@ func _handle_jump() -> void:
 		_is_jumping = true             # marcar que estamos en un salto activo
 		_coyote_timer = 0.0           # consumir el coyote time para no saltar dos veces
 		_jump_buffer_timer = 0.0      # consumir el buffer para no saltar dos veces
+		jump_sfx.play()  # NUEVO: reproducir sonido de salto
 
 	if Input.is_action_just_released("Jump") and velocity.y < 0 and _is_jumping:
 		# soltaste el botón mientras subías → cortar el salto bruscamente
@@ -256,6 +267,37 @@ func handle_animation(anim):
 	_current_anim = anim
 	animator.play(anim)
 
+func _handle_sounds(delta: float) -> void:
+	var input_dir := Input.get_axis("Left", "Right")
+
+	# ── Aterrizaje ──────────────────────────────────────────────────
+	# detectar el momento exacto en que el jugador toca el suelo
+	# comparando el estado del frame anterior con el actual
+	if not _was_on_floor and is_on_floor():
+		land_sfx.play()    # acaba de aterrizar
+		_step_timer = STEP_INTERVAL  # reiniciar pasos para no solapar con land
+
+	_was_on_floor = is_on_floor()  # guardar estado para el siguiente frame
+
+	# ── Pasos ────────────────────────────────────────────────────────
+	# solo reproducir pasos si:
+	#   - está en el suelo
+	#   - hay input activo (se está moviendo)
+	#   - no está en modo check
+	if is_on_floor() and input_dir != 0 and not checking:
+		_step_timer -= delta
+		if _step_timer <= 0.0:
+			# elegir sonido según si está en agua o tierra
+			if wamder:
+				water_sfx.play()
+			else:
+				step_sfx.play()
+			_step_timer = STEP_INTERVAL  # reiniciar el timer
+	else:
+		# sin movimiento → reiniciar timer para que el primer paso
+		# suene inmediatamente al volver a caminar
+		_step_timer = STEP_INTERVAL
+
 func _on_water_detect_area_entered(_area):
 	wamder = true  # el jugador entró al agua
 
@@ -266,7 +308,7 @@ func _on_interactable_area_entered(_area):
 	able_to_interact = true  # hay un objeto interactuable cerca
 
 func _on_interactable_area_exited(_area):
-	able_to_interact = false # ya no hay objeto interactuable cerca
+	able_to_interact = false # ya no hay objezto interactuable cerca
 
 func _on_damage_detect_body_entered(_body: Node2D) -> void:
 	print("daño al jugador") # aquí irá la lógica de daño al jugador
