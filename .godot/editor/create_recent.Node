@@ -1,3 +1,5 @@
+Node
+Camera2D
 AudioStreamPlayer
 Sprite2D
 ParallaxBackground
@@ -8,4 +10,3 @@ Area2D
 AudioStreamPlayer2D
 CollisionShape2D
 AspectRatioContainer
-Camera2D

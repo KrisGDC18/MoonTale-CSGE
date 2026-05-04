@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://dda4xf56ny4km"]
+
+[ext_resource type="PackedScene" uid="uid://bqjatb5hf34fo" path="res://data/Scenes/StartPoint.tscn" id="1_7wqjn"]
+
+[node name="Game" type="Node" unique_id=1873560569]
+
+[node name="Level" type="Node" parent="." unique_id=226742020]
+
+[node name="Start Point" parent="Level" unique_id=1276778767 instance=ExtResource("1_7wqjn")]
+position = Vector2(-13.873077, 20.04567)

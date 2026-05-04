@@ -15,15 +15,15 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Moontale"
-run/main_scene="res://EventSystem/Game.tscn"
+run/main_scene="res://data/EventSystem/Game.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-Globals="*res://EventSystem/globals.gd"
-HandleEvents="*res://EventSystem/handle_commands.gd"
-AssetManager="*res://EventSystem/asset_manager.gd"
+player="*uid://sniu0w5cff26"
+Globals="*res://data/EventSystem/globals.gd"
+AssetManager="*res://data/EventSystem/asset_manager.gd"
 
 [display]
 
