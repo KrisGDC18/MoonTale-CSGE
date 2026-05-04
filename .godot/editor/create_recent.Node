@@ -1,3 +1,7 @@
+Sprite2D
+ParallaxBackground
+ParallaxLayer
+Parallax2D
 TileMapLayer
 Area2D
 AudioStreamPlayer2D

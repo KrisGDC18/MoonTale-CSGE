@@ -11,7 +11,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if Input.is_action_just_pressed("ui_down") and interactable:
+	if Input.is_action_just_pressed("Down") and interactable:
 		Globals.MM_Event(eventNumber)
 
 func _on_area_2d_area_entered(area):

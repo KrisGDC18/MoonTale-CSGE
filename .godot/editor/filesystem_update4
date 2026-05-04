@@ -3,3 +3,7 @@ res://Entities/player/Shaders/playerCite.gdshader
 res://Tiles/Cave.tres
 res://Tiles/moon_base.tres
 res://Entities/player/Shaders/player_damage.tres
+res://Entities/player/playerMovement.gd
+res://Entities/Door.gd
+res://Scenes/first_cave.tscn
+res://Entities/Misc/question_mark.tscn

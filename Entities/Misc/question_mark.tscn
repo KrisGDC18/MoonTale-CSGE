@@ -1,6 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://c0kfcchm0g70e"]
+[gd_scene format=3 uid="uid://c0kfcchm0g70e"]
 
-[ext_resource type="Script" path="res://Scenes/QuestionMark.gd" id="1_uepsr"]
+[ext_resource type="Script" uid="uid://ci258p7t4s16l" path="res://Scenes/QuestionMark.gd" id="1_uepsr"]
 [ext_resource type="Texture2D" uid="uid://moqn4dmnbv5" path="res://Sprites/Misc/Caret.png" id="2_l5c4h"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idrsu"]
@@ -37,28 +37,24 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ka0na"]
 _data = {
-"Huh": SubResource("Animation_pr2p5")
+&"Huh": SubResource("Animation_pr2p5")
 }
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_p3rin"]
 
-[node name="Node2D" type="CharacterBody2D"]
+[node name="Node2D" type="CharacterBody2D" unique_id=1353917030]
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1_uepsr")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-visible = false
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=294262368]
 z_index = -1
-position = Vector2(0, -14.685)
 texture = SubResource("AtlasTexture_idrsu")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_ka0na")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=360961411]
+libraries/ = SubResource("AnimationLibrary_ka0na")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1203917443]
 shape = SubResource("CircleShape2D_p3rin")
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

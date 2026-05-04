@@ -37,6 +37,10 @@ region = Rect2(0, 32, 32, 32)
 atlas = ExtResource("1_vtqvh")
 region = Rect2(64, 0, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_dnrcq"]
+atlas = ExtResource("1_vtqvh")
+region = Rect2(192, 0, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_6d21t"]
 atlas = ExtResource("1_vtqvh")
 region = Rect2(128, 0, 32, 32)
@@ -153,6 +157,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_kspwo")
+}],
+"loop": true,
+"name": &"IdleLeftLookDown",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_wb1qb")
 }],
 "loop": true,
@@ -197,6 +209,14 @@ animations = [{
 }],
 "loop": true,
 "name": &"JumpLeft",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dnrcq")
+}],
+"loop": true,
+"name": &"JumpLeftLookDown",
 "speed": 5.0
 }, {
 "frames": [{
@@ -250,6 +270,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_k5mt1")
+}],
+"loop": true,
+"name": &"WalkLeftCheck",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_elhn1")
 }, {
 "duration": 1.0,
@@ -298,6 +326,14 @@ animations = [{
 "loop": true,
 "name": &"WalkRight",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k5mt1")
+}],
+"loop": true,
+"name": &"WalkRightCheck",
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -353,7 +389,7 @@ damage_material = SubResource("ShaderMaterial_jm4nm")
 z_index = -1
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_x1tpm")
-animation = &"IdleLeftCheck"
+animation = &"IdleLeftLookDown"
 
 [node name="Bottom" type="CollisionShape2D" parent="." unique_id=1582475767]
 visible = false

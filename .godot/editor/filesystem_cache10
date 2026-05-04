@@ -1,5 +1,5 @@
 63f7b34db8d8cdea90c76aacccf841ec
-::res://::1777857075
+::res://::1777861700
 FadeThingy.gd::GDScript::3867333152863046701::1777574372::0::1::::<>Camera2D<><>0<>0<><>::
 icon.svg::CompressedTexture2D::6773711847853134843::1777574372::1777582766::1::::<><><>0<>0<>cef125f98da4c8cfb575ad218ce9d60e<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
 ::res://Entities/::1777776365
@@ -9,12 +9,12 @@ playerCite.gd::GDScript::1824817272793154071::1777607816::0::1::::<>CharacterBod
 player_cite.gd::GDScript::812463466535852916::1777762191::0::1::::<>CharacterBody2D<><>0<>0<><>::
 ::res://Entities/Misc/::1777606249
 question_mark.tscn::PackedScene::6548513508868489942::1777574372::0::1::::<><><>0<>0<><>::res://Scenes/QuestionMark.gd<>uid://moqn4dmnbv5::::res://Sprites/Misc/Caret.png
-::res://Entities/player/::1777856881
-playerCite.tscn::PackedScene::1290758896542979025::1777856232::0::1::::<><><>0<>0<><>::uid://bsvyo23xutyy7::::res://Entities/player/playerMovement.gd<>uid://bem4ugaunkteb::::res://Sprites/Players/MyChar.png<>uid://c0kfcchm0g70e::::res://Entities/Misc/question_mark.tscn<>uid://b4qccg3b8b71j::::res://Entities/player/Shaders/playerCite.gdshader<>uid://c4v6vhs1riovw::::res://Sprites/Players/Kiruma.png
-playerMovement.gd::GDScript::3694655473411497320::1777856881::0::1::::<>CharacterBody2D<><>0<>0<><>::
-::res://Entities/player/Shaders/::1777855459
-playerCite.gdshader::Shader::4455052557318575541::1777855459::0::1::::<><><>0<>0<><>::
-player_damage.tres::VisualShader::432244074552933770::1777855459::0::1::::<><><>0<>0<><>::
+::res://Entities/player/::1777859994
+playerCite.tscn::PackedScene::1290758896542979025::1777857506::0::1::::<><><>0<>0<><>::uid://bsvyo23xutyy7::::res://Entities/player/playerMovement.gd<>uid://bem4ugaunkteb::::res://Sprites/Players/MyChar.png<>uid://c0kfcchm0g70e::::res://Entities/Misc/question_mark.tscn<>uid://b4qccg3b8b71j::::res://Entities/player/Shaders/playerCite.gdshader<>uid://c4v6vhs1riovw::::res://Sprites/Players/Kiruma.png
+playerMovement.gd::GDScript::3694655473411497320::1777859994::0::1::::<>CharacterBody2D<><>0<>0<><>::
+::res://Entities/player/Shaders/::1777857507
+playerCite.gdshader::Shader::4455052557318575541::1777857506::0::1::::<><><>0<>0<><>::
+player_damage.tres::VisualShader::432244074552933770::1777857507::0::1::::<><><>0<>0<><>::
 ::res://EventSystem/::1777854211
 asset_manager.gd::GDScript::6384872172497799811::1777574372::0::1::::<>Node<><>0<>0<><>::
 Game.tscn::PackedScene::7371630758431171268::1777854211::0::1::::<><><>0<>0<><>::uid://c8toruomf3ptv::::res://EventSystem/GameRoot.gd<>uid://b2wa0bu06l5d5::::res://Scenes/first_cave.tscn<>uid://chalk28jw1ulm::::res://Sounds/BGM/vivi_loop.ogg<>uid://sniu0w5cff26::::res://Entities/player/playerCite.tscn
@@ -22,8 +22,8 @@ GameRoot.gd::GDScript::7129177853810810247::1777762191::0::1::::<>Node<><>0<>0<>
 globals.gd::GDScript::5245607270743221979::1777822749::0::1::::<>Node<><>0<>0<><>::
 handle_commands.gd::GDScript::2613249562043285826::1777574372::0::1::::<>Node<><>0<>0<><>::
 LevelScript.gd::GDScript::8690405242440216548::1777762191::0::1::::<>Node2D<><>0<>0<><>::
-::res://Scenes/::1777854211
-first_cave.tscn::PackedScene::4326980501954130532::1777854211::0::1::::<><><>0<>0<><>::uid://dv2xx7t6bv0x1::::res://EventSystem/LevelScript.gd<>uid://48ups7a06mvg::::res://Tiles/Cave.tres<>uid://diiq1u1doxfaq::::res://Entities/door.tscn<>uid://b5c3gejdo7vqc::::res://Tiles/moon_base.tres
+::res://Scenes/::1777860172
+first_cave.tscn::PackedScene::4326980501954130532::1777860172::0::1::::<><><>0<>0<><>::uid://dv2xx7t6bv0x1::::res://EventSystem/LevelScript.gd<>uid://48ups7a06mvg::::res://Tiles/Cave.tres<>uid://diiq1u1doxfaq::::res://Entities/door.tscn<>uid://b5c3gejdo7vqc::::res://Tiles/moon_base.tres
 QuestionMark.gd::GDScript::5391971595018689489::1777574372::0::1::::<>Node<><>0<>0<><>::
 StartPoint.tscn::PackedScene::3528055610965696700::1777649326::0::1::::<><><>0<>0<><>::uid://dv2xx7t6bv0x1::::res://EventSystem/LevelScript.gd<>uid://by5a3lmi14my4::::res://Sprites/Backgrounds/bkBlack.png<>uid://48ups7a06mvg::::res://Tiles/Cave.tres<>uid://diiq1u1doxfaq::::res://Entities/door.tscn
 ::res://Sounds/::1777778167
@@ -31,8 +31,9 @@ StartPoint.tscn::PackedScene::3528055610965696700::1777649326::0::1::::<><><>0<>
 vivi_intro.ogg::AudioStreamOggVorbis::3729889168496410158::1777778763::1777778763::1::::<><><>0<>0<>3a244eebddd663a7908b27fef66d2e06<>res://.godot/imported/vivi_intro.ogg-8f38409b2eeb5972a5b207dee412752a.oggvorbisstr::
 vivi_loop.ogg::AudioStreamOggVorbis::5264850487260272098::1777778763::1777778763::1::::<><><>0<>0<>b32a9ee1a3f25b5ffc0440b78406c22e<>res://.godot/imported/vivi_loop.ogg-7e0554b0985be43f7aa50033bee81aba.oggvorbisstr::
 ::res://Sprites/::1777606246
-::res://Sprites/Backgrounds/::1777606248
+::res://Sprites/Backgrounds/::1777861200
 bkBlack.png::CompressedTexture2D::4132934862550895877::1777574372::1777582766::1::::<><><>0<>0<>cb6a36fdc9cdc79a4e903e00d6671429<>res://.godot/imported/bkBlack.png-383d1f8a26d6e27d3641f43855642bb6.ctex::
+bkgray.png::CompressedTexture2D::2033736000998039889::1501890164::1777861200::1::::<><><>0<>0<>2489747d06480a49fe79f01a01996aec<>res://.godot/imported/bkgray.png-98d995847ea0facda2da3e5fa3fba28b.ctex::
 ::res://Sprites/Faces/::1777606578
 face1.png::CompressedTexture2D::1631769577295942882::1501890164::1777606578::1::::<><><>0<>0<>d6bbb1861bbca1cc538f758621841126<>res://.godot/imported/face1.png-10c1c6898b9a2bc9874a8c71c703e4db.ctex::
 face2.png::CompressedTexture2D::6108479037895465235::1501890164::1777606578::1::::<><><>0<>0<>ada297ac88173c32141a4362350a55f5<>res://.godot/imported/face2.png-12ca85c4b2fb3c32182b120e85d35dcc.ctex::
@@ -54,6 +55,6 @@ Cave.png::CompressedTexture2D::46566606172095303::1679332428::1777590574::1::::<
 old_Cave.png::CompressedTexture2D::9059991361998189053::1777574372::1777590502::1::::<><><>0<>0<>c01a6d7c5d61ce1be027900be6f4dc94<>res://.godot/imported/old_Cave.png-1e7564582536975bf83b33ec5c18f0f7.ctex::
 ::res://Sprites/Terrain/Moon/::1777765246
 moon_base..png::CompressedTexture2D::7652870276360232830::1777765228::1777765246::1::::<><><>0<>0<>5ecc47240b0a83688c39569e66eded1b<>res://.godot/imported/moon_base..png-b1ed9b4abfe2a11f32fb4d881bbb5d7a.ctex::
-::res://Tiles/::1777855459
-Cave.tres::TileSet::2104843053039499784::1777855459::0::1::::<><><>0<>0<><>::uid://ws7ewfbkt48::::res://Sprites/Terrain/Cave.png
-moon_base.tres::TileSet::4497925763056020342::1777855459::0::1::::<><><>0<>0<><>::uid://dhbdwjuahvoqo::::res://Sprites/Terrain/Moon/moon_base..png
+::res://Tiles/::1777860065
+Cave.tres::TileSet::2104843053039499784::1777860065::0::1::::<><><>0<>0<><>::uid://ws7ewfbkt48::::res://Sprites/Terrain/Cave.png
+moon_base.tres::TileSet::4497925763056020342::1777857507::0::1::::<><><>0<>0<><>::uid://dhbdwjuahvoqo::::res://Sprites/Terrain/Moon/moon_base..png
