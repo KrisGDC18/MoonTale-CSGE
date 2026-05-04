@@ -1,8 +1,5 @@
 res://Entities/player/playerCite.tscn
-res://Entities/player/playerMovement.gd
-res://Tiles/Cave.tres
-res://Scenes/first_cave.tscn
-res://Tiles/moon_base.tres
-res://EventSystem/Game.tscn
 res://Entities/player/Shaders/playerCite.gdshader
-res://Entities/player/player_damage.tres
+res://Tiles/Cave.tres
+res://Tiles/moon_base.tres
+res://Entities/player/Shaders/player_damage.tres

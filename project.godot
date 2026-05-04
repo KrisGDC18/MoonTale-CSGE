@@ -30,6 +30,12 @@ AssetManager="*res://EventSystem/asset_manager.gd"
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
 
+[importer_defaults]
+
+animation_library={
+&"animation/fps": 60.0
+}
+
 [input]
 
 Jump={
