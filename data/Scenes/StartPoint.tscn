@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://bqjatb5hf34fo"]
 
-[ext_resource type="Script" uid="uid://dfm6d52vf3idd" path="res://data/Scenes/start_point.gd" id="1_kbmrw"]
+[ext_resource type="Script" uid="uid://dfm6d52vf3idd" path="res://data/Scenes/small_room.gd" id="1_kbmrw"]
 [ext_resource type="Texture2D" uid="uid://by5a3lmi14my4" path="res://data/Sprites/Backgrounds/bkBlack.png" id="3_8gmha"]
 [ext_resource type="TileSet" uid="uid://48ups7a06mvg" path="res://data/Tiles/Cave.tres" id="3_v1l87"]
 [ext_resource type="PackedScene" uid="uid://diiq1u1doxfaq" path="res://data/Entities/door.tscn" id="4_k0b30"]

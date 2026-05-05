@@ -122,7 +122,7 @@ func _update_air() -> void:
 		return
 
 	air_bar.value  = _player.airSupply
-	air_label.text = str(int(_player.airSupply))
+	air_label.text = "Air:  " + str(int(_player.airSupply))
 
 	#if _player.airSupply <= 20:
 		#air_bar.tint_progress = Color(1.0, 0.2, 0.2)

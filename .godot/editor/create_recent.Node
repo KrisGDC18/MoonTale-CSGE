@@ -1,3 +1,4 @@
+AudioStreamPlayer
 Label
 ProgressBar
 TextureProgressBar
@@ -5,7 +6,6 @@ TextureRect
 CanvasLayer
 Control
 Sprite2D
-AudioStreamPlayer
 Node
 Camera2D
 ParallaxBackground

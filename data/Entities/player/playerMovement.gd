@@ -53,6 +53,16 @@ const IFRAMES_FLASH_RATE  := 0.07   # segundos entre cada parpadeo del sprite
 									 # valor bajo = parpadeo rápido y nervioso
 
 
+# ─── Cámara (estilo Cave Story) ──────────────────────────────────────
+const CAM_H_LEAD       := 48.0  # píxeles de adelanto horizontal según dirección
+const CAM_V_LOOK_UP    := 64.0  # píxeles que sube la cámara al mantener Up
+const CAM_V_LOOK_DOWN  := 48.0  # píxeles que baja la cámara al agacharse
+const CAM_H_LERP       := 4.0   # velocidad de seguimiento horizontal
+								 # más bajo que antes para transición más suave
+const CAM_V_LERP       := 3.0   # velocidad de seguimiento vertical
+const CAM_LOOK_LERP    := 2.5   # velocidad del desplazamiento al mirar arriba/abajo
+const CAM_OVERRIDE_LERP:= 5.0   # velocidad por defecto al mover la cámara externamente
+
 # ─── Variables del jugador ───────────────────────────────────────────
 
 @onready var animator = $AnimatedSprite2D # agrega el nodo hijo de animacion 2d
@@ -67,6 +77,28 @@ var jetpack_equipped: = false
 @onready var hurt_sfx  = $hurt_sfx    # sonido al recibir daño
 @onready var death_sfx  = $death_sfx   # sonido al morir
 @onready var death_drown_sfx = $death_drown_sfx  # sonido al morir por ahogamiento
+
+# ─── Variables de cámara ─────────────────────────────────────────────
+@onready var camera          = $Camera2D
+var _cam_offset   := Vector2.ZERO  # offset interpolado actual aplicado a camera.offset
+var _cam_target   := Vector2.ZERO  # destino al que _cam_offset se interpola
+var _cam_small_room := false  # true cuando la escena activa tiene la flag small_room
+							  # se detecta automáticamente cada frame desde el script de la escena
+# ── Control externo ───────────────────────────────────────────────────
+# otro script puede llamar camera_focus_on() o camera_move_to() para
+# redirigir la cámara temporalmente; camera_release() devuelve el control
+var _cam_override_active := false        # true cuando el control es externo
+var _cam_override_target := Vector2.ZERO # destino del override en espacio local del jugador
+var _cam_override_speed  := CAM_OVERRIDE_LERP # velocidad del override actual
+var _cam_focus_node      : Node2D = null # si está asignado, la cámara sigue a este nodo
+										 # tiene prioridad sobre _cam_override_target
+
+# ── Temblor (quake) ───────────────────────────────────────────────────
+var cam_quake            := false   # ponla en true desde cualquier script para activar el temblor
+var cam_quake_intensity  := 4.0     # magnitud del temblor en píxeles
+var cam_quake_speed      := 22.0    # qué tan rápido oscila el temblor
+var _quake_offset        := Vector2.ZERO  # offset de temblor calculado cada frame
+var _quake_time          := 0.0           # acumulador de tiempo para el oscilador de temblor
 
 # ─── Variables del contador de aire ──────────────────────────────────
 var airSupply       : float = AIR_MAX  # aire actual; arranca lleno
@@ -118,10 +150,13 @@ var canContinue      := false # true cuando el exterior (game over, cutscene, et
 
 
 func _ready():
-	add_to_group("player")  # NUEVO: permite que el HUD lo encuentre
-	# conectar la señal del área de daño al aterrizar en enemigos/peligros
+	add_to_group("player")
 	dmg.body_entered.connect(_on_damage_detect_body_entered)
 
+	# anchor_mode centra la cámara sobre el jugador correctamente
+	camera.anchor_mode            = Camera2D.ANCHOR_MODE_DRAG_CENTER
+	camera.offset                 = Vector2.ZERO
+	camera.position_smoothing_enabled = false
 
 func _physics_process(delta):
 	# si el jugador no es controlable (cutscene, diálogo, etc) no hacer nada
@@ -164,6 +199,8 @@ func _physics_process(delta):
 	handle_animation(anim)      # 9. elegir y reproducir la animación correcta
 	_handle_sounds(delta)       # 10. aplicar sonidos a las acciones del jugador
 	_update_iframes(delta)      # 11. actualizar invencibilidad y parpadeo visual
+	_update_iframes(delta)      # 11. actualizar invencibilidad y parpadeo visual
+	_update_camera(delta)       # 12. actualizar posición de la cámara estilo CS
 
 # ─── Motor de daño ────────────────────────────────────────────────────
 
@@ -321,6 +358,110 @@ func _update_jump_buffer(delta: float) -> void:
 	else:
 		# tiempo agotado → limpiar el buffer
 		_jump_buffer_timer = 0.0
+
+
+# ─── Cámara estilo Cave Story ─────────────────────────────────────────
+
+func _update_camera(delta: float) -> void:
+	# ── 0. Detectar flag small_room desde Globals ─────────────────────
+	_cam_small_room = Globals.small_room
+
+	if _cam_small_room:
+		# resetear el target para que el lead no se filtre al volver al modo normal
+		_cam_target = Vector2.ZERO
+		_cam_offset  = Vector2.ZERO
+
+		# asignación directa sin lerp: camera.offset = -global_position
+		# cancela exactamente el desplazamiento del jugador cada frame
+		# fijando la vista en el (0,0) mundial sin deriva
+		var fixed_offset := -global_position
+
+		if cam_quake:
+			_quake_time += delta * cam_quake_speed
+			_quake_offset.x = sin(_quake_time * 1.1) * cam_quake_intensity
+			_quake_offset.y = sin(_quake_time * 1.7) * cam_quake_intensity
+		else:
+			_quake_offset = _quake_offset.lerp(Vector2.ZERO, 10.0 * delta)
+
+		camera.offset = fixed_offset + _quake_offset
+		return
+
+	# ── 1. Calcular el target base ────────────────────────────────────
+	if _cam_override_active or _cam_focus_node != null:
+		# resetear el target para que el lead no se filtre al enfocar otro objeto
+		_cam_target = Vector2.ZERO
+
+		var dest := Vector2.ZERO
+		if _cam_focus_node != null:
+			dest = to_local(_cam_focus_node.global_position)
+		else:
+			dest = _cam_override_target
+
+		_cam_offset = _cam_offset.lerp(dest, _cam_override_speed * delta)
+
+	else:
+		# ── Modo normal: lead hacia donde mira el jugador ─────────────
+		var lead_x := CAM_H_LEAD if lastDirection == 0 else -CAM_H_LEAD
+
+		var lead_y := 0.0
+		if Input.is_action_pressed("Up"):
+			lead_y = -CAM_V_LOOK_UP
+		elif checking and is_on_floor():
+			lead_y = CAM_V_LOOK_DOWN
+
+		_cam_target.x = lead_x
+		_cam_target.y = lerp(_cam_target.y, lead_y, CAM_LOOK_LERP * delta)
+
+		_cam_offset.x = lerp(_cam_offset.x, _cam_target.x, CAM_H_LERP * delta)
+		_cam_offset.y = lerp(_cam_offset.y, _cam_target.y, CAM_V_LERP * delta)
+
+	# ── 2. Calcular offset de temblor ─────────────────────────────────
+	if cam_quake:
+		_quake_time += delta * cam_quake_speed
+		_quake_offset.x = sin(_quake_time * 1.1) * cam_quake_intensity
+		_quake_offset.y = sin(_quake_time * 1.7) * cam_quake_intensity
+	else:
+		_quake_offset = _quake_offset.lerp(Vector2.ZERO, 10.0 * delta)
+
+	# ── 3. Aplicar offset total ───────────────────────────────────────
+	camera.offset = _cam_offset + _quake_offset
+
+
+# ─── API pública de cámara ────────────────────────────────────────────
+# estas funciones pueden llamarse desde cualquier otro script con:
+#   $Player.camera_focus_on(nodo)
+#   $Player.camera_move_to(offset)
+#   $Player.camera_release()
+
+	#var player = get_tree().get_first_node_in_group("player")
+	#player.camera_focus_on($NPC)          # seguir un NPC
+	#player.camera_move_to(Vector2(120, 0)) # desplazar la vista 120px a la derecha
+	#player.camera_release()                # volver al jugador
+	#player.cam_quake           = true     # activar temblor
+	#player.cam_quake_intensity = 8.0      # más fuerte
+	#player.cam_quake           = false    # apagar temblor (se suaviza solo)
+
+
+func camera_focus_on(target: Node2D, speed: float = CAM_OVERRIDE_LERP) -> void:
+	# enfocar un nodo específico; la cámara lo sigue aunque se mueva
+	# ejemplo: enfocar un NPC durante un diálogo
+	_cam_focus_node      = target
+	_cam_override_active = true
+	_cam_override_speed  = speed
+
+func camera_move_to(offset: Vector2, speed: float = CAM_OVERRIDE_LERP) -> void:
+	# mover la cámara a un offset fijo en espacio local del jugador
+	# ejemplo: mostrar una trampa fuera de pantalla antes de que el jugador llegue
+	_cam_focus_node      = null
+	_cam_override_active = true
+	_cam_override_target = offset
+	_cam_override_speed  = speed
+
+func camera_release() -> void:
+	# devolver el control de la cámara al sistema normal de seguimiento
+	# el lerp suaviza la transición de vuelta al jugador
+	_cam_focus_node      = null
+	_cam_override_active = false
 
 
 func _apply_gravity(delta: float) -> void:

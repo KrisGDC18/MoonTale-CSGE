@@ -30,74 +30,79 @@ offset_bottom = 40.0
 [node name="hud_bg2" type="TextureRect" parent="CanvasLayer/Control" unique_id=714837299]
 texture_filter = 1
 layout_mode = 0
-offset_right = 261.0
-offset_bottom = 133.0
+offset_right = 180.0
+offset_bottom = 69.0
 texture = ExtResource("3_nk8rh")
+expand_mode = 5
 
 [node name="hud_bg" type="TextureRect" parent="CanvasLayer/Control" unique_id=1781662510]
 texture_filter = 1
 layout_mode = 0
-offset_right = 261.0
-offset_bottom = 133.0
+offset_right = 180.0
+offset_bottom = 90.0
 texture = ExtResource("2_s6sb5")
+expand_mode = 5
 
 [node name="hp_bar" type="ProgressBar" parent="CanvasLayer/Control" unique_id=1273257746]
 texture_filter = 1
 layout_mode = 0
-offset_left = 98.0
-offset_top = 38.0
-offset_right = 257.0
-offset_bottom = 59.0
+offset_left = 68.0
+offset_top = 25.0
+offset_right = 177.0
+offset_bottom = 39.0
 theme_override_styles/background = SubResource("StyleBoxFlat_7qkfh")
 theme_override_styles/fill = SubResource("StyleBoxFlat_s6sb5")
 show_percentage = false
 
 [node name="hp_label" type="Label" parent="CanvasLayer/Control" unique_id=1278683255]
 layout_mode = 0
-offset_left = 60.0
-offset_top = 40.0
-offset_right = 91.0
-offset_bottom = 63.0
+offset_left = 38.0
+offset_top = 20.0
+offset_right = 69.0
+offset_bottom = 43.0
 text = "HP"
 
 [node name="air_bar" type="ProgressBar" parent="CanvasLayer/Control" unique_id=1093755004]
 layout_mode = 0
-offset_left = 98.0
-offset_top = 71.0
-offset_right = 256.0
-offset_bottom = 91.0
+offset_left = 68.0
+offset_top = 48.0
+offset_right = 177.0
+offset_bottom = 62.0
 theme_override_styles/background = SubResource("StyleBoxFlat_nk8rh")
 theme_override_styles/fill = SubResource("StyleBoxFlat_p4t4q")
 show_percentage = false
 
 [node name="air_label" type="Label" parent="CanvasLayer/Control" unique_id=1108088605]
-layout_mode = 0
-offset_left = 62.0
-offset_top = 72.0
-offset_right = 90.0
-offset_bottom = 95.0
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 4.4960003
+anchor_bottom = 2.22
+offset_left = 958.0
+offset_top = 527.0
+offset_right = 870.16
+offset_bottom = 464.2
 text = "Air"
 
 [node name="xp_bar" type="ProgressBar" parent="CanvasLayer/Control" unique_id=1337042434]
 layout_mode = 0
-offset_left = 99.0
-offset_top = 4.0
-offset_right = 257.0
-offset_bottom = 25.0
+offset_left = 68.0
+offset_top = 3.0
+offset_right = 177.0
+offset_bottom = 17.0
 show_percentage = false
 
 [node name="jet_bar" type="ProgressBar" parent="CanvasLayer/Control" unique_id=1251762636]
 layout_mode = 0
-offset_left = 98.0
-offset_top = 104.0
-offset_right = 257.0
-offset_bottom = 125.0
+offset_left = 67.0
+offset_top = 71.0
+offset_right = 177.0
+offset_bottom = 84.0
 show_percentage = false
 
 [node name="jet_label" type="Label" parent="CanvasLayer/Control" unique_id=143498867]
 layout_mode = 0
-offset_left = 64.0
-offset_top = 103.0
-offset_right = 81.0
-offset_bottom = 126.0
+offset_left = 44.0
+offset_top = 63.0
+offset_right = 61.0
+offset_bottom = 86.0
 text = "JP"

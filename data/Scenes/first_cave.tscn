@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://b2wa0bu06l5d5"]
 
-[ext_resource type="Script" uid="uid://c5i02m7gy0ted" path="res://data/Scenes/first_cave.gd" id="1_01qg7"]
+[ext_resource type="Script" uid="uid://c5i02m7gy0ted" path="res://data/Scenes/normal_room.gd" id="1_01qg7"]
 [ext_resource type="TileSet" uid="uid://48ups7a06mvg" path="res://data/Tiles/Cave.tres" id="2_wnu3j"]
 [ext_resource type="PackedScene" uid="uid://diiq1u1doxfaq" path="res://data/Entities/door.tscn" id="3_m8epk"]
 [ext_resource type="TileSet" uid="uid://b5c3gejdo7vqc" path="res://data/Tiles/moon_base.tres" id="4_d85ye"]
@@ -38,4 +38,4 @@ tile_set = ExtResource("2_wnu3j")
 position = Vector2(-16, 8)
 scale = Vector2(2, 2)
 next_scene_path = "res://data/Scenes/StartPoint.tscn"
-pos_Change = [16, -183]
+pos_Change = [16, -180]

@@ -1,45 +1,69 @@
 extends Sprite2D
 
-var interactable = false
+var interactable     = false
+var _transitioning   = false  # evita que se llame change_scene dos veces seguidas
+							   # mientras el sonido y el fade están en curso
 
-# Ruta del archivo de la escena a la que se navegará al interactuar.
-# Se asigna desde el Inspector de Godot.
 @export var next_scene_path: String
-
-# Array exportable con la posición destino del jugador en la nueva escena.
-# Formato: [x, y] — se asigna desde el Inspector de Godot.
-# Ejemplo: [150.0, 200.0] colocará al jugador en x=150, y=200 al llegar.
 @export var pos_Change: Array
+
+@onready var door_sfx = $door_sfx  # sonido de la puerta al teletransportar
+
 
 func _ready():
 	pass
+
 
 @warning_ignore("unused_parameter")
 func _process(delta):
 	# Si el jugador presiona "Down" estando en el área de este objeto,
 	# se ejecuta el cambio de escena.
-	if Input.is_action_just_pressed("Down") and interactable:
+	# _transitioning evita que el input se procese mientras ya está en curso
+	if Input.is_action_just_pressed("Down") and interactable and not _transitioning:
+		_transitioning = true
 		change_scene()
 
-# Se activa cuando un área entra en contacto con el Area2D de este objeto.
-# Habilita la interacción para que el jugador pueda usar el portal/puerta.
+
 @warning_ignore("unused_parameter")
 func _on_area_2d_area_entered(area):
 	interactable = true
 
-# Se activa cuando un área sale del Area2D de este objeto.
-# Deshabilita la interacción para evitar cambios de escena accidentales.
+
 @warning_ignore("unused_parameter")
 func _on_area_2d_area_exited(area):
 	interactable = false
 
-func change_scene():
-	# Guarda en Globals la posición destino antes de cambiar de escena.
-	# Convierte los dos valores del array pos_Change en un Vector2
-	# para que la nueva escena pueda leerlo y reposicionar al jugador.
 
-	# Cambia a la escena indicada en next_scene_path.
-	# La nueva escena debe leer Globals.player_spawn_pos en su _ready()
-	# y aplicarlo a la posición del nodo del jugador.
+func change_scene():
+	# ── 1. Reproducir sonido ──────────────────────────────────────────
+	door_sfx.play()
+
+	# ── 2. Crear overlay de fade en el root ───────────────────────────
+	# se añade al root y no a la puerta para que sobreviva al cambio de escena
+	# CanvasLayer con layer alto garantiza que tape todo lo demás en pantalla
+	var canvas  := CanvasLayer.new()
+	canvas.layer = 100
+	var overlay := ColorRect.new()
+	overlay.color = Color(0.0, 0.0, 0.0, 0.0)  # negro transparente al inicio
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	canvas.add_child(overlay)
+	get_tree().root.add_child(canvas)
+
+	# ── 3. Esperar a que termine el sonido ────────────────────────────
+	
+
+	# ── 4. Fade a negro ───────────────────────────────────────────────
+	var tween := create_tween()
+	tween.tween_property(overlay, "color", Color(0.0, 0.0, 0.0, 1.0), 0.4)
+	await tween.finished
+
+	# ── 5. Avisar a la nueva escena que debe hacer fade-in ────────────
+	# la nueva escena lee este flag en su _ready y lanza el fade-in
+	Globals.needs_fade_in = true
+
+	
+	# ── 6. Cambiar escena y reposicionar al jugador ───────────────────
+	# el overlay en root sobrevive al cambio porque está fuera del árbol
+	# de la escena actual
 	get_tree().change_scene_to_file(next_scene_path)
 	player.position = Vector2(pos_Change[0], pos_Change[1])

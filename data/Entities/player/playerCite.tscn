@@ -11,7 +11,6 @@
 [ext_resource type="AudioStream" uid="uid://xnamdeki48on" path="res://data/Sounds/SFX/Player/step.wav" id="8_fb0eh"]
 [ext_resource type="AudioStream" uid="uid://w1fdejlpkx1j" path="res://data/Sounds/SFX/Player/hurt.wav" id="10_tkctx"]
 [ext_resource type="AudioStream" uid="uid://c4wauark5be5a" path="res://data/Sounds/SFX/Player/dead.wav" id="11_tkctx"]
-[ext_resource type="Script" uid="uid://tnl3bmtcn6d0" path="res://data/Entities/player/camera_2d.gd" id="12_brn1j"]
 [ext_resource type="PackedScene" uid="uid://bkvkpu5wgo631" path="res://data/Entities/Misc/HUD.tscn" id="13_brn1j"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jm4nm"]
@@ -369,8 +368,8 @@ animations = [{
 "speed": 8.0
 }]
 
-[sub_resource type="SeparationRayShape2D" id="SeparationRayShape2D_brn1j"]
-length = 16.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5o1rp"]
+size = Vector2(5.5, 14)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j4dl1"]
 size = Vector2(5.937496, 5.6250043)
@@ -393,6 +392,13 @@ qMark = ExtResource("2_wb1qb")
 dmg = NodePath("DamageDetect")
 damage_material = SubResource("ShaderMaterial_jm4nm")
 
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1454706974]
+position_smoothing_enabled = true
+rotation_smoothing_enabled = true
+
+[node name="Hud" parent="Camera2D" unique_id=776642068 instance=ExtResource("13_brn1j")]
+position = Vector2(-961, -540)
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1016720795]
 z_index = -1
 texture_filter = 1
@@ -400,8 +406,9 @@ sprite_frames = SubResource("SpriteFrames_x1tpm")
 animation = &"IdleRight"
 
 [node name="Bottom" type="CollisionShape2D" parent="." unique_id=1582475767]
+position = Vector2(0, 9)
 scale = Vector2(2, 1)
-shape = SubResource("SeparationRayShape2D_brn1j")
+shape = SubResource("RectangleShape2D_5o1rp")
 
 [node name="Top" type="CollisionShape2D" parent="." unique_id=1013970600]
 visible = false
@@ -473,15 +480,6 @@ stream = ExtResource("11_tkctx")
 
 [node name="death_drown_sfx" type="AudioStreamPlayer" parent="." unique_id=1419141869]
 stream = ExtResource("7_dnrcq")
-
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1454706974]
-drag_horizontal_enabled = true
-drag_vertical_enabled = true
-drag_horizontal_offset = 0.08
-drag_vertical_offset = 0.02
-script = ExtResource("12_brn1j")
-
-[node name="Hud" parent="Camera2D" unique_id=776642068 instance=ExtResource("13_brn1j")]
 
 [connection signal="area_entered" from="WaterDetect" to="." method="_on_water_detect_area_entered"]
 [connection signal="area_exited" from="WaterDetect" to="." method="_on_water_detect_area_exited"]

@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://pxhc48qv2u4" path="res://data/Sprites/Misc/NpcSym.png" id="1_0imda"]
 [ext_resource type="Script" uid="uid://gdakl4fdi257" path="res://data/Entities/Door.gd" id="2_yk30a"]
+[ext_resource type="AudioStream" uid="uid://w1fdejlpkx1j" path="res://data/Sounds/SFX/Player/hurt.wav" id="3_8oxbf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h6jpt"]
 atlas = ExtResource("1_0imda")
@@ -23,6 +24,9 @@ collision_mask = 4
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=81611479]
 position = Vector2(0, 2)
 shape = SubResource("RectangleShape2D_prbxe")
+
+[node name="door_sfx" type="AudioStreamPlayer" parent="." unique_id=156869939]
+stream = ExtResource("3_8oxbf")
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
