@@ -55,6 +55,7 @@ texture = SubResource("AtlasTexture_idrsu")
 libraries/ = SubResource("AnimationLibrary_ka0na")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1203917443]
+visible = false
 shape = SubResource("CircleShape2D_p3rin")
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

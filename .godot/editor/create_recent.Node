@@ -1,6 +1,7 @@
+AudioStreamPlayer
+CanvasLayer
 Node
 Camera2D
-AudioStreamPlayer
 Sprite2D
 ParallaxBackground
 ParallaxLayer

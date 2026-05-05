@@ -7,7 +7,10 @@
 [ext_resource type="Texture2D" uid="uid://c4v6vhs1riovw" path="res://data/Sprites/Players/Kiruma.png" id="3_kspwo"]
 [ext_resource type="AudioStream" uid="uid://dhlruiji2rswi" path="res://data/Sounds/SFX/Player/jump.wav" id="6_6d21t"]
 [ext_resource type="AudioStream" uid="uid://b4cgk7e6n0uhu" path="res://data/Sounds/SFX/Player/land.wav" id="7_dnrcq"]
+[ext_resource type="AudioStream" uid="uid://bqhdgwvcky0jw" path="res://data/Sounds/SFX/Player/headbonk.wav" id="7_n6brj"]
 [ext_resource type="AudioStream" uid="uid://xnamdeki48on" path="res://data/Sounds/SFX/Player/step.wav" id="8_fb0eh"]
+[ext_resource type="AudioStream" uid="uid://w1fdejlpkx1j" path="res://data/Sounds/SFX/Player/hurt.wav" id="10_tkctx"]
+[ext_resource type="AudioStream" uid="uid://c4wauark5be5a" path="res://data/Sounds/SFX/Player/dead.wav" id="11_tkctx"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jm4nm"]
 shader = ExtResource("3_elhn1")
@@ -451,7 +454,7 @@ shape = SubResource("RectangleShape2D_kspwo")
 stream = ExtResource("6_6d21t")
 
 [node name="bonk_sfx" type="AudioStreamPlayer" parent="." unique_id=1930589260]
-stream = ExtResource("7_dnrcq")
+stream = ExtResource("7_n6brj")
 
 [node name="land_sfx" type="AudioStreamPlayer" parent="." unique_id=238209823]
 stream = ExtResource("7_dnrcq")
@@ -461,6 +464,9 @@ stream = ExtResource("7_dnrcq")
 [node name="step_sfx" type="AudioStreamPlayer" parent="." unique_id=459217647]
 stream = ExtResource("8_fb0eh")
 
+[node name="hurt_sfx" type="AudioStreamPlayer" parent="." unique_id=307617984]
+stream = ExtResource("10_tkctx")
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=765725437]
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
@@ -468,6 +474,12 @@ drag_horizontal_enabled = true
 drag_vertical_enabled = true
 drag_horizontal_offset = 0.1
 drag_vertical_offset = 0.06
+
+[node name="death_sfx" type="AudioStreamPlayer" parent="." unique_id=1837028717]
+stream = ExtResource("11_tkctx")
+
+[node name="death_drown_sfx" type="AudioStreamPlayer" parent="." unique_id=1419141869]
+stream = ExtResource("7_dnrcq")
 
 [connection signal="area_entered" from="WaterDetect" to="." method="_on_water_detect_area_entered"]
 [connection signal="area_exited" from="WaterDetect" to="." method="_on_water_detect_area_exited"]
