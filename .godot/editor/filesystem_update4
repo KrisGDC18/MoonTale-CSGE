@@ -1,7 +1,8 @@
-res://data/Entities/player/playerCite.tscn
-res://data/Entities/player/Shaders/playerCite.gdshader
+res://data/Entities/Misc/HUD.tscn
 res://data/Tiles/Cave.tres
+res://data/Entities/Misc/hud.gd
+res://data/EventSystem/Game.tscn
+res://data/Entities/player/playerCite.tscn
 res://data/Tiles/moon_base.tres
-res://data/Entities/player/Shaders/player_damage.tres
 res://data/Entities/player/playerMovement.gd
-res://data/Entities/Misc/question_mark.tscn
+res://data/Scenes/StartPoint.tscn

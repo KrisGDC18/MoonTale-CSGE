@@ -56,6 +56,7 @@ const IFRAMES_FLASH_RATE  := 0.07   # segundos entre cada parpadeo del sprite
 # ─── Variables del jugador ───────────────────────────────────────────
 
 @onready var animator = $AnimatedSprite2D # agrega el nodo hijo de animacion 2d
+var jetpack_equipped: = false
 
 # ─── Variables de sonidos ───────────────────────────────────────────
 @onready var jump_sfx  = $jump_sfx    # sonido de salto
@@ -117,6 +118,7 @@ var canContinue      := false # true cuando el exterior (game over, cutscene, et
 
 
 func _ready():
+	add_to_group("player")  # NUEVO: permite que el HUD lo encuentre
 	# conectar la señal del área de daño al aterrizar en enemigos/peligros
 	dmg.body_entered.connect(_on_damage_detect_body_entered)
 
