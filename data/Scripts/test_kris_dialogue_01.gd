@@ -8,7 +8,7 @@ func _ready():
 	pass
 
 func _physics_process(delta: float):
-	if Input.is_action_just_pressed("Down") and interactable:
+	if Input.is_action_just_pressed("Down") and interactable and !Globals.playerStay:
 		print("Hola Mundo de Mootale, soy yo Kris!")
 		_on_interact()
 		

@@ -9,6 +9,13 @@ signal choice_made(index: int)
 @onready var text_lbl  : RichTextLabel  = $Panel/Text
 @onready var arrow     : Label          = $Panel/Arrow
 @onready var choices   : VBoxContainer  = $Panel/Choices
+@onready var beep_sfx : AudioStreamPlayer = $BeepSFX
+@onready var cursor_sfx : AudioStreamPlayer = $CursorSFX
+@onready var confirm_sfx : AudioStreamPlayer = $ConfirmSFX
+
+const SKIP_CHARS := [" ", ".", ",", "!", "?", ":", ";", "-", "—", "\"", "'", "(", ")", "\n"]
+const BEEP_EVERY := 2  # suena cada N letras válidas
+var _beep_counter := 0
 
 const CHARS_PER_SEC := 40.0
 
@@ -40,6 +47,7 @@ func start(pages: Array) -> void:
 	_pages      = pages
 	_page_index = 0
 	panel.show()
+	Globals.playerStay = true   # ← bloquea al jugador
 	_show_page(0)
 
 
@@ -69,6 +77,7 @@ func _show_page(index: int) -> void:
 	_typing      = true
 	_waiting     = false
 	_in_choices  = false
+	_beep_counter = 0
 
 	text_lbl.text               = _full_text
 	text_lbl.visible_characters = 0
@@ -100,13 +109,28 @@ func _tick(delta: float) -> void:
 	var add := int(_timer * CHARS_PER_SEC)
 	if add < 1:
 		return
-	_timer       = 0.0
-	_chars_shown = min(_chars_shown + add, _full_text.length())
+	_timer = 0.0
+
+	for i in add:
+		if _chars_shown >= _full_text.length():
+			break
+
+		var current_char := _full_text[_chars_shown]
+		_chars_shown += 1
+
+		if current_char not in SKIP_CHARS:
+			_beep_counter += 1
+			if _beep_counter >= BEEP_EVERY:
+				_beep_counter = 0
+				if beep_sfx and not beep_sfx.playing:
+					beep_sfx.play()
+
 	text_lbl.visible_characters = _chars_shown
 
 	if _chars_shown >= _full_text.length():
 		_typing  = false
 		_waiting = true
+		_beep_counter = 0
 		_on_end()
 
 
@@ -134,6 +158,7 @@ func _advance() -> void:
 
 func _close() -> void:
 	panel.hide()
+	Globals.playerStay = false  #
 	emit_signal("dialog_finished")
 
 
@@ -160,12 +185,14 @@ func _handle_choices() -> void:
 	if Input.is_action_just_pressed("Up"):
 		_choice_index = max(_choice_index - 1, 0)
 		_refresh_cursor()
-
+		cursor_sfx.play()  # ← sonido al mover cursor
 	elif Input.is_action_just_pressed("Down"):
 		_choice_index = min(_choice_index + 1, opts.size() - 1)
 		_refresh_cursor()
+		cursor_sfx.play()  # ← sonido al mover cursor
 
 	elif Input.is_action_just_pressed("Accept"):
+		confirm_sfx.play()  # ← sonido al confirmar
 		var targets = page.get("targets", [])
 		var next    = targets[_choice_index] if _choice_index < targets.size() \
 					  else _page_index + 1

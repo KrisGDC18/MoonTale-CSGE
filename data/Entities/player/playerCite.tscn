@@ -426,7 +426,7 @@ position = Vector2(-961, -540)
 z_index = -1
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_x1tpm")
-animation = &"WalkRightLookUp"
+animation = &"Check"
 
 [node name="Bottom" type="CollisionShape2D" parent="." unique_id=1582475767]
 visible = false

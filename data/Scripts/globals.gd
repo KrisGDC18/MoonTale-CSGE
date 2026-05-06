@@ -13,7 +13,7 @@ var small_room := false          # la escena activa la pone en true si es sala p
 var dan = false                  # flag de propósito general (pendiente de documentar)
 var needs_fade_in := false       # true cuando una puerta hizo fade-out antes de cambiar escena
 								 # la nueva escena lo lee en su _ready para lanzar el fade-in de entrada
-
+var playerStay : bool = false
 var music_paused : bool  = false  # true = música en pausa
 var music_volume : float = 1.0    # 0.0 = silencio, 1.0 = máximo
 

@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://ci1hxujl6dyjd" path="res://data/Scripts/DialogueSystem/DialogBox.gd" id="1_yoo1p"]
 [ext_resource type="Texture2D" uid="uid://cuv0x5uqchvip" path="res://data/Sprites/UI/TextBox.png" id="2_hvmpf"]
+[ext_resource type="AudioStream" uid="uid://dhlruiji2rswi" path="res://data/Sounds/SFX/Player/jump.wav" id="3_hvmpf"]
+[ext_resource type="AudioStream" uid="uid://dxw5f4ueq0i3u" path="res://data/Sounds/SFX/sfx_cursor.mp3" id="4_btt7u"]
+[ext_resource type="AudioStream" uid="uid://dlfas5nsodg6a" path="res://data/Sounds/SFX/sfx_cursor_ok.mp3" id="5_03ai2"]
 
 [node name="DialogBox" type="CanvasLayer" unique_id=1282337130]
 layer = 10
@@ -64,4 +67,11 @@ region_rect = Rect2(150.96107, 48, 85.963486, 31.283249)
 patch_margin_left = 88
 patch_margin_top = 32
 
-[node name="BeepSFX" type="AudioStreamPlayer2D" parent="." unique_id=1886585365]
+[node name="BeepSFX" type="AudioStreamPlayer" parent="." unique_id=140603759]
+stream = ExtResource("3_hvmpf")
+
+[node name="CursorSFX" type="AudioStreamPlayer" parent="." unique_id=1291512541]
+stream = ExtResource("4_btt7u")
+
+[node name="ConfirmSFX" type="AudioStreamPlayer" parent="." unique_id=1339429831]
+stream = ExtResource("5_03ai2")

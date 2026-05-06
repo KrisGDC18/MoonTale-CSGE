@@ -262,6 +262,8 @@ func _handle_jump() -> void:
 		_booster2_active     = false
 		_booster2_locked_dir = 0.0
 		_jump_grace_frame    = false
+	if Globals.playerStay:  
+		return
 
 	var can_jump       := is_on_floor() or (_coyote_timer > 0.0 and not _is_jumping)
 	var jump_requested := Input.is_action_just_pressed("Jump") or _jump_buffer_timer > 0.0
@@ -371,7 +373,9 @@ func _handle_booster2(delta: float) -> void:
 func _handle_horizontal(delta: float) -> void:
 	if _booster2_active:
 		return
-
+	if Globals.playerStay:  # ← agrega esto
+		velocity.x = move_toward(velocity.x, 0, FRICTION * delta)
+		return
 	var direction = Input.get_axis("Left", "Right")
 	@warning_ignore("narrowing_conversion")
 	currentDirection = direction
@@ -625,6 +629,13 @@ func move_state():
 func handle_animation(anim):
 	if playerDead:
 		return
+		
+	if Globals.playerStay:  # ← agrega esto
+		var idle := "Check" if lastDirection == 1 else "Check"
+		if _current_anim != idle:
+			_current_anim = idle
+			animator.play(idle)
+		return
 
 	if checking and (_current_anim.ends_with("Check") or _current_anim.ends_with("LookUp")):
 		var base := "IdleLeft" if lastDirection == 1 else "IdleRight"
@@ -715,6 +726,9 @@ func _handle_sounds(delta: float) -> void:
 # ─── Cámara estilo Cave Story ─────────────────────────────────────────
 
 func _update_camera(delta: float) -> void:
+	
+	
+	
 	_cam_small_room = Globals.small_room
 
 	if _cam_small_room:
@@ -742,13 +756,15 @@ func _update_camera(delta: float) -> void:
 		_cam_offset = _cam_offset.lerp(dest, _cam_override_speed * delta)
 
 	else:
-		var lead_x := CAM_H_LEAD if lastDirection == 0 else -CAM_H_LEAD
-		var lead_y := 0.0
-		if Input.is_action_pressed("Up"):
-			lead_y = -CAM_V_LOOK_UP
+		if not Globals.playerStay:  # ← agrega esto
+			var lead_x := CAM_H_LEAD if lastDirection == 0 else -CAM_H_LEAD
+			var lead_y := 0.0
+			if Input.is_action_pressed("Up"):
+				lead_y = -CAM_V_LOOK_UP
 
-		_cam_target.x = lead_x
-		_cam_target.y = lerp(_cam_target.y, lead_y, CAM_LOOK_LERP * delta)
+			_cam_target.x = lead_x
+			_cam_target.y = lerp(_cam_target.y, lead_y, CAM_LOOK_LERP * delta)
+
 		_cam_offset.x = lerp(_cam_offset.x, _cam_target.x, CAM_H_LERP * delta)
 		_cam_offset.y = lerp(_cam_offset.y, _cam_target.y, CAM_V_LERP * delta)
 
