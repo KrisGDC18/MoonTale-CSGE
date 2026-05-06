@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ddb6fa12fa31d" path="res://data/Scripts/test_kris_dialogue_01.gd" id="1_f5hf7"]
 [ext_resource type="Texture2D" uid="uid://cxsoo4epubj6u" path="res://data/Sprites/NPC/Kris_test.png" id="2_o76xj"]
+[ext_resource type="PackedScene" uid="uid://cexb8qced5uet" path="res://data/EventSystem/DialogBox.tscn" id="3_o76xj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yys81"]
 atlas = ExtResource("2_o76xj")
@@ -40,6 +41,8 @@ shape = SubResource("RectangleShape2D_sna75")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1361688217]
 position = Vector2(0, 8)
 shape = SubResource("RectangleShape2D_sna75")
+
+[node name="DialogBox" parent="." unique_id=1282337130 instance=ExtResource("3_o76xj")]
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]

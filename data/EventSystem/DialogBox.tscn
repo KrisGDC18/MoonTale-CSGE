@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://cexb8qced5uet"]
+
+[ext_resource type="Script" uid="uid://ci1hxujl6dyjd" path="res://data/Scripts/DialogueSystem/DialogBox.gd" id="1_yoo1p"]
+[ext_resource type="Texture2D" uid="uid://cuv0x5uqchvip" path="res://data/Sprites/UI/TextBox.png" id="2_hvmpf"]
+
+[node name="DialogBox" type="CanvasLayer" unique_id=1282337130]
+layer = 10
+script = ExtResource("1_yoo1p")
+
+[node name="Panel" type="Panel" parent="." unique_id=1588402999]
+texture_filter = 1
+anchors_preset = -1
+anchor_left = 0.2078125
+anchor_top = 0.7675926
+anchor_right = 0.79270834
+anchor_bottom = 0.9574074
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="Portrait" type="TextureRect" parent="Panel" unique_id=1879875388]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.18300001
+anchor_bottom = 0.9760001
+offset_left = 2.0
+offset_top = 3.0
+offset_right = 0.49098206
+offset_bottom = 1.9199829
+metadata/_edit_use_anchors_ = true
+
+[node name="SpeakerName" type="Label" parent="Panel" unique_id=899322137]
+layout_mode = 0
+offset_left = 1.0
+offset_top = -36.0
+offset_right = 147.0
+
+[node name="Text" type="RichTextLabel" parent="Panel" unique_id=1721038307]
+layout_mode = 0
+offset_right = 1123.0
+offset_bottom = 205.0
+
+[node name="Arrow" type="Label" parent="Panel" unique_id=51332319]
+layout_mode = 0
+offset_left = 1076.0
+offset_top = 160.0
+offset_right = 1124.0
+offset_bottom = 203.0
+text = "▼"
+
+[node name="Choices" type="VBoxContainer" parent="Panel" unique_id=351474473]
+layout_mode = 0
+offset_left = 1123.0
+offset_top = -222.0
+offset_right = 1341.0
+offset_bottom = -133.0
+
+[node name="SelectionBox" type="NinePatchRect" parent="Panel/Choices" unique_id=1672062327]
+layout_mode = 2
+texture = ExtResource("2_hvmpf")
+region_rect = Rect2(150.96107, 48, 85.963486, 31.283249)
+patch_margin_left = 88
+patch_margin_top = 32
+
+[node name="BeepSFX" type="AudioStreamPlayer2D" parent="." unique_id=1886585365]

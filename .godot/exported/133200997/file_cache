@@ -1,9 +1,0 @@
-res://data/Entities/Misc/question_mark.tscn::30ca3faf847627f997d23a64332a0c1b::1777941371::res://.godot/exported/133200997/export-cf94994f147876d30471008091994e84-question_mark.scn
-res://data/Entities/player/Shaders/player_damage.tres::4726cdcb35b69c604b6e21d916c8d280::1777941371::res://.godot/exported/133200997/export-15f7fb0b6c5ce0a9bb93a21b6d3e4bc4-player_damage.res
-res://data/Entities/player/playerCite.tscn::698414709101f5b730f79f4b451a1bf4::1777941371::res://.godot/exported/133200997/export-7fa2eaba1b64afb4e75de72128dfe83c-playerCite.scn
-res://data/Entities/door.tscn::ceed80cedf2c05ae53d536f7412a4015::1777941371::res://.godot/exported/133200997/export-d3b5636a0b683729d651a089bf495da0-door.scn
-res://data/EventSystem/Game.tscn::e28bd1bf96127a7eb9c67fe070aada36::1777944422::res://.godot/exported/133200997/export-a3c18e574720211a63052fde8aa412fd-Game.scn
-res://data/Scenes/first_cave.tscn::f326e99a7fee6dac40af438eed053b4c::1777941371::res://.godot/exported/133200997/export-b1f3059f54a03b8c9c38cebc42900238-first_cave.scn
-res://data/Scenes/StartPoint.tscn::381277aa0c6f301a0387248633fee38f::1777941371::res://.godot/exported/133200997/export-43f25e0312fa01c8a86ff7e69702f521-StartPoint.scn
-res://data/Tiles/Cave.tres::220288c7799ee151668bd4693f8b015e::1777944422::res://.godot/exported/133200997/export-eb3b195bfb7f68fa74a5f6aa72eb251a-Cave.res
-res://data/Tiles/moon_base.tres::edf2c4a5da4eca72b49a3edb2b8ea1db::1777941371::res://.godot/exported/133200997/export-161e74eb6b82e30f823fa0caf739d78c-moon_base.res

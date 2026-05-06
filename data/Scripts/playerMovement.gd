@@ -47,56 +47,23 @@ const IFRAMES_DURATION    := 1.25
 const IFRAMES_FLASH_RATE  := 0.07
 
 # ─── Booster 1.0 ──────────────────────────────────────────────────────
-# jetpack de elevación vertical:
-#   - se activa con just_pressed Jump en el aire (nunca al saltar)
-#   - aplica fuerza hacia arriba gradualmente mientras mantienes Jump
-#   - la gravedad se aplica reducida (BOOSTER1_GRAVITY_REDUCED) para
-#     dar sensación de jetpack — no flotación completa ni caída libre
-#   - el gas se recarga INMEDIATAMENTE al tocar el suelo
-#   - la altura máxima es equivalente a Cave Story
-# para equipar: player.jetpack_equipped = true
-# para quitar:  player.jetpack_equipped = false
-const BOOSTER1_LIFT_FORCE     := 200.0  # fuerza de elevación por segundo
-										 # más baja que antes para altura correcta
-const BOOSTER1_GRAVITY_REDUCED:= 600.0  # gravedad reducida mientras el booster está activo
-										 # GRAVITY_DOWN(980) - 300 = empuje neto de 680
-										 # da la sensación de jetpack sin flotar
-const BOOSTER1_MAX_UP_SPEED   := -280.0  # más alto que antes (-120) para ganar más altura velocidad máxima hacia arriba del booster 1.0
-										 # limita la altura para que cuadre con CS
-const BOOSTER1_GAS_DRAIN      := 60.0   # gas por segundo — dura ~1.6s con gas lleno
-const BOOSTER_GAS_MAX         := 100.0  # gas máximo compartido entre ambos boosters
+const BOOSTER1_LIFT_FORCE     := 200.0
+const BOOSTER1_GRAVITY_REDUCED:= 600.0
+const BOOSTER1_MAX_UP_SPEED   := -280.0
+const BOOSTER1_GAS_DRAIN      := 60.0
+const BOOSTER_GAS_MAX         := 100.0
 
 # ─── Booster 2.0 ──────────────────────────────────────────────────────
-# vuelo direccional al estilo Cave Story:
-#   - se activa con just_pressed Jump en el aire
-#   - al activar fija la dirección horizontal hasta que sueltes Jump
-#   - la dirección fijada NO puede cambiarse mientras mantienes Jump
-#   - al soltar y volver a presionar puedes cambiar la dirección
-#   - la gravedad se aplica reducida para dar sensación de vuelo controlado
-#   - Down acelera la caída durante el vuelo
-#   - el gas se recarga INMEDIATAMENTE al tocar el suelo
-# para equipar: player.jetpack_equipped = true + player.jetpack_upgrade = true
-const BOOSTER2_SPEED_X := 350.0  # antes 190.0
+const BOOSTER2_SPEED_X        := 350.0
 const BOOSTER2_GRAVITY_REDUCED := 880.0
-const BOOSTER2_MAX_UP_SPEED    := -80.0
-const BOOSTER2_DOWN_FORCE      := 400.0
-const BOOSTER2_GAS_DRAIN       := 100.0  # antes 50.0 — se acaba más rápido como CS
-
-# ─── Recarga de gas ───────────────────────────────────────────────────
-# el gas se recarga INMEDIATAMENTE al tocar el suelo (no gradualmente)
-# esto es exactamente como Cave Story — al aterrizar tienes gas lleno
-# para recargar manualmente: player.jetpack_gas = player.BOOSTER_GAS_MAX
+const BOOSTER2_MAX_UP_SPEED   := -80.0
+const BOOSTER2_DOWN_FORCE     := 400.0
+const BOOSTER2_GAS_DRAIN      := 100.0
 
 # ─── Animación de caída ───────────────────────────────────────────────
 const FALL_ANIM_TIME      := 0.35
 
 # ─── Cámara ───────────────────────────────────────────────────────────
-# API pública:
-#   player.camera_focus_on(nodo)     → seguir un nodo
-#   player.camera_move_to(offset)    → desplazar la vista
-#   player.camera_release()          → volver al seguimiento normal
-#   player.cam_quake = true/false    → activar/apagar temblor
-#   player.cam_quake_intensity = N   → intensidad del temblor
 const CAM_H_LEAD          := 48.0
 const CAM_V_LOOK_UP       := 64.0
 const CAM_H_LERP          := 4.0
@@ -125,14 +92,7 @@ var jetpack_gas         : float = BOOSTER_GAS_MAX
 var jetpack_gas_max     : float = BOOSTER_GAS_MAX
 var _booster1_active    : bool  = false
 var _booster2_active    : bool  = false
-
-# dirección fijada del booster 2.0 al activarse
-# no puede cambiarse hasta soltar Jump — igual que Cave Story
-# 0 = sin dirección fijada, -1 = izquierda, 1 = derecha
 var _booster2_locked_dir : float = 0.0
-
-# evita que el booster se active el mismo frame del salto
-# true al saltar → false un frame después
 var _jump_grace_frame   : bool  = false
 
 # ─── Variables de animación ───────────────────────────────────────────
@@ -147,8 +107,13 @@ var _knockback_timer    := 0.0
 var _iframes_timer      := 0.0
 var _flash_timer        := 0.0
 var _is_invincible      := false
+var _iframes_drowning   : bool  = false
+var _death_phase        : int   = 0
+var _death_flash_timer  : float = 0.0
+var _death_respawn_timer: float = 0.0
 var canContinue         := false
 var playerDead          := false
+
 
 # ─── Variables de movimiento ──────────────────────────────────────────
 var currentGravity      := GRAVITY_DOWN
@@ -220,20 +185,23 @@ func _physics_process(delta):
 			_jump_grace_frame    = false
 			_is_falling          = false
 			_air_time            = 0.0
+			_death_phase         = 0
+			_death_flash_timer   = 0.0
+			_death_respawn_timer = 0.0
+			_iframes_drowning    = false
+			allowMovement        = true
+			Globals.playerPlayable = true
+		else:
+			_update_death_flash(delta)
+			_death_respawn_timer += delta
 		return
 
 	var anim = "IdleRight"
 
-	_update_coyote_time(delta)    # 1. coyote time
-	_update_jump_buffer(delta)    # 2. jump buffer
-
-	# 3. gravedad:
-	#   - booster 1.0 activo → gravedad reducida (sensación de jetpack)
-	#   - booster 2.0 activo → gravedad reducida (casi flota)
-	#   - ningún booster     → gravedad normal completa
+	_update_coyote_time(delta)
+	_update_jump_buffer(delta)
 	_apply_gravity(delta)
-
-	_update_fall_anim(delta)      # 4. animación de caída
+	_update_fall_anim(delta)
 
 	if _knockback_timer > 0.0:
 		_knockback_timer     -= delta
@@ -244,28 +212,24 @@ func _physics_process(delta):
 		if booster_sfx.playing:  booster_sfx.stop()
 		if booster2_sfx.playing: booster2_sfx.stop()
 	else:
-		_handle_jump()              # 5. salto y activación de boosters
-		_handle_booster1(delta)     # 6. física del booster 1.0
-		_handle_booster2(delta)     # 7. física del booster 2.0
-		_handle_horizontal(delta)   # 8. movimiento horizontal
+		_handle_jump()
+		_handle_booster1(delta)
+		_handle_booster2(delta)
+		_handle_horizontal(delta)
 
-	_update_air_supply(delta)    # 9. aire bajo el agua
-	move_and_slide()             # 10. mover y detectar colisiones
+	_update_air_supply(delta)
+	move_and_slide()
 
-	# 11. recarga inmediata de gas al tocar el suelo
-	# se hace DESPUÉS de move_and_slide para que is_on_floor() sea correcto
-	# en Cave Story el gas se recarga al instante al aterrizar — no gradualmente
 	if is_on_floor() and jetpack_equipped:
 		jetpack_gas          = BOOSTER_GAS_MAX
-		_booster2_locked_dir = 0.0  # liberar dirección fijada al aterrizar
+		_booster2_locked_dir = 0.0
 
-	_handle_check_action()       # 12. agacharse e inspeccionar
-	handle_animation(anim)       # 13. animación
-	_handle_sounds(delta)        # 14. sonidos
-	_update_iframes(delta)       # 15. i-frames con tinte rojo
-	_update_camera(delta)        # 16. cámara
+	_handle_check_action()
+	handle_animation(anim)
+	_handle_sounds(delta)
+	_update_iframes(delta)
+	_update_camera(delta)
 
-	# apagar grace frame al final del frame
 	if _jump_grace_frame:
 		_jump_grace_frame = false
 
@@ -278,7 +242,6 @@ func _apply_gravity(delta: float) -> void:
 		velocity.y += GRAVITY_WATER * delta
 		return
 
-	# si cualquier booster está activo, él gestiona su vertical — aquí no tocar nada
 	if _booster1_active or _booster2_active:
 		return
 
@@ -303,7 +266,6 @@ func _handle_jump() -> void:
 	var can_jump       := is_on_floor() or (_coyote_timer > 0.0 and not _is_jumping)
 	var jump_requested := Input.is_action_just_pressed("Jump") or _jump_buffer_timer > 0.0
 
-	# ── Salto normal ──────────────────────────────────────────────────
 	if jump_requested and can_jump:
 		velocity.y           = -jump_speed()
 		_is_jumping          = true
@@ -318,16 +280,13 @@ func _handle_jump() -> void:
 		jump_sfx.play()
 		return
 
-	# ── Boosters: solo en el aire, con gas, sin grace frame ───────────
 	if not is_on_floor() and jetpack_equipped \
 			and jetpack_gas > 0.0 and not _jump_grace_frame:
 
 		if Input.is_action_just_pressed("Jump"):
 			if jetpack_upgrade:
-				# ── Activar Booster 2.0 ───────────────────────────────
 				var input_dir := Input.get_axis("Left", "Right")
 				var locked : float = input_dir
-
 				_booster2_locked_dir = locked
 				_booster2_active     = true
 				_booster1_active     = false
@@ -338,20 +297,16 @@ func _handle_jump() -> void:
 				else:
 					velocity.x = 0.0
 					velocity.y = -200.0
-
 			else:
-				# ── Activar Booster 1.0 ───────────────────────────────
 				_booster1_active = true
 				_booster2_active = false
 				velocity.y       = BOOSTER1_MAX_UP_SPEED
 
-		# soltar Jump desactiva el booster activo
 		if Input.is_action_just_released("Jump"):
 			_booster1_active     = false
 			_booster2_active     = false
 			_booster2_locked_dir = 0.0
 
-	# corte de salto normal — solo si ningún booster está activo
 	if Input.is_action_just_released("Jump") and velocity.y < 0 \
 			and _is_jumping and not _booster1_active and not _booster2_active:
 		velocity.y *= JUMP_CUT_MULTIPLIER
@@ -366,9 +321,7 @@ func _handle_booster1(delta: float) -> void:
 	if not booster_sfx.playing:
 		booster_sfx.play()
 
-	# gravedad muy baja para no frenar el impulso inicial
-	# el jugador sube rápido al principio y luego flota levemente
-	var BOOSTER1_HOVER_GRAVITY := 40.0   # antes 120.0 — demasiado frenante
+	var BOOSTER1_HOVER_GRAVITY := 40.0
 	velocity.y += BOOSTER1_HOVER_GRAVITY * delta
 	velocity.y  = min(velocity.y, 20.0)
 
@@ -390,27 +343,18 @@ func _handle_booster2(delta: float) -> void:
 	if not booster2_sfx.playing:
 		booster2_sfx.play()
 
-	# ── Horizontal ────────────────────────────────────────────────────
 	if _booster2_locked_dir != 0.0:
-		# dirección fijada: mantener velocidad horizontal constante
 		velocity.x = _booster2_locked_dir * BOOSTER2_SPEED_X
-	# si locked_dir es 0.0 (vertical puro) no tocar velocity.x
 
-	# ── Vertical ──────────────────────────────────────────────────────
 	if Input.is_action_pressed("Down"):
-		# Down → caída recta hacia abajo
-		# resetear horizontal para que sea completamente recto
 		velocity.x  = 0.0
 		velocity.y += (GRAVITY_DOWN + BOOSTER2_DOWN_FORCE) * delta
 		velocity.y  = min(velocity.y, MAX_FALL_SPEED)
 	elif _booster2_locked_dir != 0.0:
-		# impulso horizontal activo → subida leve y constante
 		velocity.y = -60.0
 	else:
-		# vertical puro → subida fuerte constante
 		velocity.y = -150.0
 
-	# consumir gas
 	jetpack_gas -= BOOSTER2_GAS_DRAIN * delta
 	jetpack_gas  = max(jetpack_gas, 0.0)
 
@@ -422,17 +366,9 @@ func _handle_booster2(delta: float) -> void:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# ─── Salto y boosters ─────────────────────────────────────────────────
-
-
-
-
-
-# ═══════════════════════════════════════════════════════════════════════
 # ─── Movimiento horizontal ────────────────────────────────────────────
 
 func _handle_horizontal(delta: float) -> void:
-	# durante el booster 2.0 la dirección la controla _handle_booster2
 	if _booster2_active:
 		return
 
@@ -508,22 +444,16 @@ func take_damage(amount: int, source_global_pos: Vector2,
 	currentLife = max(currentLife - amount, 0)
 	hurt_sfx.play()
 
-	# descomenta si tienes WeaponManager:
-	# var active_id := WeaponManager.get_active_weapon_id()
-	# if active_id != "": WeaponManager.lose_exp(active_id, 10)
-
-	# descomenta si tienes HealSystem:
-	# HealSystem.cancel_gradual()
-
 	if currentLife <= 0:
 		_die(is_drowning)
 	else:
 		if apply_knockback:
 			_apply_knockback(source_global_pos)
 		if is_drowning:
-			_is_invincible = true
-			_iframes_timer = AIR_DMG_INTERVAL
-			_flash_timer   = 0.0
+			_is_invincible    = true
+			_iframes_timer    = AIR_DMG_INTERVAL
+			_flash_timer      = 0.0
+			_iframes_drowning = true
 
 
 func _die(is_drowning: bool = false) -> void:
@@ -538,17 +468,23 @@ func _die(is_drowning: bool = false) -> void:
 	_booster2_active     = false
 	_booster2_locked_dir = 0.0
 	_jump_grace_frame    = false
+	_death_phase         = 0
+	_death_flash_timer   = 0.0
+	_death_respawn_timer = 0.0
 	if booster_sfx.playing:  booster_sfx.stop()
 	if booster2_sfx.playing: booster2_sfx.stop()
 
+	var idle_anim := "IdleLeft" if lastDirection == 1 else "IdleRight"
+	animator.play(idle_anim)
+
 	if is_drowning:
-		var idle_anim := "IdleLeft" if lastDirection == 1 else "IdleRight"
-		animator.play(idle_anim)
-		animator.modulate = Color(0.35, 0.55, 1.0, 1.0)
+		animator.modulate = Color(0.55, 0.78, 1.0, 1.0)
 		death_drown_sfx.play()
 	else:
+		_death_phase      = 1
+		_death_flash_timer = 0.0
+		animator.modulate  = Color(1.0, 0.0, 0.0, 1.0)
 		death_sfx.play()
-		animator.modulate.a = 0.0
 
 	print("jugador muerto")
 
@@ -564,13 +500,13 @@ func _apply_knockback(source_global_pos: Vector2) -> void:
 	_is_invincible       = true
 	_iframes_timer       = IFRAMES_DURATION
 	_flash_timer         = 0.0
+	_iframes_drowning    = false
 	checking             = false
 	hasChecked           = false
 
 
 func _update_iframes(delta: float) -> void:
 	if not _is_invincible:
-		# fuera de i-frames: restaurar color completamente
 		animator.modulate = Color(1.0, 1.0, 1.0, 1.0)
 		return
 
@@ -580,19 +516,44 @@ func _update_iframes(delta: float) -> void:
 		_is_invincible    = false
 		_iframes_timer    = 0.0
 		_flash_timer      = 0.0
+		_iframes_drowning = false
 		animator.modulate = Color(1.0, 1.0, 1.0, 1.0)
 		return
 
-	# parpadeo con tinte rojo al estilo Cave Story
-	# frame visible   → tinte rojo (1, 0.3, 0.3, 1)
-	# frame invisible → transparente (1, 1, 1, 0)
 	_flash_timer += delta
 	if _flash_timer >= IFRAMES_FLASH_RATE:
 		_flash_timer = 0.0
 		if animator.modulate.a > 0.5:
-			animator.modulate = Color(1.0, 1.0, 1.0, 0.0)  # invisible
+			animator.modulate = Color(1.0, 1.0, 1.0, 0.0)
 		else:
-			animator.modulate = Color(1.0, 0.3, 0.3, 1.0)  # visible con tinte rojo
+			if _iframes_drowning:
+				animator.modulate = Color(0.7, 0.2, 1.0, 1.0)
+			else:
+				animator.modulate = Color(1.0, 0.3, 0.3, 1.0)
+
+
+func _update_death_flash(delta: float) -> void:
+	if _death_phase == 0:
+		return
+
+	_death_flash_timer += delta
+
+	if _death_phase == 1:
+		# rojo → blanco en 0.3 segundos
+		var t : float = min(_death_flash_timer / 0.3, 1.0)
+		animator.modulate = Color(1.0, t, t, 1.0)
+		if t >= 1.0:
+			_death_phase       = 2
+			_death_flash_timer = 0.0
+
+	elif _death_phase == 2:
+		# blanco fijo 0.5 segundos
+		if _death_flash_timer >= 0.5:
+			_death_phase       = 3
+			_death_flash_timer = 0.0
+			animator.modulate  = Color(1.0, 1.0, 1.0, 0.0)
+
+	# fase 3: invisible permanente hasta el respawn
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -640,6 +601,10 @@ func _handle_check_action() -> void:
 
 func _process(_delta):
 	move_state()
+	
+	if OS.is_debug_build() and Input.is_action_just_pressed("Debug"):
+		if playerDead:
+			canContinue = true
 
 
 func move_state():
@@ -648,8 +613,6 @@ func move_state():
 	elif Input.is_action_pressed("Left"):
 		lastDirection = 1
 
-	# durante el booster 2.0 la dirección visual la controla _booster2_locked_dir
-	# así la animación muestra la dirección correcta aunque no se mueva el joystick
 	if _booster2_active and _booster2_locked_dir != 0:
 		lastDirection = 1 if _booster2_locked_dir < 0 else 0
 
@@ -660,6 +623,9 @@ func move_state():
 # ─── Animaciones ──────────────────────────────────────────────────────
 
 func handle_animation(anim):
+	if playerDead:
+		return
+
 	if checking and (_current_anim.ends_with("Check") or _current_anim.ends_with("LookUp")):
 		var base := "IdleLeft" if lastDirection == 1 else "IdleRight"
 		if Input.is_action_pressed("Up"):
@@ -677,12 +643,9 @@ func handle_animation(anim):
 	var input_dir := Input.get_axis("Left", "Right")
 
 	if playerJump:
-		# base de la animación según dirección
 		var jump_base := "JumpLeft" if lastDirection == 1 else "JumpRight"
 
 		if _booster2_active:
-			# booster 2.0: usar JumpLeft/Right con sus variantes LookUp y LookDown
-			# la dirección la controla _booster2_locked_dir actualizada en move_state
 			anim = jump_base
 			if Input.is_action_pressed("Up"):
 				anim = jump_base + "LookUp"
@@ -690,7 +653,6 @@ func handle_animation(anim):
 				anim = jump_base + "LookDown"
 
 		elif _booster1_active:
-			# booster 1.0: usar JumpLeft/Right con sus variantes
 			anim = jump_base
 			if Input.is_action_pressed("Up"):
 				anim = jump_base + "LookUp"
@@ -698,17 +660,14 @@ func handle_animation(anim):
 				anim = jump_base + "LookDown"
 
 		elif _is_falling:
-			# caída libre después de FALL_ANIM_TIME segundos bajando
 			anim = "FallingLeft" if lastDirection == 1 else "FallingRight"
 
 		else:
-			# salto normal
 			anim = jump_base
 			if Input.is_action_pressed("Up"):
 				anim = jump_base + "LookUp"
 
 	else:
-		# en el suelo
 		if lastDirection == 1:
 			anim = "WalkLeft" if input_dir < 0 else "IdleLeft"
 		else:
@@ -822,6 +781,7 @@ func camera_release() -> void:
 	_cam_focus_node      = null
 	_cam_override_active = false
 
+
 func jump_speed() -> float:
 	return WATER_JUMP_VELOCITY if wamder else JUMP_VELOCITY
 
@@ -833,7 +793,8 @@ func _on_water_detect_area_entered(_area):
 	wamder = true
 
 func _on_water_detect_area_exited(_area):
-	wamder = false
+	wamder            = false
+	_iframes_drowning = false
 
 func _on_interactable_area_entered(_area):
 	able_to_interact = true

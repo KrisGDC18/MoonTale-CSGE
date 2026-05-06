@@ -1,14 +1,4 @@
-AnimatedSprite2D
-AudioStreamPlayer
-TextureRect
-VBoxContainer
-RichTextLabel
 Label
-PanelContainer
-Control
-CanvasLayer
-CollisionShape2D
-CharacterBody2D
-ProgressBar
-TextureProgressBar
-Sprite2D
+Panel
+RichTextLabel
+TextureRect
