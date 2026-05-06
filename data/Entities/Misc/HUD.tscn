@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bkvkpu5wgo631"]
 
-[ext_resource type="Script" uid="uid://chsqh0p7wak0q" path="res://data/Entities/Misc/hud.gd" id="1_dxeyc"]
+[ext_resource type="Script" uid="uid://chsqh0p7wak0q" path="res://data/Scripts/hud.gd" id="1_dxeyc"]
 [ext_resource type="Texture2D" uid="uid://drhsu6oggq4ks" path="res://data/Sprites/UI/hud_background.png" id="2_s6sb5"]
 [ext_resource type="Texture2D" uid="uid://bwlbq4k520wm0" path="res://data/Sprites/UI/hud_background_2.png" id="3_nk8rh"]
 
@@ -16,6 +16,18 @@ bg_color = Color(0, 0.8156863, 1, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p4t4q"]
 bg_color = Color(0, 0, 1, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i2wfu"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wlmh5"]
+bg_color = Color(1, 1, 0.16078432, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k7451"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3oprh"]
+bg_color = Color(1, 0.7921569, 0, 1)
+
 [node name="Hud" type="Node2D" unique_id=776642068]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1759530265]
@@ -23,86 +35,148 @@ script = ExtResource("1_dxeyc")
 
 [node name="Control" type="Control" parent="CanvasLayer" unique_id=1227426363]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 31.0
+offset_top = 2.0
+offset_right = 71.0
+offset_bottom = 42.0
+metadata/_edit_use_anchors_ = true
 
 [node name="hud_bg2" type="TextureRect" parent="CanvasLayer/Control" unique_id=714837299]
 texture_filter = 1
-layout_mode = 0
-offset_right = 180.0
-offset_bottom = 69.0
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 4.5
+anchor_bottom = 3.2770002
+offset_bottom = -62.08
 texture = ExtResource("3_nk8rh")
 expand_mode = 5
+metadata/_edit_use_anchors_ = true
 
 [node name="hud_bg" type="TextureRect" parent="CanvasLayer/Control" unique_id=1781662510]
 texture_filter = 1
-layout_mode = 0
-offset_right = 180.0
-offset_bottom = 90.0
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 4.5
+anchor_bottom = 3.3750002
+offset_bottom = -1.5258789e-05
 texture = ExtResource("2_s6sb5")
 expand_mode = 5
+metadata/_edit_use_anchors_ = true
 
 [node name="hp_bar" type="ProgressBar" parent="CanvasLayer/Control" unique_id=1273257746]
 texture_filter = 1
-layout_mode = 0
-offset_left = 68.0
-offset_top = 25.0
-offset_right = 177.0
-offset_bottom = 39.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.7
+anchor_top = 1.7000002
+anchor_right = 4.425
+anchor_bottom = 2.075
 theme_override_styles/background = SubResource("StyleBoxFlat_7qkfh")
 theme_override_styles/fill = SubResource("StyleBoxFlat_s6sb5")
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="hp_label" type="Label" parent="CanvasLayer/Control" unique_id=1278683255]
-layout_mode = 0
-offset_left = 38.0
-offset_top = 20.0
-offset_right = 69.0
-offset_bottom = 43.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.77500004
+anchor_top = 1.6750001
+anchor_right = 1.325
+anchor_bottom = 2.25
 text = "HP"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="air_bar" type="ProgressBar" parent="CanvasLayer/Control" unique_id=1093755004]
-layout_mode = 0
-offset_left = 68.0
-offset_top = 48.0
-offset_right = 177.0
-offset_bottom = 62.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.7
+anchor_top = 2.275
+anchor_right = 4.425
+anchor_bottom = 2.6250002
 theme_override_styles/background = SubResource("StyleBoxFlat_nk8rh")
 theme_override_styles/fill = SubResource("StyleBoxFlat_p4t4q")
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="air_label" type="Label" parent="CanvasLayer/Control" unique_id=1108088605]
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 4.4960003
-anchor_bottom = 2.22
-offset_left = 958.0
-offset_top = 527.0
-offset_right = 870.16
-offset_bottom = 464.2
+anchor_left = 23.95
+anchor_top = 13.175
+anchor_right = 26.250002
+anchor_bottom = 13.825001
+offset_right = -0.00012207031
 text = "Air"
 
 [node name="xp_bar" type="ProgressBar" parent="CanvasLayer/Control" unique_id=1337042434]
-layout_mode = 0
-offset_left = 68.0
-offset_top = 3.0
-offset_right = 177.0
-offset_bottom = 17.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.7
+anchor_top = 1.175
+anchor_right = 4.425
+anchor_bottom = 1.5250001
+offset_right = -1.5258789e-05
+theme_override_styles/background = SubResource("StyleBoxFlat_i2wfu")
+theme_override_styles/fill = SubResource("StyleBoxFlat_wlmh5")
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="jet_bar" type="ProgressBar" parent="CanvasLayer/Control" unique_id=1251762636]
-layout_mode = 0
-offset_left = 67.0
-offset_top = 71.0
-offset_right = 177.0
-offset_bottom = 84.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.7
+anchor_top = 2.9
+anchor_right = 4.45
+anchor_bottom = 3.225
+theme_override_styles/background = SubResource("StyleBoxFlat_k7451")
+theme_override_styles/fill = SubResource("StyleBoxFlat_3oprh")
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="jet_label" type="Label" parent="CanvasLayer/Control" unique_id=143498867]
-layout_mode = 0
-offset_left = 44.0
-offset_top = 63.0
-offset_right = 61.0
-offset_bottom = 86.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 4.525
+anchor_top = 2.8000002
+anchor_right = 4.9500003
+anchor_bottom = 3.3750002
+offset_right = -1.5258789e-05
+offset_bottom = -1.5258789e-05
 text = "JP"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="xp_label" type="Label" parent="CanvasLayer/Control" unique_id=1635522898]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.90000004
+anchor_top = 1.1
+anchor_right = 1.45
+anchor_bottom = 1.6750001
+text = "XP"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="ammo_total_label" type="Label" parent="CanvasLayer/Control" unique_id=261799598]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 3.775
+anchor_top = 0.5
+anchor_right = 4.15
+anchor_bottom = 1.125
+offset_top = 2.0
+text = "- -"
+metadata/_edit_use_anchors_ = true
+
+[node name="ammo_rest_label" type="Label" parent="CanvasLayer/Control" unique_id=1051868530]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 3.775
+anchor_right = 4.15
+anchor_bottom = 0.57500005
+text = "- -"
+metadata/_edit_use_anchors_ = true

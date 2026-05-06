@@ -1,0 +1,11 @@
+~ start
+Kris: [[Hi|Hello|Howdy]], this is some dialogue.
+Kris: Here are some choices.
+- First one
+	Kris: You picked the first one.
+- Second one
+	Kris: You picked the second one.
+- Start again => start
+- End the conversation => END
+Kris: For more information see the online documentation.
+=> END

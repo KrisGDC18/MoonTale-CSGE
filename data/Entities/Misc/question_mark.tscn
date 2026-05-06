@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c0kfcchm0g70e"]
 
-[ext_resource type="Script" uid="uid://ci258p7t4s16l" path="res://data/Entities/Misc/QuestionMark.gd" id="1_a76f1"]
+[ext_resource type="Script" uid="uid://ci258p7t4s16l" path="res://data/Scripts/QuestionMark.gd" id="1_a76f1"]
 [ext_resource type="Texture2D" uid="uid://moqn4dmnbv5" path="res://data/Sprites/Misc/Caret.png" id="2_43q7g"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idrsu"]

@@ -1,9 +1,12 @@
 [gd_scene format=4 uid="uid://b2wa0bu06l5d5"]
 
-[ext_resource type="Script" uid="uid://c5i02m7gy0ted" path="res://data/Scenes/normal_room.gd" id="1_01qg7"]
+[ext_resource type="Script" uid="uid://c5i02m7gy0ted" path="res://data/Scripts/normal_room.gd" id="1_01qg7"]
 [ext_resource type="TileSet" uid="uid://48ups7a06mvg" path="res://data/Tiles/Cave.tres" id="2_wnu3j"]
 [ext_resource type="PackedScene" uid="uid://diiq1u1doxfaq" path="res://data/Entities/door.tscn" id="3_m8epk"]
 [ext_resource type="TileSet" uid="uid://b5c3gejdo7vqc" path="res://data/Tiles/moon_base.tres" id="4_d85ye"]
+[ext_resource type="AudioStream" uid="uid://bte1y2qu7als5" path="res://data/Sounds/BGM/vivi_intro.ogg" id="5_01qg7"]
+[ext_resource type="AudioStream" uid="uid://chalk28jw1ulm" path="res://data/Sounds/BGM/vivi_loop.ogg" id="6_h4vf1"]
+[ext_resource type="PackedScene" uid="uid://ci31taf705rx5" path="res://data/Entities/npc/test/test_kris_dialogue_01.tscn" id="7_h4vf1"]
 
 [node name="First Cave" type="Node2D" unique_id=1056936284]
 script = ExtResource("1_01qg7")
@@ -21,7 +24,7 @@ tile_set = ExtResource("2_wnu3j")
 
 [node name="Background" type="TileMapLayer" parent="." unique_id=606464897]
 z_index = -3
-tile_map_data = PackedByteArray("AAD+////AAALAAMAAAD+/wAAAAALAAQAAAD/////AAAMAAMAAAD//wAAAAAKAAEAAAAAAP//AAANAAMAAAAAAAAAAAANAAQAAAD6////AAALAAMAAAD6/wAAAAALAAQAAAD6//3/AAALAAMAAAD6//7/AAALAAQAAAD6//v/AAALAAMAAAD6//z/AAALAAQAAAD6//n/AAALAAMAAAD6//r/AAALAAQAAAD6//f/AAALAAMAAAD6//j/AAALAAQAAAD7////AAANAAMAAAD7/wAAAAANAAQAAAD7//3/AAANAAMAAAD7//7/AAANAAQAAAD7//v/AAANAAMAAAD7//z/AAANAAQAAAD7//n/AAANAAMAAAD7//r/AAANAAQAAAD7//f/AAANAAMAAAD7//j/AAANAAQAAAA=")
+tile_map_data = PackedByteArray("AAD+////AAALAAMAAAD+/wAAAAALAAQAAAD/////AAAMAAMAAAD//wAAAAAKAAEAAAAAAAAAAAANAAQAAAD6////AAALAAMAAAD6/wAAAAALAAQAAAD6//3/AAALAAMAAAD6//7/AAALAAQAAAD6//v/AAALAAMAAAD6//z/AAALAAQAAAD6//n/AAALAAMAAAD6//r/AAALAAQAAAD6//f/AAALAAMAAAD6//j/AAALAAQAAAD7////AAANAAMAAAD7/wAAAAANAAQAAAD7//3/AAANAAMAAAD7//7/AAANAAQAAAD7//v/AAANAAMAAAD7//z/AAANAAQAAAD7//n/AAANAAMAAAD7//r/AAANAAQAAAD7//f/AAANAAMAAAD7//j/AAANAAQAAAAAAP//AAANAAgAAAD9////AAANAAgAAAD9/wAAAAANAAkAAAD8////AAALAAgAAAD8/wAAAAALAAkAAAD8//3/AAALAAgAAAD8//7/AAALAAkAAAD9//3/AAANAAgAAAD9//7/AAANAAkAAAA=")
 tile_set = ExtResource("2_wnu3j")
 
 [node name="extras" type="TileMapLayer" parent="." unique_id=174757972]
@@ -39,3 +42,13 @@ position = Vector2(-16, 8)
 scale = Vector2(2, 2)
 next_scene_path = "res://data/Scenes/StartPoint.tscn"
 pos_Change = [16, -180]
+
+[node name="intro_bgm" type="AudioStreamPlayer" parent="." unique_id=892378641]
+stream = ExtResource("5_01qg7")
+
+[node name="loop_bgm" type="AudioStreamPlayer" parent="." unique_id=1653586991]
+stream = ExtResource("6_h4vf1")
+
+[node name="TestKrisDialogue01" parent="." unique_id=571265759 instance=ExtResource("7_h4vf1")]
+z_index = -2
+position = Vector2(151, 11)

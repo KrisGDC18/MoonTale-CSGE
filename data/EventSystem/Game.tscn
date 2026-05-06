@@ -1,8 +1,7 @@
 [gd_scene format=3 uid="uid://dda4xf56ny4km"]
 
 [ext_resource type="PackedScene" uid="uid://bqjatb5hf34fo" path="res://data/Scenes/StartPoint.tscn" id="1_7wqjn"]
-[ext_resource type="Script" uid="uid://dlnjel4b8kmgb" path="res://data/EventSystem/level.gd" id="1_46wim"]
-[ext_resource type="AudioStream" uid="uid://chalk28jw1ulm" path="res://data/Sounds/BGM/vivi_loop.ogg" id="3_xfei7"]
+[ext_resource type="Script" uid="uid://dlnjel4b8kmgb" path="res://data/Scripts/level.gd" id="1_46wim"]
 
 [node name="Game" type="Node" unique_id=1873560569]
 
@@ -11,8 +10,3 @@ script = ExtResource("1_46wim")
 
 [node name="Start Point" parent="Level" unique_id=1276778767 instance=ExtResource("1_7wqjn")]
 position = Vector2(-13.873077, 20.04567)
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Level" unique_id=845317201]
-stream = ExtResource("3_xfei7")
-volume_db = -2.5
-autoplay = true
