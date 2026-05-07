@@ -24,23 +24,40 @@ func _on_interact() -> void:
 			"speaker"  : "Kris",
 			"portrait" : preload("res://data/Sprites/Faces/Kris.png"),
 			"text"     : "¿Quieres activar el Booster?",
-			"choices"  : ["El 1.0", "El 2.0", "Ninguno"],
-			"targets"  : [2, 2, 2],
+			"choices"  : ["El 1.0", "El 2.0", "Ninguno", "item"],
+			"targets"  : [2, 2, 2, 3],
 			"actions"  : [
 				func(): _activar_booster_1(),   # se ejecuta si elige opción 0
 				func(): _activar_booster_2(),   # se ejecuta si elige opción 1
 				func(): _disable_booster(),     # no hace nada si elige opción 2
+				func(): _give_jet2(),
 			]
 		},
 		{
 			"speaker" : "Kris",
 			"portrait" : preload("res://data/Sprites/Faces/Kris.png"),
 			"text"    : "¡Listo!"
+		},
+		{
+			"speaker" : "Kris",
+			"portrait" : preload("res://data/Sprites/Faces/Kris.png"),
+			"text"    : "¡Listo! esta en tu inventario"
 		}
 	]
 
+
+
 	dialog.start(pages)
 	await dialog.dialog_finished
+
+func _give_jet2():
+	var jet2 = preload("res://data/Items/jetpack2.tres")
+	jet2.on_use = func():
+		var player = get_tree().get_first_node_in_group("player")
+		player.currentLife = min(player.currentLife + 4, player.PLAYER_MAX_LIFE)
+	PlayerInventory.add_item(jet2)
+
+
 
 func _activar_booster_1() -> void:
 	# cambia variables, llama funciones, lo que necesites

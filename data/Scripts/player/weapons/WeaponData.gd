@@ -1,28 +1,26 @@
-extends Resource
 class_name WeaponData
+extends Resource
 
-# ─── Identidad ────────────────────────────────────────────────────────
-@export var id           : String    = "laser"     # identificador único del arma
-@export var display_name : String    = "Polar Star"     # nombre visible en el HUD
-@export var icon         : Texture2D = null   # icono para el HUD
+@export var id          : String    = ""
+@export var name        : String    = ""
+@export var icon        : Texture2D = null
+@export var max_level   : int       = 3
+@export var exp_to_next : Array[int] = [10, 20, 30]  # exp necesaria por nivel
 
-# ─── Niveles ──────────────────────────────────────────────────────────
-@export var max_level    : int       = 3      # nivel máximo del arma
-@export var exp_to_level : Array     = [10, 30]  # EXP para subir a lvl2 y lvl3
-											   # si max_level=1 dejar vacío
+var current_level : int = 1
+var current_exp   : int = 0
 
-# ─── Estadísticas por nivel ───────────────────────────────────────────
-# cada Array tiene un valor por nivel [lvl1, lvl2, lvl3]
-@export var damage       : Array     = [1, 2, 3]   # daño por disparo
-@export var cooldown     : Array     = [0.3, 0.25, 0.2]  # segundos entre disparos
-@export var recoil       : Array     = [0.0, 0.0, 0.0]   # retroceso horizontal
 
-# ─── Bala ─────────────────────────────────────────────────────────────
-# puede ser una escena diferente por nivel (bala más grande, etc.)
-@export var bullet_scene : Array     = []  # [PackedScene lvl1, lvl2, lvl3]
+func add_exp(amount: int) -> void:
+	if current_level >= max_level:
+		return
+	current_exp += amount
+	while current_level < max_level and current_exp >= exp_to_next[current_level - 1]:
+		current_exp -= exp_to_next[current_level - 1]
+		current_level += 1
 
-# ─── Munición ─────────────────────────────────────────────────────────
-@export var max_ammo     : int       = -1  # -1 = infinita, >0 = limitada
 
-# ─── Sonido ───────────────────────────────────────────────────────────
-@export var sound        : AudioStream = null  # sonido al disparar
+func get_exp_progress() -> float:
+	if current_level >= max_level:
+		return 1.0
+	return float(current_exp) / float(exp_to_next[current_level - 1])

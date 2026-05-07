@@ -1,8 +1,9 @@
 TextureRect
+Panel
 VBoxContainer
+Label
 HBoxContainer
+CanvasLayer
 NinePatchRect
 AudioStreamPlayer
-Label
-Panel
 RichTextLabel

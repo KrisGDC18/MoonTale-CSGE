@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://5l30i3536eca"]
+
+[ext_resource type="Texture2D" uid="uid://dwsdvg2ngdwmr" path="res://data/Sprites/Items/Jetpack_Upgraded.png" id="1_v8wq8"]
+[ext_resource type="Script" uid="uid://bbs8lrrtfkco0" path="res://data/Scripts/Inventory/ItemData.gd" id="2_46nnc"]
+
+[resource]
+script = ExtResource("2_46nnc")
+id = "Jet2"
+name = "Booster 2.0"
+description = "Jetpack Mejorado"
+icon = ExtResource("1_v8wq8")
+type = 1
+max_stack = 1
+metadata/_custom_type_script = "uid://bbs8lrrtfkco0"

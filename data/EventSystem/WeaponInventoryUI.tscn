@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://c8q3ikbn18tbn"]
+
+[ext_resource type="Script" uid="uid://bjld6o5ewjcn1" path="res://data/Scripts/player/weapons/WeaponInventory.gd" id="1_52uwn"]
+
+[node name="WeaponInventoryUi" type="CanvasLayer" unique_id=2066089077]
+script = ExtResource("1_52uwn")
+
+[node name="Panel" type="Panel" parent="." unique_id=2066866693]
+offset_left = 265.0
+offset_top = 98.0
+offset_right = 928.0
+offset_bottom = 524.0
+
+[node name="WeaponList" type="HBoxContainer" parent="Panel" unique_id=1492807648]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 38.0
+offset_right = 624.0
+offset_bottom = 191.0
+
+[node name="ArrowLeft" type="Label" parent="Panel" unique_id=431258267]
+layout_mode = 0
+offset_left = -49.0
+offset_top = 171.0
+offset_right = -9.0
+offset_bottom = 194.0
+
+[node name="ArrowRight" type="Label" parent="Panel" unique_id=974235445]
+layout_mode = 0
+offset_left = -51.0
+offset_top = 150.0
+offset_right = -11.0
+offset_bottom = 173.0
+
+[node name="WeaponName" type="Label" parent="Panel" unique_id=1097255104]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 161.0
+offset_right = 183.0
+offset_bottom = 197.0
+
+[node name="ItemList" type="VBoxContainer" parent="Panel" unique_id=1254453906]
+layout_mode = 0
+offset_left = 46.0
+offset_top = 225.0
+offset_right = 621.0
+offset_bottom = 402.0
+
+[node name="EquipPanel" type="Panel" parent="Panel" unique_id=288555402]
+layout_mode = 0
+offset_left = 47.0
+offset_top = 38.0
+offset_right = 611.0
+offset_bottom = 160.0
+
+[node name="SlotHead" type="TextureRect" parent="Panel/EquipPanel" unique_id=514493856]
+layout_mode = 0
+offset_left = 47.0
+offset_top = 28.0
+offset_right = 87.0
+offset_bottom = 68.0
+
+[node name="SlotBody" type="TextureRect" parent="Panel/EquipPanel" unique_id=1095225536]
+layout_mode = 0
+offset_left = 442.0
+offset_top = 39.0
+offset_right = 482.0
+offset_bottom = 79.0
+
+[node name="SlotAcc" type="TextureRect" parent="Panel/EquipPanel" unique_id=417586466]
+layout_mode = 0
+offset_left = 192.0
+offset_top = 30.0
+offset_right = 232.0
+offset_bottom = 70.0

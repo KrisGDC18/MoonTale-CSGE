@@ -1,9 +1,5 @@
-res://data/EventSystem/DialogBox.tscn
+res://data/EventSystem/WeaponInventoryUI.tscn
 res://data/Tiles/Cave.tres
-res://data/Scripts/DialogueSystem/DialogBox.gd
 res://data/Entities/npc/test/test_kris_dialogue_01.tscn
+res://data/Items/jetpack2.tres
 res://data/Scripts/test_kris_dialogue_01.gd
-res://data/Scripts/playerMovement.gd
-res://data/Entities/Misc/HUD.tscn
-res://data/Entities/player/playerCite.tscn
-res://data/Scripts/camara_resize.gd
