@@ -50,13 +50,13 @@ const IFRAMES_FLASH_RATE  := 0.07
 const BOOSTER1_LIFT_FORCE     := 200.0
 const BOOSTER1_GRAVITY_REDUCED:= 600.0
 const BOOSTER1_MAX_UP_SPEED   := -280.0
-const BOOSTER1_GAS_DRAIN      := 60.0
+const BOOSTER1_GAS_DRAIN      := 180.0
 const BOOSTER_GAS_MAX         := 100.0
 
 # ─── Booster 2.0 ──────────────────────────────────────────────────────
-const BOOSTER2_SPEED_X        := 350.0
-const BOOSTER2_GRAVITY_REDUCED := 880.0
-const BOOSTER2_MAX_UP_SPEED   := -80.0
+const BOOSTER2_SPEED_X        := 450.0 
+const BOOSTER2_GRAVITY_REDUCED := 0.0
+const BOOSTER2_MAX_UP_SPEED   := -310.0
 const BOOSTER2_DOWN_FORCE     := 400.0
 const BOOSTER2_GAS_DRAIN      := 100.0
 
@@ -294,11 +294,14 @@ func _handle_jump() -> void:
 				_booster1_active     = false
 
 				if locked != 0.0:
-					velocity.x =  locked * BOOSTER2_SPEED_X
-					velocity.y = -150.0
+					velocity.x = locked * BOOSTER2_SPEED_X
+					velocity.y = 0.0                    # horizontal: altura congelada
+				elif Input.is_action_pressed("Up"):
+					velocity.x = 0.0
+					velocity.y = BOOSTER2_MAX_UP_SPEED  # disparo vertical fuerte
 				else:
 					velocity.x = 0.0
-					velocity.y = -200.0
+					velocity.y = BOOSTER2_MAX_UP_SPEED   # neutro: impulso vertical
 			else:
 				_booster1_active = true
 				_booster2_active = false
@@ -345,17 +348,26 @@ func _handle_booster2(delta: float) -> void:
 	if not booster2_sfx.playing:
 		booster2_sfx.play()
 
+	# Mantener velocidad horizontal fija en la dirección bloqueada
 	if _booster2_locked_dir != 0.0:
 		velocity.x = _booster2_locked_dir * BOOSTER2_SPEED_X
 
 	if Input.is_action_pressed("Down"):
+		# Cancelar horizontal y caer rápido
 		velocity.x  = 0.0
 		velocity.y += (GRAVITY_DOWN + BOOSTER2_DOWN_FORCE) * delta
 		velocity.y  = min(velocity.y, MAX_FALL_SPEED)
-	elif _booster2_locked_dir != 0.0:
-		velocity.y = -60.0
+	elif Input.is_action_pressed("Up") and _booster2_locked_dir == 0.0:
+		# Impulso vertical sostenido (solo si se activó neutro + Up)
+		velocity.y = BOOSTER2_MAX_UP_SPEED
 	else:
-		velocity.y = -150.0
+		# Cancelar gravedad: mantener Y constante (la que tenía al activarse)
+		# Se aplica una anti-gravedad equivalente a GRAVITY_DOWN para congelar Y
+		velocity.y += GRAVITY_DOWN * delta            # re-aplicamos lo que _apply_gravity NO aplicó
+		velocity.y -= GRAVITY_DOWN * delta            # y lo cancelamos → neto = 0
+		# Forma más clara: simplemente no tocar velocity.y aquí.
+		# La clave es que _apply_gravity() ya retorna si _booster2_active == true (ver arriba).
+		pass
 
 	jetpack_gas -= BOOSTER2_GAS_DRAIN * delta
 	jetpack_gas  = max(jetpack_gas, 0.0)

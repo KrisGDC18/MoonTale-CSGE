@@ -34,6 +34,7 @@ func _on_interact() -> void:
 		},
 		{
 			"speaker" : "Kris",
+			"portrait" : preload("res://data/Sprites/Faces/Kris.png"),
 			"text"    : "¡Listo!"
 		}
 	]

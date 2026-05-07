@@ -3,23 +3,23 @@ extends CanvasLayer
 signal dialog_finished
 signal choice_made(index: int)
 
-@onready var panel : NinePatchRect = $Box
-@onready var portrait  : TextureRect    = $Box/HBoxContainer/Portrait
-@onready var speaker   : Label          = $Box/SpeakerName
-@onready var text_lbl  : RichTextLabel  = $Box/HBoxContainer/VBoxContainer/Text
-@onready var arrow     : Label          = $Box/Arrow
-@onready var choices_bg : TextureRect  = $Box/ChoicesBG
-@onready var choices    : VBoxContainer = $Box/ChoicesBG/Choices
-@onready var beep_sfx : AudioStreamPlayer = $BeepSFX
-@onready var cursor_sfx : AudioStreamPlayer = $CursorSFX
+@onready var panel       : NinePatchRect    = $Box
+@onready var portrait    : TextureRect      = $Box/HBoxContainer/Portrait
+@onready var speaker     : Label            = $Box/SpeakerName
+@onready var text_lbl    : RichTextLabel    = $Box/HBoxContainer/VBoxContainer/Text
+@onready var arrow       : Label            = $Box/Arrow
+@onready var choices     : VBoxContainer    = $Box/ChoicesBG/Choices
+@onready var choices_bg  : TextureRect      = $Box/ChoicesBG
+@onready var beep_sfx    : AudioStreamPlayer = $BeepSFX
+@onready var cursor_sfx  : AudioStreamPlayer = $CursorSFX
 @onready var confirm_sfx : AudioStreamPlayer = $ConfirmSFX
 
-const SKIP_CHARS := [" ", ".", ",", "!", "?", ":", ";", "-", "—", "\"", "'", "(", ")", "\n"]
-const BEEP_EVERY := 2  # suena cada N letras válidas
-var _beep_counter := 0
-const CHOICE_FONT = preload("res://data/Fonts/monogatari.ttf")
+const SKIP_CHARS  := [" ", ".", ",", "!", "?", ":", ";", "-", "—", "\"", "'", "(", ")", "\n"]
+const BEEP_EVERY  := 2
 const CHARS_PER_SEC := 40.0
+const CHOICE_FONT := preload("res://data/Fonts/monogatari.ttf")
 
+var _beep_counter : int   = 0
 var _pages        : Array = []
 var _page_index   : int   = 0
 var _full_text    : String = ""
@@ -35,16 +35,8 @@ func _ready() -> void:
 	panel.hide()
 	choices_bg.hide()
 
-# ── API pública ────────────────────────────────────────────────────────
-# Formato de cada página:
-# {
-#   "text"     : "Hola mundo",
-#   "speaker"  : "Kris",          # opcional
-#   "portrait" : <Texture2D>,      # opcional
-#   "choices"  : ["Sí", "No"],    # opcional
-#   "targets"  : [1, 2],          # índice de página destino por opción
-# }
 
+# ── API pública ────────────────────────────────────────────────────────
 func start(pages: Array) -> void:
 	_pages        = pages
 	_page_index   = 0
@@ -65,6 +57,17 @@ func _show_page(index: int) -> void:
 
 	var page = _pages[index]
 
+	# Posición dinámica
+	if page.has("position"):
+		var viewport_size = get_viewport().get_visible_rect().size
+		match page["position"]:
+			"top":
+				panel.position = Vector2(panel.position.x, viewport_size.y * 0.05)
+			"center":
+				panel.position = Vector2(panel.position.x, viewport_size.y * 0.5 - panel.size.y * 0.5)
+			"bottom":
+				panel.position = Vector2(panel.position.x, viewport_size.y * 0.85)
+
 	# Portrait
 	if page.get("portrait"):
 		portrait.texture = page["portrait"]
@@ -77,12 +80,12 @@ func _show_page(index: int) -> void:
 	speaker.visible = speaker.text != ""
 
 	# Texto
-	_full_text   = page.get("text", "")
-	_chars_shown = 0
-	_timer       = 0.0
-	_typing      = true
-	_waiting     = false
-	_in_choices  = false
+	_full_text    = page.get("text", "")
+	_chars_shown  = 0
+	_timer        = 0.0
+	_typing       = true
+	_waiting      = false
+	_in_choices   = false
 	_beep_counter = 0
 
 	text_lbl.text               = _full_text
@@ -135,8 +138,8 @@ func _tick(delta: float) -> void:
 	text_lbl.visible_characters = _chars_shown
 
 	if _chars_shown >= _full_text.length():
-		_typing  = false
-		_waiting = true
+		_typing       = false
+		_waiting      = true
 		_beep_counter = 0
 		_on_end()
 
@@ -165,7 +168,8 @@ func _advance() -> void:
 
 func _close() -> void:
 	panel.hide()
-	Globals.playerStay = false  #
+	choices_bg.hide()
+	Globals.playerStay = false
 	emit_signal("dialog_finished")
 
 
@@ -175,14 +179,14 @@ func _show_choices(opts: Array) -> void:
 	_in_choices   = true
 	_choice_index = 0
 	choices.show()
-	choices_bg.show() 
-	
+	choices_bg.show()
+
 	for i in opts.size():
-		var lbl       := Label.new()
-		lbl.text       = opts[i]
+		var lbl   := Label.new()
+		lbl.text   = opts[i]
 		lbl.add_theme_color_override("font_color", Color.WHITE)
 		lbl.add_theme_font_override("font", CHOICE_FONT)
-		lbl.add_theme_font_size_override("font_size", 36)
+		lbl.add_theme_font_size_override("font_size", 16)
 		choices.add_child(lbl)
 
 	_refresh_cursor()
@@ -233,4 +237,4 @@ func _refresh_cursor() -> void:
 
 func _clear_choices() -> void:
 	for child in choices.get_children():
-		child.queue_free()
+		child.free()
