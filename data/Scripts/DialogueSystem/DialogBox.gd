@@ -3,12 +3,13 @@ extends CanvasLayer
 signal dialog_finished
 signal choice_made(index: int)
 
-@onready var panel     : Panel          = $Panel
-@onready var portrait  : TextureRect    = $Panel/Portrait
-@onready var speaker   : Label          = $Panel/SpeakerName
-@onready var text_lbl  : RichTextLabel  = $Panel/Text
-@onready var arrow     : Label          = $Panel/Arrow
-@onready var choices   : VBoxContainer  = $Panel/Choices
+@onready var panel : NinePatchRect = $Box
+@onready var portrait  : TextureRect    = $Box/HBoxContainer/Portrait
+@onready var speaker   : Label          = $Box/SpeakerName
+@onready var text_lbl  : RichTextLabel  = $Box/HBoxContainer/VBoxContainer/Text
+@onready var arrow     : Label          = $Box/Arrow
+@onready var choices_bg : TextureRect  = $Box/ChoicesBG
+@onready var choices    : VBoxContainer = $Box/ChoicesBG/Choices
 @onready var beep_sfx : AudioStreamPlayer = $BeepSFX
 @onready var cursor_sfx : AudioStreamPlayer = $CursorSFX
 @onready var confirm_sfx : AudioStreamPlayer = $ConfirmSFX
@@ -16,7 +17,7 @@ signal choice_made(index: int)
 const SKIP_CHARS := [" ", ".", ",", "!", "?", ":", ";", "-", "—", "\"", "'", "(", ")", "\n"]
 const BEEP_EVERY := 2  # suena cada N letras válidas
 var _beep_counter := 0
-
+const CHOICE_FONT = preload("res://data/Fonts/monogatari.ttf")
 const CHARS_PER_SEC := 40.0
 
 var _pages        : Array = []
@@ -32,7 +33,7 @@ var _choice_index : int   = 0
 
 func _ready() -> void:
 	panel.hide()
-
+	choices_bg.hide()
 
 # ── API pública ────────────────────────────────────────────────────────
 # Formato de cada página:
@@ -43,11 +44,16 @@ func _ready() -> void:
 #   "choices"  : ["Sí", "No"],    # opcional
 #   "targets"  : [1, 2],          # índice de página destino por opción
 # }
+
 func start(pages: Array) -> void:
-	_pages      = pages
-	_page_index = 0
+	_pages        = pages
+	_page_index   = 0
+	_in_choices   = false
+	_choice_index = 0
+	_typing       = false
+	_waiting      = false
 	panel.show()
-	Globals.playerStay = true   # ← bloquea al jugador
+	Globals.playerStay = true
 	_show_page(0)
 
 
@@ -83,6 +89,7 @@ func _show_page(index: int) -> void:
 	text_lbl.visible_characters = 0
 	arrow.hide()
 	choices.hide()
+	choices_bg.hide()
 	_clear_choices()
 
 
@@ -168,11 +175,14 @@ func _show_choices(opts: Array) -> void:
 	_in_choices   = true
 	_choice_index = 0
 	choices.show()
-
+	choices_bg.show() 
+	
 	for i in opts.size():
 		var lbl       := Label.new()
 		lbl.text       = opts[i]
 		lbl.add_theme_color_override("font_color", Color.WHITE)
+		lbl.add_theme_font_override("font", CHOICE_FONT)
+		lbl.add_theme_font_size_override("font_size", 36)
 		choices.add_child(lbl)
 
 	_refresh_cursor()
@@ -183,25 +193,35 @@ func _handle_choices() -> void:
 	var opts = page.get("choices", [])
 
 	if Input.is_action_just_pressed("Up"):
-		_choice_index = max(_choice_index - 1, 0)
+		_choice_index = (_choice_index - 1 + opts.size()) % opts.size()
 		_refresh_cursor()
-		cursor_sfx.play()  # ← sonido al mover cursor
+		cursor_sfx.play()
+
 	elif Input.is_action_just_pressed("Down"):
-		_choice_index = min(_choice_index + 1, opts.size() - 1)
+		_choice_index = (_choice_index + 1) % opts.size()
 		_refresh_cursor()
-		cursor_sfx.play()  # ← sonido al mover cursor
+		cursor_sfx.play()
 
 	elif Input.is_action_just_pressed("Accept"):
-		confirm_sfx.play()  # ← sonido al confirmar
+		confirm_sfx.play()
 		var targets = page.get("targets", [])
+		var actions = page.get("actions", [])
 		var next    = targets[_choice_index] if _choice_index < targets.size() \
 					  else _page_index + 1
-		emit_signal("choice_made", _choice_index)
+		var chosen  = _choice_index
+
+		emit_signal("choice_made", chosen)
 		_in_choices = false
 		_clear_choices()
 		choices.hide()
+		choices_bg.hide()
 		_page_index = next
 		_show_page(_page_index)
+
+		if chosen < actions.size():
+			var action = actions[chosen]
+			if action is Callable:
+				action.call()
 
 
 func _refresh_cursor() -> void:

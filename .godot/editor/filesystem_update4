@@ -1,4 +1,3 @@
-res://data/Entities/player/playerCite.tscn
+res://data/EventSystem/DialogBox.tscn
 res://data/Tiles/Cave.tres
 res://data/Scripts/DialogueSystem/DialogBox.gd
-res://data/EventSystem/DialogBox.tscn

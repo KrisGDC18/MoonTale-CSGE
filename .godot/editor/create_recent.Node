@@ -1,5 +1,8 @@
+TextureRect
+VBoxContainer
+HBoxContainer
+NinePatchRect
 AudioStreamPlayer
 Label
 Panel
 RichTextLabel
-TextureRect

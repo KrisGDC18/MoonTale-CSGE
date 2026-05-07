@@ -1,77 +1,113 @@
 [gd_scene format=3 uid="uid://cexb8qced5uet"]
 
 [ext_resource type="Script" uid="uid://ci1hxujl6dyjd" path="res://data/Scripts/DialogueSystem/DialogBox.gd" id="1_yoo1p"]
-[ext_resource type="Texture2D" uid="uid://cuv0x5uqchvip" path="res://data/Sprites/UI/TextBox.png" id="2_hvmpf"]
-[ext_resource type="AudioStream" uid="uid://dhlruiji2rswi" path="res://data/Sounds/SFX/Player/jump.wav" id="3_hvmpf"]
-[ext_resource type="AudioStream" uid="uid://dxw5f4ueq0i3u" path="res://data/Sounds/SFX/sfx_cursor.mp3" id="4_btt7u"]
-[ext_resource type="AudioStream" uid="uid://dlfas5nsodg6a" path="res://data/Sounds/SFX/sfx_cursor_ok.mp3" id="5_03ai2"]
+[ext_resource type="FontFile" uid="uid://dqo6c4v5cqvos" path="res://data/Fonts/monogatari.ttf" id="2_03ai2"]
+[ext_resource type="Texture2D" uid="uid://dnpsui34jucl" path="res://data/Sprites/UI/msgbox.png" id="2_dqkix"]
+[ext_resource type="AudioStream" uid="uid://dgvo0pf15afx3" path="res://data/Sounds/SFX/Player/Beep.wav" id="3_btt7u"]
+[ext_resource type="Texture2D" uid="uid://x8n4h4rjmcy8" path="res://data/Sprites/UI/ChoiceBox.png" id="3_dqkix"]
+[ext_resource type="AudioStream" uid="uid://b4dw3wlhk0nr2" path="res://data/Sounds/SFX/Player/Cursor.wav" id="4_03ai2"]
+[ext_resource type="AudioStream" uid="uid://mvrc01e43j2n" path="res://data/Sounds/SFX/Player/ok.wav" id="5_dqkix"]
 
 [node name="DialogBox" type="CanvasLayer" unique_id=1282337130]
 layer = 10
 script = ExtResource("1_yoo1p")
 
-[node name="Panel" type="Panel" parent="." unique_id=1588402999]
+[node name="Box" type="NinePatchRect" parent="." unique_id=191388762]
 texture_filter = 1
 anchors_preset = -1
-anchor_left = 0.2078125
-anchor_top = 0.7675926
+anchor_left = 0.209
+anchor_top = 0.71900004
 anchor_right = 0.79270834
-anchor_bottom = 0.9574074
+anchor_bottom = 0.95100003
+offset_left = -1.2799988
+offset_top = -53.52002
+offset_right = 1.0
+offset_bottom = -53.08008
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-metadata/_edit_use_anchors_ = true
+size_flags_horizontal = 6
+size_flags_vertical = 10
+texture = ExtResource("2_dqkix")
 
-[node name="Portrait" type="TextureRect" parent="Panel" unique_id=1879875388]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.18300001
-anchor_bottom = 0.9760001
-offset_left = 2.0
-offset_top = 3.0
-offset_right = 0.49098206
-offset_bottom = 1.9199829
-metadata/_edit_use_anchors_ = true
-
-[node name="SpeakerName" type="Label" parent="Panel" unique_id=899322137]
+[node name="ChoicesBG" type="TextureRect" parent="Box" unique_id=1872647275]
 layout_mode = 0
-offset_left = 1.0
-offset_top = -36.0
-offset_right = 147.0
-
-[node name="Text" type="RichTextLabel" parent="Panel" unique_id=1721038307]
-layout_mode = 0
+offset_left = 682.0
+offset_top = -218.0
 offset_right = 1123.0
-offset_bottom = 205.0
+offset_bottom = 8.0
+texture = ExtResource("3_dqkix")
 
-[node name="Arrow" type="Label" parent="Panel" unique_id=51332319]
+[node name="Choices" type="VBoxContainer" parent="Box/ChoicesBG" unique_id=351474473]
 layout_mode = 0
-offset_left = 1076.0
-offset_top = 160.0
-offset_right = 1124.0
-offset_bottom = 203.0
-text = "▼"
+offset_left = 39.0
+offset_top = 33.0
+offset_right = 395.0
+offset_bottom = 196.0
 
-[node name="Choices" type="VBoxContainer" parent="Panel" unique_id=351474473]
-layout_mode = 0
-offset_left = 1123.0
-offset_top = -222.0
-offset_right = 1341.0
-offset_bottom = -133.0
-
-[node name="SelectionBox" type="NinePatchRect" parent="Panel/Choices" unique_id=1672062327]
+[node name="SelectionBox" type="NinePatchRect" parent="Box/ChoicesBG/Choices" unique_id=1672062327]
 layout_mode = 2
-texture = ExtResource("2_hvmpf")
 region_rect = Rect2(150.96107, 48, 85.963486, 31.283249)
 patch_margin_left = 88
 patch_margin_top = 32
 
+[node name="SpeakerName" type="Label" parent="Box" unique_id=899322137]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 0
+offset_right = 483.0
+offset_bottom = 60.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("2_03ai2")
+theme_override_font_sizes/font_size = 42
+autowrap_mode = 2
+
+[node name="Arrow" type="Label" parent="Box" unique_id=51332319]
+layout_mode = 0
+offset_left = 1077.0
+offset_top = 177.0
+offset_right = 1100.0
+offset_bottom = 205.0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "▼"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Box" unique_id=1913505497]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 21.0
+offset_top = 45.0
+offset_right = -23.0
+offset_bottom = -46.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="Portrait" type="TextureRect" parent="Box/HBoxContainer" unique_id=1879875388]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+stretch_mode = 6
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Box/HBoxContainer" unique_id=675862167]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Text" type="RichTextLabel" parent="Box/HBoxContainer/VBoxContainer" unique_id=1721038307]
+texture_filter = 1
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/normal_font = ExtResource("2_03ai2")
+theme_override_font_sizes/normal_font_size = 42
+autowrap_mode = 2
+
 [node name="BeepSFX" type="AudioStreamPlayer" parent="." unique_id=140603759]
-stream = ExtResource("3_hvmpf")
+stream = ExtResource("3_btt7u")
 
 [node name="CursorSFX" type="AudioStreamPlayer" parent="." unique_id=1291512541]
-stream = ExtResource("4_btt7u")
+stream = ExtResource("4_03ai2")
 
 [node name="ConfirmSFX" type="AudioStreamPlayer" parent="." unique_id=1339429831]
-stream = ExtResource("5_03ai2")
+stream = ExtResource("5_dqkix")
