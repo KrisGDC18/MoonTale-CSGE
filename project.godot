@@ -26,15 +26,13 @@ Globals="*res://data/Scripts/globals.gd"
 AssetManager="*res://data/Scripts/asset_manager.gd"
 MusicManager="*uid://co26fyvsg3pjc"
 HealSystem="*uid://clyrac4onqmqh"
+CamaraResize="*uid://dyggt8jkxabv4"
 
 [display]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
+window/size/mode=1
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
-window/stretch/scale=1.75
-window/stretch/scale_mode="integer"
 window/per_pixel_transparency/allowed=true
 window/vsync/vsync_mode=2
 

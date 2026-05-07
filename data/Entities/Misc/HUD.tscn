@@ -35,6 +35,7 @@ script = ExtResource("1_dxeyc")
 
 [node name="Control" type="Control" parent="CanvasLayer" unique_id=1227426363]
 layout_mode = 3
+anchors_preset = 0
 offset_left = 31.0
 offset_top = 2.0
 offset_right = 71.0

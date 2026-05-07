@@ -162,6 +162,7 @@ func _ready():
 	dmg.body_entered.connect(_on_damage_detect_body_entered)
 	camera.anchor_mode                = Camera2D.ANCHOR_MODE_DRAG_CENTER
 	camera.offset                     = Vector2.ZERO
+	camera.position                   = Vector2.ZERO
 	camera.position_smoothing_enabled = false
 
 
