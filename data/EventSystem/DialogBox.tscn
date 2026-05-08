@@ -83,6 +83,7 @@ offset_bottom = -46.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 8
+metadata/_edit_use_anchors_ = true
 
 [node name="Portrait" type="TextureRect" parent="Box/HBoxContainer" unique_id=1879875388]
 custom_minimum_size = Vector2(160, 160)

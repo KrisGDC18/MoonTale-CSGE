@@ -32,7 +32,10 @@ const MAX_FALL_SPEED      := 700.0
 const JUMP_CUT_MULTIPLIER := 0.35
 
 # ─── Coyote Time ──────────────────────────────────────────────────────
-const COYOTE_TIME         := 0.083
+const COYOTE_TIME         := 0.088
+
+# ─── Escalado automático de bordes (step-up) ──────────────────────────
+const STEP_UP_HEIGHT := 6.0  # píxeles máximos que intenta subir
 
 # ─── Jump Buffer ──────────────────────────────────────────────────────
 const JUMP_BUFFER_TIME    := 0.05
@@ -84,6 +87,9 @@ const CAM_OVERRIDE_LERP   := 5.0
 @onready var death_drown_sfx : AudioStreamPlayer = $death_drown_sfx
 @onready var booster_sfx     : AudioStreamPlayer = $booster_sfx
 @onready var booster2_sfx    : AudioStreamPlayer = $booster2_sfx
+#@onready var spur : Node2D = $Spur
+@onready var weapon_manager = $WeaponManager
+
 
 # ─── Variables de booster ─────────────────────────────────────────────
 var jetpack_equipped    : bool  = true
@@ -128,6 +134,7 @@ var playerJump          := false
 var _is_jumping         := false
 var _coyote_timer       := 0.0
 var _jump_buffer_timer  := 0.0
+var _prev_position : Vector2 = Vector2.ZERO
 
 # ─── Variables de agua ────────────────────────────────────────────────
 var airSupply           : float = AIR_MAX
@@ -164,7 +171,8 @@ func _ready():
 	camera.offset                     = Vector2.ZERO
 	camera.position                   = Vector2.ZERO
 	camera.position_smoothing_enabled = false
-
+	weapon_manager.init(self)
+	
 
 # ═══════════════════════════════════════════════════════════════════════
 func _physics_process(delta):
@@ -219,7 +227,9 @@ func _physics_process(delta):
 		_handle_horizontal(delta)
 
 	_update_air_supply(delta)
+	_prev_position = global_position
 	move_and_slide()
+
 
 	if is_on_floor() and jetpack_equipped:
 		jetpack_gas          = BOOSTER_GAS_MAX
@@ -229,6 +239,9 @@ func _physics_process(delta):
 	handle_animation(anim)
 	_handle_sounds(delta)
 	_update_iframes(delta)
+	
+
+	
 	_update_camera(delta)
 
 	if _jump_grace_frame:
@@ -282,6 +295,7 @@ func _handle_jump() -> void:
 		_jump_grace_frame    = true
 		jump_sfx.play()
 		return
+
 
 	if not is_on_floor() and jetpack_equipped \
 			and jetpack_gas > 0.0 and not _jump_grace_frame:
@@ -359,17 +373,28 @@ func _handle_booster2(delta: float) -> void:
 		velocity.y += (GRAVITY_DOWN + BOOSTER2_DOWN_FORCE) * delta
 		velocity.y  = min(velocity.y, MAX_FALL_SPEED)
 	elif Input.is_action_pressed("Up") and _booster2_locked_dir == 0.0:
-		# Impulso vertical sostenido (solo si se activó neutro + Up)
 		velocity.y = BOOSTER2_MAX_UP_SPEED
+	# Movimiento lateral reducido
+		var input_dir := Input.get_axis("Left", "Right")
+		velocity.x = move_toward(velocity.x, input_dir * (MAX_SPEED * 0.4), AIR_ACCR * delta)
+	# Caso neutro también permite movimiento lateral reducido
 	else:
 		# Cancelar gravedad: mantener Y constante (la que tenía al activarse)
 		# Se aplica una anti-gravedad equivalente a GRAVITY_DOWN para congelar Y
+		var input_dir := Input.get_axis("Left", "Right")
+		velocity.x = move_toward(velocity.x, input_dir * (MAX_SPEED * 0.4), AIR_ACCR * delta)
 		velocity.y += GRAVITY_DOWN * delta            # re-aplicamos lo que _apply_gravity NO aplicó
 		velocity.y -= GRAVITY_DOWN * delta            # y lo cancelamos → neto = 0
+		
 		# Forma más clara: simplemente no tocar velocity.y aquí.
 		# La clave es que _apply_gravity() ya retorna si _booster2_active == true (ver arriba).
 		pass
-
+	# Al final de _handle_booster2(), antes de drenar el gas
+	if _booster2_locked_dir != 0.0:
+		if abs(global_position.x - _prev_position.x) < 0.5:
+			velocity.y = move_toward(velocity.y, -80.0, 300.0 * delta)
+			
+			
 	jetpack_gas -= BOOSTER2_GAS_DRAIN * delta
 	jetpack_gas  = max(jetpack_gas, 0.0)
 

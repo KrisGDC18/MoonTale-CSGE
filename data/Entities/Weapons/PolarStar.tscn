@@ -1,0 +1,89 @@
+[gd_scene format=3 uid="uid://bk31ogs2o2jkm"]
+
+[ext_resource type="Script" uid="uid://cqbpvfryn2357" path="res://data/Entities/Weapons/PolarStar.gd" id="1_jx315"]
+[ext_resource type="PackedScene" uid="uid://dv12negrr0pm2" path="res://data/Entities/Bullets/Bullet.tscn" id="2_3gmqr"]
+[ext_resource type="Texture2D" uid="uid://d1ycqukwujxlc" path="res://data/Sprites/Weapons/Arms.png" id="3_vhtee"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kywkw"]
+atlas = ExtResource("3_vhtee")
+region = Rect2(98, 0, 49, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3gmqr"]
+atlas = ExtResource("3_vhtee")
+region = Rect2(98, 132, 49, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vhtee"]
+atlas = ExtResource("3_vhtee")
+region = Rect2(98, 99, 49, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sl218"]
+atlas = ExtResource("3_vhtee")
+region = Rect2(98, 33, 49, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dxwk0"]
+atlas = ExtResource("3_vhtee")
+region = Rect2(98, 132, 49, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_40nku"]
+atlas = ExtResource("3_vhtee")
+region = Rect2(98, 66, 49, 33)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vq2nj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kywkw")
+}],
+"loop": true,
+"name": &"idle_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3gmqr")
+}],
+"loop": true,
+"name": &"idle_left_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vhtee")
+}],
+"loop": true,
+"name": &"idle_left_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sl218")
+}],
+"loop": true,
+"name": &"idle_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dxwk0")
+}],
+"loop": true,
+"name": &"idle_right_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_40nku")
+}],
+"loop": true,
+"name": &"idle_right_up",
+"speed": 5.0
+}]
+
+[node name="PolarStar" type="Node2D" unique_id=1630933231]
+script = ExtResource("1_jx315")
+weapon_name = "Polar Star"
+bullet_scene = ExtResource("2_3gmqr")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=254855722]
+sprite_frames = SubResource("SpriteFrames_vq2nj")
+animation = &"idle_right_up"

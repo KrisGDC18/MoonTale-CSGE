@@ -1,5 +1,7 @@
-res://data/EventSystem/WeaponInventoryUI.tscn
+res://data/EventSystem/DialogBox.tscn
 res://data/Tiles/Cave.tres
-res://data/Entities/npc/test/test_kris_dialogue_01.tscn
-res://data/Items/jetpack2.tres
-res://data/Scripts/test_kris_dialogue_01.gd
+res://data/Entities/player/playerCite.tscn
+res://data/Scripts/playerMovement.gd
+res://data/Scripts/player/weapons/Weapon.gd
+res://data/Entities/Weapons/PolarStar.gd
+res://data/Entities/Weapons/spur.gd

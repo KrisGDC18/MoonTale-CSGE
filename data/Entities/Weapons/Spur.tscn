@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://5mon82cad5le"]
+
+[ext_resource type="Script" uid="uid://bnelv4lqtr1cv" path="res://data/Entities/Weapons/spur.gd" id="1_ghwgt"]
+[ext_resource type="Texture2D" uid="uid://d1ycqukwujxlc" path="res://data/Sprites/Weapons/Arms.png" id="1_yf8mu"]
+[ext_resource type="PackedScene" uid="uid://dv12negrr0pm2" path="res://data/Entities/Bullets/Bullet.tscn" id="2_ba84c"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ghwgt"]
+atlas = ExtResource("1_yf8mu")
+region = Rect2(0, 208, 43, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yly54"]
+atlas = ExtResource("1_yf8mu")
+region = Rect2(0, 330, 45, 22)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_24ydd"]
+atlas = ExtResource("1_yf8mu")
+region = Rect2(0, 286, 45, 22)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hlnyv"]
+atlas = ExtResource("1_yf8mu")
+region = Rect2(0, 240, 43, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fav5b"]
+atlas = ExtResource("1_yf8mu")
+region = Rect2(0, 334, 45, 22)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bujgu"]
+atlas = ExtResource("1_yf8mu")
+region = Rect2(0, 258, 45, 21)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vq2nj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ghwgt")
+}],
+"loop": true,
+"name": &"idle_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yly54")
+}],
+"loop": true,
+"name": &"idle_left_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_24ydd")
+}],
+"loop": true,
+"name": &"idle_left_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hlnyv")
+}],
+"loop": true,
+"name": &"idle_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fav5b")
+}],
+"loop": true,
+"name": &"idle_right_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bujgu")
+}],
+"loop": true,
+"name": &"idle_right_up",
+"speed": 5.0
+}]
+
+[node name="Splur" type="Node2D" unique_id=1630933231]
+script = ExtResource("1_ghwgt")
+bullet_scene = ExtResource("2_ba84c")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=254855722]
+sprite_frames = SubResource("SpriteFrames_vq2nj")
+animation = &"idle_left"

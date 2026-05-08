@@ -4,7 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://bem4ugaunkteb" path="res://data/Sprites/Players/MyChar.png" id="1_vtqvh"]
 [ext_resource type="PackedScene" uid="uid://c0kfcchm0g70e" path="res://data/Entities/Misc/question_mark.tscn" id="2_wb1qb"]
 [ext_resource type="Shader" uid="uid://b4qccg3b8b71j" path="res://data/Entities/player/Shaders/playerCite.gdshader" id="3_elhn1"]
+[ext_resource type="PackedScene" uid="uid://5mon82cad5le" path="res://data/Entities/Weapons/Spur.tscn" id="4_5o1rp"]
+[ext_resource type="Script" uid="uid://btos1thx1apeb" path="res://data/Scripts/player/weapons/WeaponManager.gd" id="4_brn1j"]
 [ext_resource type="AudioStream" uid="uid://dhlruiji2rswi" path="res://data/Sounds/SFX/Player/jump.wav" id="6_6d21t"]
+[ext_resource type="PackedScene" uid="uid://bk31ogs2o2jkm" path="res://data/Entities/Weapons/PolarStar.tscn" id="6_qpy3o"]
 [ext_resource type="AudioStream" uid="uid://b4cgk7e6n0uhu" path="res://data/Sounds/SFX/Player/land.wav" id="7_dnrcq"]
 [ext_resource type="AudioStream" uid="uid://bqhdgwvcky0jw" path="res://data/Sounds/SFX/Player/headbonk.wav" id="7_n6brj"]
 [ext_resource type="AudioStream" uid="uid://xnamdeki48on" path="res://data/Sounds/SFX/Player/step.wav" id="8_fb0eh"]
@@ -415,18 +418,29 @@ qMark = ExtResource("2_wb1qb")
 dmg = NodePath("DamageDetect")
 damage_material = SubResource("ShaderMaterial_jm4nm")
 
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1016720795]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_x1tpm")
+animation = &"Check"
+
+[node name="WeaponManager" type="Node2D" parent="." unique_id=1572819859]
+z_index = -1
+script = ExtResource("4_brn1j")
+weapon_scenes = Array[PackedScene]([ExtResource("6_qpy3o"), ExtResource("4_5o1rp")])
+
+[node name="PolarStar" parent="WeaponManager" unique_id=1630933231 instance=ExtResource("6_qpy3o")]
+visible = false
+
+[node name="Spur" parent="WeaponManager" unique_id=1284685379 instance=ExtResource("4_5o1rp")]
+visible = false
+weapon_name = "Spur"
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1454706974]
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 
 [node name="Hud" parent="Camera2D" unique_id=776642068 instance=ExtResource("13_brn1j")]
 position = Vector2(-961, -540)
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1016720795]
-z_index = -1
-texture_filter = 1
-sprite_frames = SubResource("SpriteFrames_x1tpm")
-animation = &"Check"
 
 [node name="Bottom" type="CollisionShape2D" parent="." unique_id=1582475767]
 visible = false
