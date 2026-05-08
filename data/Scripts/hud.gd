@@ -5,26 +5,26 @@ extends CanvasLayer
 @onready var hp_label          : Label              = $Control/hp_label
 @onready var air_bar           : ProgressBar        = $Control/air_bar
 @onready var air_label         : Label              = $Control/air_label
-@onready var jet_bar           : ProgressBar        = $Control/jet_bar    # NUEVO: barra de jetpack
-@onready var jet_label         : Label              = $Control/jet_label  # NUEVO: etiqueta de jetpack
-@onready var hud_bg            : TextureRect        = $Control/hud_bg     # fondo normal
-@onready var hud_bg2           : TextureRect        = $Control/hud_bg2    # NUEVO: fondo alternativo con jetpack
+@onready var jet_bar           : ProgressBar        = $Control/jet_bar
+@onready var jet_label         : Label              = $Control/jet_label
+@onready var hud_bg            : TextureRect        = $Control/hud_bg
+@onready var hud_bg2           : TextureRect        = $Control/hud_bg2
 @onready var ammo_total_label  : Label              = $Control/ammo_total_label
 @onready var ammo_rest_label   : Label              = $Control/ammo_rest_label
 @onready var xp_label          : Label              = $Control/xp_label
+@onready var weapon_icon       : TextureRect        = $Control/weapon_icon
+
 var _air_visible     := false
 var _jet_visible     := false
-var _player          : CharacterBody2D = null  # referencia cacheada al jugador
+var _player          : CharacterBody2D = null
 
 
 func _ready():
-	# escuchar cuando el árbol de escena cambia para re-obtener al jugador
-	# esto resuelve el problema de que el HUD pierda la referencia al cambiar de escena
+	# Escuchar cuando el árbol de escena cambia para re-obtener al jugador
 	get_tree().node_added.connect(_on_node_added)
 	_find_player()
-	
+
 	# ── Configurar fuente pixel art ────────────────────────────────────
-	# descomenta estas líneas si tienes una fuente personalizada
 	var font = load("res://data/Fonts/monogatari.ttf")
 	xp_label.add_theme_font_override("font", font)
 	xp_label.add_theme_font_size_override("font_size", 36)
@@ -39,19 +39,19 @@ func _ready():
 	jet_label.add_theme_font_override("font", font)
 	jet_label.add_theme_font_size_override("font_size", 36)
 
+	# ── Conectar al WeaponManager ─────────────────────────────────────
+	# Se hace con call_deferred para dar un frame al jugador a que esté listo
+	call_deferred("_connect_weapon_manager")
 
 
 func _on_node_added(node: Node) -> void:
-	# cada vez que se añade un nodo al árbol verificar si es el jugador
-	# node_added dispara para CADA nodo añadido, por eso filtramos por grupo
 	if node.is_in_group("player"):
 		_find_player()
+		# Reconectar WeaponManager si el jugador se recargó (cambio de escena)
+		call_deferred("_connect_weapon_manager")
 
 
 func _find_player() -> void:
-	# buscar al jugador en el árbol completo
-	# call_deferred da un frame de margen para que el jugador termine su _ready()
-	# y tenga todas sus variables inicializadas antes de que el HUD las lea
 	call_deferred("_init_with_player")
 
 
@@ -63,42 +63,74 @@ func _init_with_player() -> void:
 		return
 
 	# ── Configurar barra de vida ───────────────────────────────────────
-	hp_bar.max_value     = _player.PLAYER_MAX_LIFE
-	hp_bar.value         = _player.currentLife
-	#hp_bar.tint_progress = Color(0.85, 0.1, 0.1)
-	#hp_bar.tint_under    = Color(0.2,  0.2, 0.2)
+	hp_bar.max_value = _player.PLAYER_MAX_LIFE
+	hp_bar.value     = _player.currentLife
 
 	# ── Configurar barra de aire ───────────────────────────────────────
-	air_bar.max_value     = _player.AIR_MAX
-	air_bar.value         = _player.airSupply
-	#air_bar.tint_progress = Color(0.2, 0.5, 0.9)
-	#air_bar.tint_under    = Color(0.2, 0.2, 0.2)
+	air_bar.max_value = _player.AIR_MAX
+	air_bar.value     = _player.airSupply
 
 	# ── Configurar barra de jetpack ───────────────────────────────────
-	# jetpack_gas es el combustible actual
-	# jetpack_equipped es la flag que controla visibilidad
-	# si el jugador no tiene esas variables aún, get() devuelve null sin error
 	var jet_max = _player.get("jetpack_gas_max")
 	if jet_max != null:
 		jet_bar.max_value = jet_max
 	else:
-		jet_bar.max_value = 100.0  # fallback si no existe jetpack_gas_max
-
-	#jet_bar.tint_progress = Color(0.9, 0.7, 0.1)  # amarillo/naranja
-	#jet_bar.tint_under    = Color(0.2, 0.2, 0.2)
+		jet_bar.max_value = 100.0
 
 	# ── Ocultar barras opcionales al inicio ───────────────────────────
-	air_bar.visible = false
+	air_bar.visible   = false
 	air_label.visible = false
-	jet_bar.visible = false
+	jet_bar.visible   = false
 	jet_label.visible = false
 
-	# forzar actualización visual inmediata para evitar flash de valores viejos
+	# Forzar actualización visual inmediata
 	_update_hp()
 	_update_air()
 	_update_jetpack()
 	_update_backgrounds()
 
+
+# ─── Conexión con WeaponManager ───────────────────────────────────────
+
+func _connect_weapon_manager() -> void:
+	var player = get_tree().get_first_node_in_group("player")
+	if player == null:
+		push_error("HUD: no se encontró el jugador al conectar WeaponManager")
+		return
+
+	# Ajusta "WeaponManager" si el nodo tiene otro nombre en tu escena
+	var wm : Node = player.get_node_or_null("WeaponManager")
+	if wm == null:
+		push_error("HUD: no se encontró WeaponManager como hijo del jugador")
+		return
+
+	# Evitar conectar la señal más de una vez (por cambios de escena)
+	if not wm.weapon_changed.is_connected(_on_weapon_changed):
+		wm.weapon_changed.connect(_on_weapon_changed)
+
+	# Mostrar el icono del arma que ya está equipada al iniciar
+	_on_weapon_changed(wm.get_current_weapon())
+
+
+func _on_weapon_changed(weapon: Node2D) -> void:
+	if weapon == null:
+		weapon_icon.texture = load("res://data/Sprites/Weapons/None.png")
+		weapon_icon.visible = false
+		return
+
+	# Usar get() para no crashear si algún arma no tiene la variable icon
+	var tex : Texture2D = weapon.get("icon")
+	if tex != null:
+		weapon_icon.texture = tex
+		weapon_icon.visible = true
+		print("HUD: icono cargado -> ", weapon.name)
+	else:
+		weapon_icon.texture = load("res://data/Sprites/Weapons/None.png")
+		weapon_icon.visible = false
+		print("HUD: arma sin icono -> ", weapon.name)
+
+
+# ─── Proceso ──────────────────────────────────────────────────────────
 
 func _process(_delta):
 	if _player == null:
@@ -114,11 +146,6 @@ func _update_hp() -> void:
 	hp_bar.value  = _player.currentLife
 	hp_label.text = str(_player.currentLife)
 
-	#if _player.currentLife <= 3:
-		#hp_bar.tint_progress = Color(1.0, 0.3, 0.3)  # rojo alerta
-	#else:
-		#hp_bar.tint_progress = Color(0.85, 0.1, 0.1) # rojo normal
-
 
 func _update_air() -> void:
 	if _player.wamder != _air_visible:
@@ -132,18 +159,11 @@ func _update_air() -> void:
 	air_bar.value  = _player.airSupply
 	air_label.text = "Air:  " + str(int(_player.airSupply))
 
-	#if _player.airSupply <= 20:
-		#air_bar.tint_progress = Color(1.0, 0.2, 0.2)
-	#else:
-		#air_bar.tint_progress = Color(0.2, 0.5, 0.9)
-
 
 func _update_jetpack() -> void:
-	# leer las variables del jugador con get() para no crashear si no existen
 	var equipped : bool  = _player.get("jetpack_equipped") if _player.get("jetpack_equipped") != null else false
 	var gas      : float = _player.get("jetpack_gas")      if _player.get("jetpack_gas")      != null else 0.0
 
-	# mostrar u ocultar según la flag jetpack_equipped
 	if equipped != _jet_visible:
 		_jet_visible      = equipped
 		jet_bar.visible   = _jet_visible
@@ -155,17 +175,8 @@ func _update_jetpack() -> void:
 	jet_bar.value  = gas
 	jet_label.text = str(int(gas))
 
-	# color de alerta cuando el combustible es bajo
-	#if gas <= jet_bar.max_value * 0.2:
-		#jet_bar.tint_progress = Color(1.0, 0.3, 0.1)  # naranja alerta
-	#else:
-		#jet_bar.tint_progress = Color(0.9, 0.7, 0.1)  # amarillo normal
-
 
 func _update_backgrounds() -> void:
-	# NUEVO: cambiar el fondo del HUD según si el jetpack está equipado
-	# hud_bg  → fondo normal (sin jetpack)
-	# hud_bg2 → fondo alternativo (con jetpack, tiene espacio para la barra extra)
 	var equipped : bool = _player.get("jetpack_equipped") if _player.get("jetpack_equipped") != null else false
 	hud_bg.visible  = not equipped
 	hud_bg2.visible = equipped

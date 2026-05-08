@@ -99,6 +99,7 @@ var jetpack_gas_max     : float = BOOSTER_GAS_MAX
 var _booster1_active    : bool  = false
 var _booster2_active    : bool  = false
 var _booster2_locked_dir : float = 0.0
+var _booster2_locked_vert : float = 0.0 
 var _jump_grace_frame   : bool  = false
 
 # ─── Variables de animación ───────────────────────────────────────────
@@ -191,6 +192,7 @@ func _physics_process(delta):
 			_booster1_active     = false
 			_booster2_active     = false
 			_booster2_locked_dir = 0.0
+			_booster2_locked_vert = 0.0 
 			_jump_grace_frame    = false
 			_is_falling          = false
 			_air_time            = 0.0
@@ -234,6 +236,7 @@ func _physics_process(delta):
 	if is_on_floor() and jetpack_equipped:
 		jetpack_gas          = BOOSTER_GAS_MAX
 		_booster2_locked_dir = 0.0
+		_booster2_locked_vert = 0.0 
 
 	_handle_check_action()
 	handle_animation(anim)
@@ -275,6 +278,7 @@ func _handle_jump() -> void:
 		_booster1_active     = false
 		_booster2_active     = false
 		_booster2_locked_dir = 0.0
+		_booster2_locked_vert = 0.0 
 		_jump_grace_frame    = false
 	if Globals.playerStay:  
 		return
@@ -292,6 +296,7 @@ func _handle_jump() -> void:
 		_booster1_active     = false
 		_booster2_active     = false
 		_booster2_locked_dir = 0.0
+		_booster2_locked_vert = 0.0 
 		_jump_grace_frame    = true
 		jump_sfx.play()
 		return
@@ -309,14 +314,17 @@ func _handle_jump() -> void:
 				_booster1_active     = false
 
 				if locked != 0.0:
+					_booster2_locked_vert = 0.0             # dash horizontal, Y congelada
 					velocity.x = locked * BOOSTER2_SPEED_X
-					velocity.y = 0.0                    # horizontal: altura congelada
-				elif Input.is_action_pressed("Up"):
+					velocity.y = 0.0
+				elif Input.is_action_pressed("Down"):
+					_booster2_locked_vert = 1.0             # disparo hacia abajo
 					velocity.x = 0.0
-					velocity.y = BOOSTER2_MAX_UP_SPEED  # disparo vertical fuerte
-				else:
+					velocity.y = 0.0
+				else:                                       # Up presionado o neutro → arriba
+					_booster2_locked_vert = -1.0
 					velocity.x = 0.0
-					velocity.y = BOOSTER2_MAX_UP_SPEED   # neutro: impulso vertical
+					velocity.y = BOOSTER2_MAX_UP_SPEED
 			else:
 				_booster1_active = true
 				_booster2_active = false
@@ -326,6 +334,7 @@ func _handle_jump() -> void:
 			_booster1_active     = false
 			_booster2_active     = false
 			_booster2_locked_dir = 0.0
+			_booster2_locked_vert = 0.0 
 
 	if Input.is_action_just_released("Jump") and velocity.y < 0 \
 			and _is_jumping and not _booster1_active and not _booster2_active:
@@ -367,40 +376,35 @@ func _handle_booster2(delta: float) -> void:
 	if _booster2_locked_dir != 0.0:
 		velocity.x = _booster2_locked_dir * BOOSTER2_SPEED_X
 
-	if Input.is_action_pressed("Down"):
-		# Cancelar horizontal y caer rápido
+	if _booster2_locked_vert == 1.0:
+		# Disparo hacia abajo bloqueado al activarse
 		velocity.x  = 0.0
 		velocity.y += (GRAVITY_DOWN + BOOSTER2_DOWN_FORCE) * delta
 		velocity.y  = min(velocity.y, MAX_FALL_SPEED)
-	elif Input.is_action_pressed("Up") and _booster2_locked_dir == 0.0:
+
+	elif _booster2_locked_vert == -1.0 and _booster2_locked_dir == 0.0:
+		# Disparo hacia arriba bloqueado al activarse
 		velocity.y = BOOSTER2_MAX_UP_SPEED
-	# Movimiento lateral reducido
 		var input_dir := Input.get_axis("Left", "Right")
 		velocity.x = move_toward(velocity.x, input_dir * (MAX_SPEED * 0.4), AIR_ACCR * delta)
-	# Caso neutro también permite movimiento lateral reducido
+
 	else:
-		# Cancelar gravedad: mantener Y constante (la que tenía al activarse)
-		# Se aplica una anti-gravedad equivalente a GRAVITY_DOWN para congelar Y
+		# Dash horizontal: control lateral reducido, Y congelada
 		var input_dir := Input.get_axis("Left", "Right")
 		velocity.x = move_toward(velocity.x, input_dir * (MAX_SPEED * 0.4), AIR_ACCR * delta)
-		velocity.y += GRAVITY_DOWN * delta            # re-aplicamos lo que _apply_gravity NO aplicó
-		velocity.y -= GRAVITY_DOWN * delta            # y lo cancelamos → neto = 0
-		
-		# Forma más clara: simplemente no tocar velocity.y aquí.
-		# La clave es que _apply_gravity() ya retorna si _booster2_active == true (ver arriba).
-		pass
-	# Al final de _handle_booster2(), antes de drenar el gas
+
+	# Si el dash horizontal choca con una pared, empujar suavemente hacia arriba
 	if _booster2_locked_dir != 0.0:
 		if abs(global_position.x - _prev_position.x) < 0.5:
 			velocity.y = move_toward(velocity.y, -80.0, 300.0 * delta)
-			
-			
+
 	jetpack_gas -= BOOSTER2_GAS_DRAIN * delta
 	jetpack_gas  = max(jetpack_gas, 0.0)
 
 	if jetpack_gas <= 0.0:
 		_booster2_active     = false
-		_booster2_locked_dir = 0.0
+		_booster2_locked_dir  = 0.0
+		_booster2_locked_vert = 0.0
 		_is_falling          = true
 		booster2_sfx.stop()
 
@@ -509,6 +513,7 @@ func _die(is_drowning: bool = false) -> void:
 	_booster1_active     = false
 	_booster2_active     = false
 	_booster2_locked_dir = 0.0
+	_booster2_locked_vert = 0.0 
 	_jump_grace_frame    = false
 	_death_phase         = 0
 	_death_flash_timer   = 0.0

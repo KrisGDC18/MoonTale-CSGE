@@ -103,7 +103,7 @@ func _ready() -> void:
 	notifier.screen_exited.connect(_on_screen_exited)
 	body_entered.connect(_on_body_entered)
 	collision_layer = 0
-	collision_mask = 0b10001  # layer 1 (escenario) y layer 5 (enemigos)
+	collision_mask = 0b10001  # layer 1 (escenario) y layer 5 (enemigos)a
 
 
 func _on_screen_exited() -> void:

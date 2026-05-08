@@ -3,36 +3,44 @@
 [ext_resource type="Script" uid="uid://bnelv4lqtr1cv" path="res://data/Entities/Weapons/spur.gd" id="1_ghwgt"]
 [ext_resource type="Texture2D" uid="uid://d1ycqukwujxlc" path="res://data/Sprites/Weapons/Arms.png" id="1_yf8mu"]
 [ext_resource type="PackedScene" uid="uid://dv12negrr0pm2" path="res://data/Entities/Bullets/Bullet.tscn" id="2_ba84c"]
+[ext_resource type="Texture2D" uid="uid://c3g4cmoodtiem" path="res://data/Sprites/Weapons/Super_Laser.png" id="4_mvwjk"]
+[ext_resource type="AudioStream" uid="uid://cnxhhbjlh0sqo" path="res://data/Sounds/SFX/Weapons/ID31_snd_polar_star_l3.wav" id="5_s3ti7"]
+[ext_resource type="AudioStream" uid="uid://b5ouenx8a3rd1" path="res://data/Sounds/SFX/Weapons/ID3c_snd_spur_charge1.wav" id="6_hvbqu"]
+[ext_resource type="AudioStream" uid="uid://e43sn3hnlije" path="res://data/Sounds/SFX/Weapons/ID3e_snd_spur_fire_l2.wav" id="6_je88v"]
+[ext_resource type="AudioStream" uid="uid://dctnoaq1pnywg" path="res://data/Sounds/SFX/Weapons/ID3d_snd_spur_charge2.wav" id="7_1nhux"]
+[ext_resource type="AudioStream" uid="uid://dkbbt2pum2xwm" path="res://data/Sounds/SFX/Weapons/ID3f_snd_spur_fire_l3.wav" id="7_805a6"]
+[ext_resource type="AudioStream" uid="uid://bbddss5kijxp0" path="res://data/Sounds/SFX/Weapons/ID41_snd_spur_charged.wav" id="8_1nhux"]
+[ext_resource type="AudioStream" uid="uid://bjx08xhdfmuc4" path="res://data/Sounds/SFX/Weapons/ID40_snd_spur_fire_max.wav" id="8_4b0aq"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ghwgt"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_s3ti7"]
 atlas = ExtResource("1_yf8mu")
-region = Rect2(0, 208, 43, 16)
+region = Rect2(0, 192, 48, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yly54"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_je88v"]
 atlas = ExtResource("1_yf8mu")
-region = Rect2(0, 330, 45, 22)
+region = Rect2(0, 320, 48, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_24ydd"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_805a6"]
 atlas = ExtResource("1_yf8mu")
-region = Rect2(0, 286, 45, 22)
+region = Rect2(0, 288, 48, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_hlnyv"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_4b0aq"]
 atlas = ExtResource("1_yf8mu")
-region = Rect2(0, 240, 43, 16)
+region = Rect2(0, 224, 48, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fav5b"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_7q1oy"]
 atlas = ExtResource("1_yf8mu")
-region = Rect2(0, 334, 45, 22)
+region = Rect2(0, 320, 48, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_bujgu"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_m4i5w"]
 atlas = ExtResource("1_yf8mu")
-region = Rect2(0, 258, 45, 21)
+region = Rect2(0, 256, 48, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_vq2nj"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ghwgt")
+"texture": SubResource("AtlasTexture_s3ti7")
 }],
 "loop": true,
 "name": &"idle_left",
@@ -40,7 +48,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_yly54")
+"texture": SubResource("AtlasTexture_je88v")
 }],
 "loop": true,
 "name": &"idle_left_down",
@@ -48,7 +56,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_24ydd")
+"texture": SubResource("AtlasTexture_805a6")
 }],
 "loop": true,
 "name": &"idle_left_up",
@@ -56,7 +64,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_hlnyv")
+"texture": SubResource("AtlasTexture_4b0aq")
 }],
 "loop": true,
 "name": &"idle_right",
@@ -64,7 +72,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fav5b")
+"texture": SubResource("AtlasTexture_7q1oy")
 }],
 "loop": true,
 "name": &"idle_right_down",
@@ -72,7 +80,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_bujgu")
+"texture": SubResource("AtlasTexture_m4i5w")
 }],
 "loop": true,
 "name": &"idle_right_up",
@@ -82,7 +90,34 @@ animations = [{
 [node name="Splur" type="Node2D" unique_id=1630933231]
 script = ExtResource("1_ghwgt")
 bullet_scene = ExtResource("2_ba84c")
+icon = ExtResource("4_mvwjk")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=254855722]
 sprite_frames = SubResource("SpriteFrames_vq2nj")
-animation = &"idle_left"
+animation = &"idle_right_up"
+
+[node name="BulletOrigin" type="Marker2D" parent="." unique_id=2073048233]
+
+[node name="ShootAudio0" type="AudioStreamPlayer2D" parent="." unique_id=805227647]
+stream = ExtResource("5_s3ti7")
+
+[node name="ShootAudio1" type="AudioStreamPlayer2D" parent="." unique_id=1708987669]
+stream = ExtResource("6_je88v")
+
+[node name="ShootAudio2" type="AudioStreamPlayer2D" parent="." unique_id=266316029]
+stream = ExtResource("7_805a6")
+
+[node name="ShootAudio3" type="AudioStreamPlayer2D" parent="." unique_id=1734153158]
+stream = ExtResource("8_4b0aq")
+
+[node name="ChargeAudio1" type="AudioStreamPlayer2D" parent="." unique_id=1842533313]
+stream = ExtResource("6_hvbqu")
+volume_db = 24.0
+
+[node name="ChargeAudio2" type="AudioStreamPlayer2D" parent="." unique_id=1792723085]
+stream = ExtResource("7_1nhux")
+volume_db = 24.0
+
+[node name="MaxChargeAudio" type="AudioStreamPlayer2D" parent="." unique_id=2094442737]
+stream = ExtResource("8_1nhux")
+volume_db = 24.0

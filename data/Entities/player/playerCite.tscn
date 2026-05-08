@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://sniu0w5cff26"]
 
-[ext_resource type="Script" uid="uid://bsvyo23xutyy7" path="res://data/Scripts/playerMovement.gd" id="1_kspwo"]
+[ext_resource type="Script" uid="uid://bsvyo23xutyy7" path="res://data/Scripts/player/playerMovement.gd" id="1_kspwo"]
 [ext_resource type="Texture2D" uid="uid://bem4ugaunkteb" path="res://data/Sprites/Players/MyChar.png" id="1_vtqvh"]
 [ext_resource type="PackedScene" uid="uid://c0kfcchm0g70e" path="res://data/Entities/Misc/question_mark.tscn" id="2_wb1qb"]
 [ext_resource type="Shader" uid="uid://b4qccg3b8b71j" path="res://data/Entities/player/Shaders/playerCite.gdshader" id="3_elhn1"]
@@ -411,6 +411,7 @@ size = Vector2(16, 16.023438)
 size = Vector2(10.5, 20.25)
 
 [node name="player" type="CharacterBody2D" unique_id=1798523650 node_paths=PackedStringArray("dmg")]
+z_index = 1
 collision_layer = 2
 collision_mask = 5
 script = ExtResource("1_kspwo")

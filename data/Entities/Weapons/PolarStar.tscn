@@ -3,6 +3,9 @@
 [ext_resource type="Script" uid="uid://cqbpvfryn2357" path="res://data/Entities/Weapons/PolarStar.gd" id="1_jx315"]
 [ext_resource type="PackedScene" uid="uid://dv12negrr0pm2" path="res://data/Entities/Bullets/Bullet.tscn" id="2_3gmqr"]
 [ext_resource type="Texture2D" uid="uid://d1ycqukwujxlc" path="res://data/Sprites/Weapons/Arms.png" id="3_vhtee"]
+[ext_resource type="Texture2D" uid="uid://bo4nabp27meiw" path="res://data/Sprites/Weapons/Laser.png" id="4_3gmqr"]
+[ext_resource type="AudioStream" uid="uid://bl681rgwqicvl" path="res://data/Sounds/SFX/Weapons/ID20_snd_polar_star_l1_2.wav" id="5_vhtee"]
+[ext_resource type="AudioStream" uid="uid://cnxhhbjlh0sqo" path="res://data/Sounds/SFX/Weapons/ID31_snd_polar_star_l3.wav" id="6_sl218"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kywkw"]
 atlas = ExtResource("3_vhtee")
@@ -83,7 +86,21 @@ animations = [{
 script = ExtResource("1_jx315")
 weapon_name = "Polar Star"
 bullet_scene = ExtResource("2_3gmqr")
+icon = ExtResource("4_3gmqr")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=254855722]
 sprite_frames = SubResource("SpriteFrames_vq2nj")
-animation = &"idle_right_up"
+animation = &"idle_right"
+
+[node name="BulletOrigin" type="Marker2D" parent="." unique_id=928936433]
+
+[node name="ShootAudio1" type="AudioStreamPlayer2D" parent="." unique_id=1238778250]
+stream = ExtResource("5_vhtee")
+volume_db = 1.0
+pitch_scale = 0.5
+
+[node name="ShootAudio2" type="AudioStreamPlayer2D" parent="." unique_id=40927678]
+stream = ExtResource("5_vhtee")
+
+[node name="ShootAudio3" type="AudioStreamPlayer2D" parent="." unique_id=1065353125]
+stream = ExtResource("6_sl218")

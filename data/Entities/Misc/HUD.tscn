@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://chsqh0p7wak0q" path="res://data/Scripts/hud.gd" id="1_dxeyc"]
 [ext_resource type="Texture2D" uid="uid://drhsu6oggq4ks" path="res://data/Sprites/UI/hud_background.png" id="2_s6sb5"]
 [ext_resource type="Texture2D" uid="uid://bwlbq4k520wm0" path="res://data/Sprites/UI/hud_background_2.png" id="3_nk8rh"]
+[ext_resource type="Texture2D" uid="uid://ds6i0r2gfwumj" path="res://data/Sprites/Weapons/None.png" id="4_7qkfh"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7qkfh"]
 bg_color = Color(0.5372549, 0, 0, 1)
@@ -172,6 +173,19 @@ anchor_bottom = 1.125
 offset_top = 2.0
 text = "- -"
 metadata/_edit_use_anchors_ = true
+
+[node name="weapon_icon" type="TextureRect" parent="CanvasLayer/Control" unique_id=102072328]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.65000004
+anchor_top = 0.1
+anchor_right = 0.65000004
+anchor_bottom = 0.1
+offset_top = -1.0
+offset_right = 40.0
+offset_bottom = 39.0
+texture = ExtResource("4_7qkfh")
+stretch_mode = 2
 
 [node name="ammo_rest_label" type="Label" parent="CanvasLayer/Control" unique_id=1051868530]
 layout_mode = 1

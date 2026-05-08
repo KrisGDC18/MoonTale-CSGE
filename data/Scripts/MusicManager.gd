@@ -1,54 +1,42 @@
 extends Node
 
-# ─── Variables de control ─────────────────────────────────────────────
-# estas se leen desde Globals para control externo
-# Globals.music_paused  → true  = música en pausa
-# Globals.music_volume  → 0.0 a 1.0 = volumen (0 = silencio, 1 = máximo)
+# ─── Variables de volumen ─────────────────────────────────────────────
+@export_range(0.0, 1.0) var volume        : float = 1.0   # volumen actual (0.0 – 1.0)
+const VOLUME_STEP                         : float = 0.1   # cuánto sube/baja cada pulsación
+var _muted                                : bool  = false  # estado mute
+var _volume_before_mute                   : float = 1.0   # guarda el volumen antes de mutear
 
 # ─── Nodos de audio ───────────────────────────────────────────────────
-var _intro_player : AudioStreamPlayer  # reproduce el intro UNA sola vez
-var _loop_player  : AudioStreamPlayer  # reproduce el loop indefinidamente
+var _intro_player : AudioStreamPlayer
+var _loop_player  : AudioStreamPlayer
 
 # ─── Estado interno ───────────────────────────────────────────────────
-var _current_intro : AudioStream = null  # stream del intro cargado
-var _current_loop  : AudioStream = null  # stream del loop cargado
-var _intro_done    : bool = false         # true cuando el intro ya terminó
-var _is_playing    : bool = false         # true si hay música activa
+var _current_intro : AudioStream = null
+var _current_loop  : AudioStream = null
+var _intro_done    : bool = false
+var _is_playing    : bool = false
 
 
 func _ready():
-	# crear los dos reproductores como hijos de este Autoload
-	# al ser Autoload sobreviven a cualquier cambio de escena
 	_intro_player = AudioStreamPlayer.new()
 	_loop_player  = AudioStreamPlayer.new()
 	add_child(_intro_player)
 	add_child(_loop_player)
 
-	# cuando el intro termine, arrancar el loop automáticamente
 	_intro_player.finished.connect(_on_intro_finished)
-
-	# el loop siempre en loop
-	# AudioStreamPlayer no tiene loop directo — se hace reconectando finished
 	_loop_player.finished.connect(_on_loop_finished)
+
+	# Aplicar volumen inicial
+	_apply_volume()
 
 
 func _process(_delta):
-	# sincronizar pausa con la variable global cada frame
-	# así cualquier sistema externo puede pausar/reanudar con solo
-	# cambiar Globals.music_paused sin llamar funciones aquí
 	if not _is_playing:
 		return
 
-	var should_pause : bool  = Globals.get("music_paused") if Globals.get("music_paused") != null else false
-	var volume_value : float = Globals.get("music_volume")  if Globals.get("music_volume")  != null else 1.0
+	# ── Sincronizar pausa con Globals ─────────────────────────────────
+	var should_pause : bool = Globals.get("music_paused") if Globals.get("music_paused") != null else false
 
-	# convertir volumen lineal (0.0-1.0) a decibeles para AudioStreamPlayer
-	# linear_to_db(0) = -inf (silencio), linear_to_db(1) = 0db (máximo)
-	var db := linear_to_db(clamp(volume_value, 0.0, 1.0))
-	_intro_player.volume_db = db
-	_loop_player.volume_db  = db
-
-	# pausar o reanudar según la flag global
 	if should_pause:
 		if _intro_player.playing:
 			_intro_player.stream_paused = true
@@ -61,13 +49,40 @@ func _process(_delta):
 			_loop_player.stream_paused = false
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("Vol+"):
+		set_volume(volume + VOLUME_STEP)
+
+	elif event.is_action_pressed("Vol-"):
+		set_volume(volume - VOLUME_STEP)
+
+	elif event.is_action_pressed("Mute"):
+		toggle_mute()
+
+
 # ─── API pública ──────────────────────────────────────────────────────
 
-# CAMBIO: los parámetros ahora aceptan AudioStreamPlayer en lugar de AudioStream
-# así puedes pasar el nodo directamente sin cambiar nada en tus escenas
+func set_volume(new_volume: float) -> void:
+	volume  = clamp(new_volume, 0.0, 1.0)
+	_muted  = false   # subir/bajar volumen cancela el mute
+	_apply_volume()
+	print("MusicManager: volumen → %.0f%%" % (volume * 100))
+
+
+func toggle_mute() -> void:
+	if _muted:
+		# Desmutear: recuperar volumen anterior
+		_muted  = false
+		volume  = _volume_before_mute
+	else:
+		# Mutear: guardar volumen actual y silenciar
+		_volume_before_mute = volume
+		_muted              = true
+	_apply_volume()
+	print("MusicManager: mute → %s" % str(_muted))
+
+
 func play(intro_player, loop_player) -> void:
-	# extraer el AudioStream del nodo si se pasó un AudioStreamPlayer
-	# si se pasó null o un AudioStream directo, manejarlo también
 	var intro : AudioStream = null
 	var loop  : AudioStream = null
 
@@ -81,7 +96,6 @@ func play(intro_player, loop_player) -> void:
 	elif loop_player is AudioStream:
 		loop = loop_player
 
-	# si ya está sonando la misma pista no reiniciar
 	if _current_loop == loop and _is_playing:
 		return
 
@@ -100,14 +114,14 @@ func play(intro_player, loop_player) -> void:
 		_intro_done = true
 		_start_loop()
 
+	_apply_volume()
+
 
 func play_loop_only(loop: AudioStream) -> void:
-	# atajo para pistas sin intro
 	play(null, loop)
 
 
 func stop() -> void:
-	# detener toda la música y limpiar el estado
 	_intro_player.stop()
 	_loop_player.stop()
 	_is_playing    = false
@@ -117,23 +131,28 @@ func stop() -> void:
 
 
 func is_playing_track(loop: AudioStream) -> bool:
-	# permite que las escenas verifiquen si ya está sonando su pista
-	# útil para no reiniciar música al volver a una escena
 	return _current_loop == loop and _is_playing
 
 
-# ─── Callbacks internos ───────────────────────────────────────────────
+# ─── Internos ─────────────────────────────────────────────────────────
+
+func _apply_volume() -> void:
+	var effective_volume : float = 0.0 if _muted else volume
+	var db               : float = linear_to_db(effective_volume)
+	_intro_player.volume_db = db
+	_loop_player.volume_db  = db
+
+	# Mantener Globals sincronizado si otros sistemas lo leen
+	if Globals.get("music_volume") != null:
+		Globals.music_volume = effective_volume
+
 
 func _on_intro_finished() -> void:
-	# el intro terminó → arrancar el loop
 	_intro_done = true
 	_start_loop()
 
 
 func _on_loop_finished() -> void:
-	# el loop terminó → repetirlo desde el inicio
-	# esto es el sistema de loop manual ya que AudioStreamPlayer
-	# no tiene propiedad loop directa en todas las versiones
 	_loop_player.play()
 
 

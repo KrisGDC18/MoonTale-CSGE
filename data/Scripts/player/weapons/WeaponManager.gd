@@ -1,5 +1,8 @@
 extends Node2D
 
+# ─── Señal ────────────────────────────────────────────────────────────
+signal weapon_changed(weapon: Node2D)
+
 # ─── Armas disponibles ────────────────────────────────────────────────
 @export var weapon_scenes : Array[PackedScene] = []
 
@@ -43,6 +46,9 @@ func _equip(index: int) -> void:
 	_current_weapon = _weapons[index]
 	_current_weapon.visible = true
 	print("Equipando arma: ", _current_weapon.name)
+
+	# Notificar al HUD (y cualquier otro listener) que el arma cambió
+	emit_signal("weapon_changed", _current_weapon)
 
 
 # ─── Proceso ──────────────────────────────────────────────────────────
