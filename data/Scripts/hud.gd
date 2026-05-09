@@ -11,12 +11,15 @@ extends CanvasLayer
 @onready var hud_bg2           : TextureRect        = $Control/hud_bg2
 @onready var ammo_total_label  : Label              = $Control/ammo_total_label
 @onready var ammo_rest_label   : Label              = $Control/ammo_rest_label
+@onready var xp_bar            : ProgressBar        = $Control/xp_bar
 @onready var xp_label          : Label              = $Control/xp_label
+@onready var xp_max_label      : Label              = $Control/xp_max_label
 @onready var weapon_icon       : TextureRect        = $Control/weapon_icon
 
 var _air_visible     := false
 var _jet_visible     := false
 var _player          : CharacterBody2D = null
+var _current_weapon  : Node2D          = null
 
 
 func _ready():
@@ -38,6 +41,8 @@ func _ready():
 	air_label.add_theme_font_size_override("font_size", 36)
 	jet_label.add_theme_font_override("font", font)
 	jet_label.add_theme_font_size_override("font_size", 36)
+	xp_max_label.add_theme_font_override("font", font)
+	xp_max_label.add_theme_font_size_override("font_size", 36)
 
 	# ── Conectar al WeaponManager ─────────────────────────────────────
 	# Se hace con call_deferred para dar un frame al jugador a que esté listo
@@ -113,12 +118,17 @@ func _connect_weapon_manager() -> void:
 
 
 func _on_weapon_changed(weapon: Node2D) -> void:
+	_current_weapon = weapon
+
 	if weapon == null:
 		weapon_icon.texture = load("res://data/Sprites/Weapons/None.png")
 		weapon_icon.visible = false
+		xp_bar.max_value = 1
+		xp_bar.value     = 0
+		xp_label.text    = "Lv.-"
 		return
 
-	# Usar get() para no crashear si algún arma no tiene la variable icon
+	# ── Ícono del arma ────────────────────────────────────────────────
 	var tex : Texture2D = weapon.get("icon")
 	if tex != null:
 		weapon_icon.texture = tex
@@ -128,6 +138,9 @@ func _on_weapon_changed(weapon: Node2D) -> void:
 		weapon_icon.texture = load("res://data/Sprites/Weapons/None.png")
 		weapon_icon.visible = false
 		print("HUD: arma sin icono -> ", weapon.name)
+
+	# ── Inicializar barra de XP con los valores del arma equipada ─────
+	_update_xp()
 
 
 # ─── Proceso ──────────────────────────────────────────────────────────
@@ -140,6 +153,7 @@ func _process(_delta):
 	_update_air()
 	_update_jetpack()
 	_update_backgrounds()
+	_update_xp()
 
 
 func _update_hp() -> void:
@@ -174,6 +188,49 @@ func _update_jetpack() -> void:
 
 	jet_bar.value  = gas
 	jet_label.text = str(int(gas))
+
+
+func _update_xp() -> void:
+	# Valores por defecto: sin arma
+	if _current_weapon == null:
+		xp_bar.max_value    = 1
+		xp_bar.value        = 0
+		xp_label.text       = "-"
+		xp_label.visible    = true
+		xp_max_label.visible = false
+		return
+
+	# ── Spur cargando: la barra muestra progreso de carga ─────────────
+	if _current_weapon is Spur:
+		var spur := _current_weapon as Spur
+		if spur._is_charging:
+			xp_bar.max_value = Spur.CHARGE_TIME_LV3
+			xp_bar.value     = clamp(spur._charge_timer, 0.0, Spur.CHARGE_TIME_LV3)
+			# Siempre muestra un número: mínimo 1, máximo 3
+			xp_label.text        = str(clampi(max(1, spur._charge_level), 1, 3))
+			xp_label.visible     = true
+			xp_max_label.visible = spur._charge_level >= 3
+			return
+
+	# ── XP normal: cualquier arma (o Spur cuando no carga) ────────────
+	var lvl        : int   = _current_weapon.get("current_level")
+	var xp         : int   = _current_weapon.get("current_xp")
+	var max_lvl    : int   = _current_weapon.get("max_level")
+	var thresholds : Array = _current_weapon.get("xp_to_level")
+
+	if lvl >= max_lvl:
+		xp_bar.max_value     = 1
+		xp_bar.value         = 1
+		xp_label.visible     = false
+		xp_max_label.visible = true
+		return
+
+	var needed : int     = thresholds[lvl] if lvl < thresholds.size() else 1
+	xp_bar.max_value     = needed
+	xp_bar.value         = xp
+	xp_label.text        = str(lvl)
+	xp_label.visible     = true
+	xp_max_label.visible = false
 
 
 func _update_backgrounds() -> void:

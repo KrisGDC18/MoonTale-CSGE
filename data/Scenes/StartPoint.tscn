@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://by5a3lmi14my4" path="res://data/Sprites/Backgrounds/bkBlack.png" id="3_8gmha"]
 [ext_resource type="TileSet" uid="uid://48ups7a06mvg" path="res://data/Tiles/Cave.tres" id="3_v1l87"]
 [ext_resource type="PackedScene" uid="uid://diiq1u1doxfaq" path="res://data/Entities/door.tscn" id="4_k0b30"]
+[ext_resource type="PackedScene" uid="uid://b2wa0bu06l5d5" path="res://data/Scenes/first_cave.tscn" id="5_rxsh0"]
 [ext_resource type="AudioStream" uid="uid://bte1y2qu7als5" path="res://data/Sounds/BGM/vivi_intro.ogg" id="5_y60wm"]
 [ext_resource type="AudioStream" uid="uid://chalk28jw1ulm" path="res://data/Sounds/BGM/vivi_loop.ogg" id="6_rxsh0"]
 
@@ -53,11 +54,14 @@ texture = ExtResource("3_8gmha")
 [node name="Door" parent="." unique_id=746746957 instance=ExtResource("4_k0b30")]
 position = Vector2(16, -184)
 scale = Vector2(2, 2)
-next_scene_path = "res://data/Scenes/first_cave.tscn"
-pos_Change = [0, 12]
+target_map = ExtResource("5_rxsh0")
+target_spawn = "Door1"
 
 [node name="intro_bgm" type="AudioStreamPlayer" parent="." unique_id=1548092630]
 stream = ExtResource("5_y60wm")
 
 [node name="loop_bgm" type="AudioStreamPlayer" parent="." unique_id=399914125]
 stream = ExtResource("6_rxsh0")
+
+[node name="Door1" type="Marker2D" parent="." unique_id=2098868769]
+position = Vector2(16, -170)

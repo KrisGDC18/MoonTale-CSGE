@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://btcqrolg6nxi6"]
+
+[ext_resource type="Script" uid="uid://cxvakx88sh8p4" path="res://data/Scripts/Inventory/InventoryMenu.gd" id="1_invmenu"]
+[ext_resource type="FontFile" uid="uid://dqo6c4v5cqvos" path="res://data/Fonts/monogatari.ttf" id="2_font"]
+[ext_resource type="AudioStream" uid="uid://b4dw3wlhk0nr2" path="res://data/Sounds/SFX/Player/Cursor.wav" id="3_cursor"]
+[ext_resource type="AudioStream" uid="uid://mvrc01e43j2n" path="res://data/Sounds/SFX/Player/ok.wav" id="4_confirm"]
+[ext_resource type="AudioStream" uid="uid://dgvo0pf15afx3" path="res://data/Sounds/SFX/Player/Beep.wav" id="5_close"]
+
+[node name="InventoryMenu" type="CanvasLayer" unique_id=988026192]
+layer = 20
+script = ExtResource("1_invmenu")
+
+[node name="CursorSFX" type="AudioStreamPlayer" parent="." unique_id=1752629373]
+stream = ExtResource("3_cursor")
+
+[node name="ConfirmSFX" type="AudioStreamPlayer" parent="." unique_id=1524861673]
+stream = ExtResource("4_confirm")
+
+[node name="CloseSFX" type="AudioStreamPlayer" parent="." unique_id=1918138705]
+stream = ExtResource("5_close")
+
+[node name="Panel" type="PanelContainer" parent="." unique_id=1319478486]
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=702981159]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="HSplit" type="HBoxContainer" parent="Panel/MarginContainer" unique_id=1669323157]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="ArmsSection" type="VBoxContainer" parent="Panel/MarginContainer/HSplit" unique_id=373365117]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ArmsTitle" type="Label" parent="Panel/MarginContainer/HSplit/ArmsSection" unique_id=1955080537]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 20
+text = "── ARMS ──"
+
+[node name="ArmsList" type="VBoxContainer" parent="Panel/MarginContainer/HSplit/ArmsSection" unique_id=833105711]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ItemsSection" type="VBoxContainer" parent="Panel/MarginContainer/HSplit" unique_id=67513094]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ItemsTitle" type="Label" parent="Panel/MarginContainer/HSplit/ItemsSection" unique_id=1274103831]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 20
+text = "── ITEMS ──"
+
+[node name="ItemsList" type="VBoxContainer" parent="Panel/MarginContainer/HSplit/ItemsSection" unique_id=1954969998]
+layout_mode = 2
+theme_override_constants/separation = 10

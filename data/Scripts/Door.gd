@@ -1,14 +1,14 @@
 extends Sprite2D
 
-var interactable     = false
-var _transitioning   = false  # evita que se llame change_scene dos veces seguidas
-							   # mientras el sonido y el fade están en curso
+var interactable   : bool = false
+var _transitioning : bool = false
 
-@export var next_scene_path: String
-@export var pos_Change: Array
-@export var next_music_intro : AudioStream = null  # intro de la zona destino (opcional)
-@export var next_music_loop  : AudioStream = null  # loop de la zona destino (opcional)
-@onready var door_sfx = $door_sfx  # sonido de la puerta al teletransportar
+@export var target_map        : PackedScene
+@export var target_spawn      : String = ""
+@export var next_music_intro  : AudioStream = null
+@export var next_music_loop   : AudioStream = null
+
+@onready var door_sfx = $door_sfx
 
 
 func _ready():
@@ -17,12 +17,9 @@ func _ready():
 
 @warning_ignore("unused_parameter")
 func _process(delta):
-	# Si el jugador presiona "Down" estando en el área de este objeto,
-	# se ejecuta el cambio de escena.
-	# _transitioning evita que el input se procese mientras ya está en curso
 	if Input.is_action_just_pressed("Down") and interactable and not _transitioning:
 		_transitioning = true
-		change_scene()
+		_do_transition()
 
 
 @warning_ignore("unused_parameter")
@@ -35,7 +32,23 @@ func _on_area_2d_area_exited(area):
 	interactable = false
 
 
-func change_scene():
+func _do_transition() -> void:
+	if target_map == null:
+		push_warning("Door: no tiene target_map asignado.")
+		_transitioning = false
+		return
+
+	var map    : PackedScene  = target_map
+	var spawn  : String       = target_spawn
+	var intro  : AudioStream  = next_music_intro
+	var loop   : AudioStream  = next_music_loop
+	var level                 = get_tree().get_first_node_in_group("level")
+
+	if level == null:
+		push_warning("Door: no se encontró el nodo Level en el grupo 'level'.")
+		_transitioning = false
+		return
+
 	door_sfx.play()
 
 	var canvas  := CanvasLayer.new()
@@ -46,21 +59,17 @@ func change_scene():
 	canvas.add_child(overlay)
 	get_tree().root.add_child(canvas)
 
-	# CAMBIO: crear el tween desde el root en lugar de desde la puerta
-	# la puerta puede ser liberada durante el cambio de escena
-	# el root siempre existe y el tween no se invalida
 	var tween := get_tree().root.create_tween()
 	tween.tween_property(overlay, "color", Color(0.0, 0.0, 0.0, 1.0), 0.4)
 	await tween.finished
 
+	canvas.queue_free()
+
 	Globals.needs_fade_in = true
 
-	if next_music_intro != null or next_music_loop != null:
-		MusicManager.play(next_music_intro, next_music_loop)
+	if intro != null or loop != null:
+		MusicManager.play(intro, loop)
 
-	# CAMBIO: guardar la referencia al árbol ANTES del cambio de escena
-	# después de change_scene_to_file get_tree() puede ser null en el nodo actual
-	var tree := get_tree()
-	var player := tree.get_first_node_in_group("player")
-	tree.change_scene_to_file(next_scene_path)
-	player.position = Vector2(pos_Change[0], pos_Change[1])
+	level.change_map(map, spawn)
+
+	_transitioning = false

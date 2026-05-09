@@ -25,9 +25,10 @@ const SPRITE_SIZE      : float = 16.0
 enum LaserPhase { NONE, TRAVEL, HOLD, COMPRESS }
 
 # ─── Nodos ────────────────────────────────────────────────────────────
-@onready var animator  : AnimatedSprite2D          = $AnimatedSprite2D
-@onready var notifier  : VisibleOnScreenNotifier2D = $VisibleOnScreenNotifier2D
-@onready var collision : CollisionShape2D          = $CollisionShape2D
+@onready var animator       : AnimatedSprite2D          = $AnimatedSprite2D
+@onready var notifier       : VisibleOnScreenNotifier2D = $VisibleOnScreenNotifier2D
+@onready var collision      : CollisionShape2D          = $CollisionShape2D
+@onready var wall_hit_sound : AudioStreamPlayer2D       = $WallHitSound
 
 # ─── Variables generales ──────────────────────────────────────────────
 var level          : int     = 0
@@ -204,5 +205,21 @@ func _on_body_entered(body: Node2D) -> void:
 				_laser_timer       = 0.0
 				_laser_dmg_timer   = 0.0
 				collision.disabled = false
+				_play_wall_hit()  # Sonido al frenar contra pared
 	else:
+		if not body.is_in_group("enemies"):
+			_play_wall_hit()  # Sonido al chocar con pared
 		queue_free()
+
+
+# ─── Sonido de impacto en pared ───────────────────────────────────────
+# Desancla el AudioStreamPlayer2D del bullet antes de liberarlo,
+# así el sonido termina de reproducirse aunque el nodo ya no exista.
+func _play_wall_hit() -> void:
+	if wall_hit_sound == null or wall_hit_sound.stream == null:
+		return
+	remove_child(wall_hit_sound)
+	get_tree().root.add_child(wall_hit_sound)
+	wall_hit_sound.global_position = global_position
+	wall_hit_sound.play()
+	wall_hit_sound.finished.connect(wall_hit_sound.queue_free)

@@ -195,3 +195,11 @@ anchor_right = 4.15
 anchor_bottom = 0.57500005
 text = "- -"
 metadata/_edit_use_anchors_ = true
+
+[node name="xp_max_label" type="Label" parent="CanvasLayer/Control" unique_id=572776173]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 43.0
+offset_right = 142.0
+offset_bottom = 66.0
+text = "MAX"

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bi4xt2pcvsoi4" path="res://data/Entities/Bullets/bullet.gd" id="1_aw7b8"]
 [ext_resource type="Texture2D" uid="uid://dw5jgc0d2a6ru" path="res://data/Sprites/Bullets/Bullet.png" id="2_r5tlc"]
+[ext_resource type="AudioStream" uid="uid://pp135ybesnp2" path="res://data/Sounds/SFX/Weapons/ID1f_snd_shot_bounce.wav" id="3_r5tlc"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_js4lu"]
 atlas = ExtResource("2_r5tlc")
@@ -139,3 +140,6 @@ animation = &"lv3_down"
 shape = SubResource("RectangleShape2D_1smg0")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=831933098]
+
+[node name="WallHitSound" type="AudioStreamPlayer2D" parent="." unique_id=1228954382]
+stream = ExtResource("3_r5tlc")

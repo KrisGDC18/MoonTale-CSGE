@@ -489,6 +489,7 @@ func take_damage(amount: int, source_global_pos: Vector2,
 
 	currentLife = max(currentLife - amount, 0)
 	hurt_sfx.play()
+	_spawn_damage_label(amount)
 
 	if currentLife <= 0:
 		_die(is_drowning)
@@ -550,6 +551,23 @@ func _apply_knockback(source_global_pos: Vector2) -> void:
 	_iframes_drowning    = false
 	checking             = false
 	hasChecked           = false
+
+
+func _spawn_damage_label(amount: int) -> void:
+	var label := Label.new()
+	label.text = "-%d" % amount
+	label.add_theme_color_override("font_color", Color(1.0, 0.12, 0.12))
+	label.add_theme_font_override("font", load("res://data/Fonts/monogatari.ttf"))
+	label.add_theme_font_size_override("font_size", 20)
+	label.z_index        = 10
+	label.global_position = global_position - Vector2(8.0, 16.0)
+	get_tree().root.add_child(label)
+
+	var tween := label.create_tween().set_parallel(true)
+	tween.tween_property(label, "global_position:y", label.global_position.y - 30.0, 1.1) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, 0.5).set_delay(0.6)
+	tween.chain().tween_callback(label.queue_free)
 
 
 func _update_iframes(delta: float) -> void:

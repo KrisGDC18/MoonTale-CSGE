@@ -2,6 +2,9 @@
 
 [ext_resource type="PackedScene" uid="uid://bqjatb5hf34fo" path="res://data/Scenes/StartPoint.tscn" id="1_7wqjn"]
 [ext_resource type="Script" uid="uid://dlnjel4b8kmgb" path="res://data/Scripts/level.gd" id="1_46wim"]
+[ext_resource type="PackedScene" uid="uid://btcqrolg6nxi6" path="res://data/EventSystem/InventoryMenu.tscn" id="1_xfei7"]
+[ext_resource type="PackedScene" uid="uid://bkvkpu5wgo631" path="res://data/Entities/Misc/HUD.tscn" id="4_m5ral"]
+[ext_resource type="PackedScene" uid="uid://cexb8qced5uet" path="res://data/EventSystem/DialogBox.tscn" id="5_631ni"]
 
 [node name="Game" type="Node" unique_id=1873560569]
 
@@ -10,3 +13,9 @@ script = ExtResource("1_46wim")
 
 [node name="Start Point" parent="Level" unique_id=1276778767 instance=ExtResource("1_7wqjn")]
 position = Vector2(-13.873077, 20.04567)
+
+[node name="InventoryMenu" parent="." unique_id=988026192 instance=ExtResource("1_xfei7")]
+
+[node name="Hud" parent="." unique_id=776642068 instance=ExtResource("4_m5ral")]
+
+[node name="DialogBox" parent="." unique_id=1282337130 instance=ExtResource("5_631ni")]

@@ -1,15 +1,4 @@
-Marker2D
-AudioStreamPlayer2D
 AudioStreamPlayer
-TextureRect
-Node2D
-Node
-VisibleOnScreenNotifier2D
-AnimatedSprite2D
-VisibleOnScreenEnabler2D
-CollisionShape2D
-Area2D
-Panel
-VBoxContainer
+AudioStreamPlayer2D
 Label
-HBoxContainer
+Marker2D

@@ -6,10 +6,10 @@
 script = ExtResource("1_52uwn")
 
 [node name="Panel" type="Panel" parent="." unique_id=2066866693]
-offset_left = 265.0
-offset_top = 98.0
-offset_right = 928.0
-offset_bottom = 524.0
+offset_left = 638.0
+offset_top = 290.0
+offset_right = 1301.0
+offset_bottom = 716.0
 
 [node name="WeaponList" type="HBoxContainer" parent="Panel" unique_id=1492807648]
 layout_mode = 0

@@ -6,6 +6,9 @@ signal weapon_changed(weapon: Node2D)
 # ─── Armas disponibles ────────────────────────────────────────────────
 @export var weapon_scenes : Array[PackedScene] = []
 
+# ─── Nodos ────────────────────────────────────────────────────────────
+@onready var switch_sfx : AudioStreamPlayer = $switch_sfx
+
 # ─── Variables ────────────────────────────────────────────────────────
 var _weapons        : Array  = []
 var _current_index  : int    = 0
@@ -15,6 +18,7 @@ var _player         : Node   = null
 
 # ─── Inicialización ───────────────────────────────────────────────────
 func init(player: Node) -> void:
+	add_to_group("weapon_manager")
 	_player = player
 	print("WeaponManager iniciado, weapon_scenes: ", weapon_scenes.size())
 	for scene in weapon_scenes:
@@ -49,6 +53,7 @@ func _equip(index: int) -> void:
 
 	# Notificar al HUD (y cualquier otro listener) que el arma cambió
 	emit_signal("weapon_changed", _current_weapon)
+	switch_sfx.play()
 
 
 # ─── Proceso ──────────────────────────────────────────────────────────
@@ -58,6 +63,9 @@ func _process(delta: float) -> void:
 		return
 	if _current_weapon == null:
 		print("ERROR: _current_weapon es null")
+		return
+	if _player.playerDead:
+		_current_weapon.visible = false
 		return
 
 	_handle_weapon_switch()

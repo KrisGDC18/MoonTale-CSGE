@@ -11,9 +11,9 @@
 [ext_resource type="AudioStream" uid="uid://b4cgk7e6n0uhu" path="res://data/Sounds/SFX/Player/land.wav" id="7_dnrcq"]
 [ext_resource type="AudioStream" uid="uid://bqhdgwvcky0jw" path="res://data/Sounds/SFX/Player/headbonk.wav" id="7_n6brj"]
 [ext_resource type="AudioStream" uid="uid://xnamdeki48on" path="res://data/Sounds/SFX/Player/step.wav" id="8_fb0eh"]
+[ext_resource type="AudioStream" uid="uid://b4dw3wlhk0nr2" path="res://data/Sounds/SFX/Player/Cursor.wav" id="8_qpy3o"]
 [ext_resource type="AudioStream" uid="uid://w1fdejlpkx1j" path="res://data/Sounds/SFX/Player/hurt.wav" id="10_tkctx"]
 [ext_resource type="AudioStream" uid="uid://c4wauark5be5a" path="res://data/Sounds/SFX/Player/dead.wav" id="11_tkctx"]
-[ext_resource type="PackedScene" uid="uid://bkvkpu5wgo631" path="res://data/Entities/Misc/HUD.tscn" id="13_brn1j"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jm4nm"]
 shader = ExtResource("3_elhn1")
@@ -34,9 +34,25 @@ region = Rect2(224, 0, 32, 32)
 atlas = ExtResource("1_vtqvh")
 region = Rect2(32, 0, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_qpy3o"]
+atlas = ExtResource("1_vtqvh")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kms3g"]
+atlas = ExtResource("1_vtqvh")
+region = Rect2(160, 0, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_brn1j"]
 atlas = ExtResource("1_vtqvh")
 region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a2tq2"]
+atlas = ExtResource("1_vtqvh")
+region = Rect2(192, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hg7qs"]
+atlas = ExtResource("1_vtqvh")
+region = Rect2(128, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1i1uy"]
 atlas = ExtResource("1_vtqvh")
@@ -65,10 +81,6 @@ region = Rect2(128, 0, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_tkctx"]
 atlas = ExtResource("1_vtqvh")
 region = Rect2(64, 32, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_a2tq2"]
-atlas = ExtResource("1_vtqvh")
-region = Rect2(192, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7wou7"]
 atlas = ExtResource("1_vtqvh")
@@ -166,10 +178,42 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_qpy3o")
+}],
+"loop": true,
+"name": &"FallingLeftLookDown",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kms3g")
+}],
+"loop": true,
+"name": &"FallingLeftLookUp",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_brn1j")
 }],
 "loop": true,
 "name": &"FallingRight",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a2tq2")
+}],
+"loop": true,
+"name": &"FallingRightLookDown",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hg7qs")
+}],
+"loop": true,
+"name": &"FallingRightLookUp",
 "speed": 5.0
 }, {
 "frames": [{
@@ -422,7 +466,7 @@ damage_material = SubResource("ShaderMaterial_jm4nm")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1016720795]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_x1tpm")
-animation = &"Check"
+animation = &"FallingRightLookUp"
 
 [node name="WeaponManager" type="Node2D" parent="." unique_id=1572819859]
 z_index = -1
@@ -436,12 +480,12 @@ visible = false
 visible = false
 weapon_name = "Spur"
 
+[node name="switch_sfx" type="AudioStreamPlayer" parent="WeaponManager" unique_id=1204701420]
+stream = ExtResource("8_qpy3o")
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1454706974]
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
-
-[node name="Hud" parent="Camera2D" unique_id=776642068 instance=ExtResource("13_brn1j")]
-position = Vector2(-961, -540)
 
 [node name="Bottom" type="CollisionShape2D" parent="." unique_id=1582475767]
 visible = false
@@ -523,6 +567,11 @@ stream = ExtResource("7_dnrcq")
 [node name="booster_sfx" type="AudioStreamPlayer" parent="." unique_id=2121917197]
 
 [node name="booster2_sfx" type="AudioStreamPlayer" parent="." unique_id=536417516]
+
+[node name="Label" type="Label" parent="." unique_id=843853101]
+offset_left = -45.0
+offset_top = -23.0
+offset_right = -5.0
 
 [connection signal="area_entered" from="WaterDetect" to="." method="_on_water_detect_area_entered"]
 [connection signal="area_exited" from="WaterDetect" to="." method="_on_water_detect_area_exited"]

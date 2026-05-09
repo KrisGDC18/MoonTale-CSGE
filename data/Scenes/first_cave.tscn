@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://diiq1u1doxfaq" path="res://data/Entities/door.tscn" id="3_m8epk"]
 [ext_resource type="TileSet" uid="uid://b5c3gejdo7vqc" path="res://data/Tiles/moon_base.tres" id="4_d85ye"]
 [ext_resource type="AudioStream" uid="uid://bte1y2qu7als5" path="res://data/Sounds/BGM/vivi_intro.ogg" id="5_01qg7"]
+[ext_resource type="PackedScene" uid="uid://bqjatb5hf34fo" path="res://data/Scenes/StartPoint.tscn" id="5_nnc1m"]
 [ext_resource type="AudioStream" uid="uid://chalk28jw1ulm" path="res://data/Sounds/BGM/vivi_loop.ogg" id="6_h4vf1"]
 [ext_resource type="PackedScene" uid="uid://ci31taf705rx5" path="res://data/Entities/npc/test/test_kris_dialogue_01.tscn" id="7_h4vf1"]
 
@@ -40,8 +41,8 @@ tile_set = ExtResource("2_wnu3j")
 [node name="Door" parent="." unique_id=234745997 instance=ExtResource("3_m8epk")]
 position = Vector2(-16, 8)
 scale = Vector2(2, 2)
-next_scene_path = "res://data/Scenes/StartPoint.tscn"
-pos_Change = [16, -180]
+target_map = ExtResource("5_nnc1m")
+target_spawn = "Door1"
 
 [node name="intro_bgm" type="AudioStreamPlayer" parent="." unique_id=892378641]
 stream = ExtResource("5_01qg7")
@@ -52,3 +53,6 @@ stream = ExtResource("6_h4vf1")
 [node name="TestKrisDialogue01" parent="." unique_id=571265759 instance=ExtResource("7_h4vf1")]
 z_index = -2
 position = Vector2(151, 11)
+
+[node name="Door1" type="Marker2D" parent="." unique_id=751608009]
+position = Vector2(-16, 22)

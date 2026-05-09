@@ -1,9 +1,0 @@
-res://data/Entities/Weapons/PolarStar.tscn
-res://data/Tiles/Cave.tres
-res://data/Entities/Weapons/Spur.tscn
-res://data/Scripts/MusicManager.gd
-res://data/Entities/Weapons/PolarStar.gd
-res://data/Scripts/player/weapons/Weapon.gd
-res://data/Entities/Weapons/spur.gd
-res://data/Entities/player/playerCite.tscn
-res://data/Entities/Bullets/Bullet.tscn
