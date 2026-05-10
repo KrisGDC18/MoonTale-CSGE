@@ -41,7 +41,7 @@ func _spawn_bullet(lvl: int) -> void:
 	bullet.global_position = _get_bullet_spawn_pos()
 	bullet.tree_exiting.connect(func(): _bullet_count -= 1)
 	get_tree().root.add_child(bullet)
-	bullet.setup(lvl, _shoot_dir, false, true)
+	bullet.setup(lvl, _shoot_dir, true)
 	_bullet_count += 1
 
 	_play_shoot_sound(lvl)  # ← pasa el nivel actual

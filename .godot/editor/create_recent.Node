@@ -1,4 +1,10 @@
+CanvasLayer
+ColorRect
+Node2D
+ProgressBar
+Control
+Sprite2D
+CollisionShape2D
+CharacterBody2D
+TextureRect
 AudioStreamPlayer
-AudioStreamPlayer2D
-Label
-Marker2D

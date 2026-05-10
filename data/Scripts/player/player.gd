@@ -647,6 +647,11 @@ func _update_air_supply(delta: float) -> void:
 # ─── Acción de inspección ─────────────────────────────────────────────
 
 func _handle_check_action() -> void:
+	if Globals.playerStay:
+		checking   = false
+		hasChecked = false
+		return
+
 	if Input.is_action_just_pressed("Down") and currentDirection == 0 and is_on_floor():
 		checking = true
 	elif checking and (currentDirection != 0 or not is_on_floor()):

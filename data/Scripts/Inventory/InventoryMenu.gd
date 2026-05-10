@@ -5,12 +5,14 @@
 ##                  current_level, current_xp, xp_to_level, max_level)
 ## Sección ITEMS → lee key_items del PlayerInventory
 ##
-## Al seleccionar se muestra la descripción en el DialogBox existente.
-## Tecla "Inventory" abre y cierra el menú.
+## Al seleccionar un ítem se consulta ItemDialogRegistry por su id.
+## El inventario se mantiene de fondo mientras el DialogBox está activo.
+## Tecla "Menu" abre y cierra el menú.
 extends CanvasLayer
 
 # ── Referencias externas ────────────────────────────────────────────────
-@onready var dialog_box  : CanvasLayer   = get_tree().get_first_node_in_group("dialog_box")
+var dialog_box : CanvasLayer = null
+@onready var _item_dialog_reg : Node        = get_node_or_null("/root/ItemDialogRegistry")
 
 # ── Nodos propios ───────────────────────────────────────────────────────
 @onready var panel       : Control        = $Panel
@@ -22,11 +24,12 @@ extends CanvasLayer
 
 # ── Estado ──────────────────────────────────────────────────────────────
 var _open           : bool = false
-var _section        : int  = 0   # 0 = ARMS  |  1 = ITEMS
+var _dialog_active  : bool = false
+var _section        : int  = 0
 var _row            : int  = 0
 
-var _weapon_manager : Node = null   # WeaponManager
-var _inventory      : Node = null   # PlayerInventory (solo key_items)
+var _weapon_manager : Node = null
+var _inventory      : Node = null
 
 # ── Paleta estilo Cave Story ────────────────────────────────────────────
 const COLOR_SELECTED  := Color(1.0,  0.85, 0.2)
@@ -46,16 +49,25 @@ const FONT := preload("res://data/Fonts/monogatari.ttf")
 func _ready() -> void:
 	panel.hide()
 	layer = 20
+	print("[InventoryMenu] _ready — dialog_box: ", dialog_box)
+	print("[InventoryMenu] _ready — _item_dialog_reg: ", _item_dialog_reg)
 
-	# WeaponManager — registrado en grupo "weapon_manager"
-	_weapon_manager = get_tree().get_first_node_in_group("weapon_manager")
 
-	# PlayerInventory — para key items
-	_inventory = get_tree().get_first_node_in_group("player_inventory")
+func _resolve_refs() -> void:
+	if dialog_box == null:
+		dialog_box = get_tree().get_first_node_in_group("dialog_box")
+		if dialog_box == null:
+			dialog_box = get_node_or_null("/root/DialogBox")
+		print("[InventoryMenu] dialog_box resuelto: ", dialog_box)
+	if _weapon_manager == null:
+		_weapon_manager = get_tree().get_first_node_in_group("weapon_manager")
+
 	if _inventory == null:
-		_inventory = get_node_or_null("/root/PlayerInventory")
-	if _inventory:
-		_inventory.inventory_changed.connect(_refresh)
+		_inventory = get_tree().get_first_node_in_group("player_inventory")
+		if _inventory == null:
+			_inventory = get_node_or_null("/root/PlayerInventory")
+		if _inventory and not _inventory.inventory_changed.is_connected(_refresh):
+			_inventory.inventory_changed.connect(_refresh)
 
 
 # ── Helpers: listas activas ─────────────────────────────────────────────
@@ -63,14 +75,12 @@ func _ready() -> void:
 func _weapons_list() -> Array:
 	if _weapon_manager == null:
 		return []
-	return _weapon_manager._weapons   # Array de instancias Weapon (Node2D)
-
+	return _weapon_manager._weapons
 
 func _key_items_list() -> Array:
 	if _inventory == null:
 		return []
 	return _inventory.key_items.values()
-
 
 func _current_list() -> Array:
 	return _weapons_list() if _section == 0 else _key_items_list()
@@ -79,12 +89,12 @@ func _current_list() -> Array:
 # ── Process ─────────────────────────────────────────────────────────────
 
 func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed("Menu"):
+	if Input.is_action_just_pressed("Menu") and not _dialog_active:
 		if _open: _close_menu()
 		else:     _open_menu()
 		return
 
-	if not _open:
+	if not _open or _dialog_active:
 		return
 
 	_handle_input()
@@ -93,16 +103,19 @@ func _process(_delta: float) -> void:
 # ── Abrir / Cerrar ──────────────────────────────────────────────────────
 
 func _open_menu() -> void:
-	_open    = true
-	_section = 0
-	_row     = 0
+	_resolve_refs()
+	_open           = true
+	_dialog_active  = false
+	_section        = 0
+	_row            = 0
 	Globals.playerStay = true
 	_refresh()
 	panel.show()
 
 
 func _close_menu() -> void:
-	_open = false
+	_open          = false
+	_dialog_active = false
 	panel.hide()
 	Globals.playerStay = false
 	if close_sfx: close_sfx.play()
@@ -175,7 +188,6 @@ func _build_items() -> void:
 
 # ── Constructores de filas ──────────────────────────────────────────────
 
-## Fila de arma — usa los campos de Weapon.gd directamente
 func _make_arm_row(weapon: Node2D, selected: bool) -> Control:
 	var vbox := VBoxContainer.new()
 	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -184,11 +196,9 @@ func _make_arm_row(weapon: Node2D, selected: bool) -> Control:
 	hbox.add_theme_constant_override("separation", 6)
 	vbox.add_child(hbox)
 
-	# ▶ cursor
 	hbox.add_child(_label("▶ " if selected else "  ", 18,
 			COLOR_SELECTED if selected else COLOR_NORMAL))
 
-	# Ícono (campo icon : Texture2D en Weapon.gd)
 	if weapon.icon:
 		var icon := TextureRect.new()
 		icon.texture = weapon.icon
@@ -196,28 +206,22 @@ func _make_arm_row(weapon: Node2D, selected: bool) -> Control:
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		hbox.add_child(icon)
 
-	# Nombre
 	var name_lbl := _label(weapon.weapon_name, 18,
 			COLOR_SELECTED if selected else COLOR_NORMAL)
 	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hbox.add_child(name_lbl)
 
-	# Nivel con color
 	var lv        : int          = weapon.current_level
 	var lv_colors : Array[Color] = [COLOR_LV1, COLOR_LV2, COLOR_LV3]
 	var lv_color  : Color        = lv_colors[clamp(lv - 1, 0, 2)]
 	hbox.add_child(_label("Lv%d" % lv, 16, lv_color))
 
-	# Barra de EXP (solo si no está en nivel máximo)
 	if lv < weapon.max_level:
 		vbox.add_child(_make_exp_bar(weapon))
 
 	return vbox
 
 
-## Barra de EXP usando campos de Weapon.gd:
-##   current_xp  : int
-##   xp_to_level : Array[int]  — xp_to_level[current_level] es el tope del nivel actual
 func _make_exp_bar(weapon: Node2D) -> ProgressBar:
 	var lv     : int = weapon.current_level
 	var xp_max : int = weapon.xp_to_level[lv] if lv < weapon.xp_to_level.size() else 1
@@ -242,8 +246,12 @@ func _make_exp_bar(weapon: Node2D) -> ProgressBar:
 
 
 func _make_item_row(item_data, selected: bool) -> Control:
+	var vbox := VBoxContainer.new()
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
 	var hbox := HBoxContainer.new()
 	hbox.add_theme_constant_override("separation", 6)
+	vbox.add_child(hbox)
 
 	hbox.add_child(_label("▶ " if selected else "  ", 18,
 			COLOR_SELECTED if selected else COLOR_NORMAL))
@@ -258,7 +266,13 @@ func _make_item_row(item_data, selected: bool) -> Control:
 	hbox.add_child(_label(item_data.name, 18,
 			COLOR_SELECTED if selected else COLOR_NORMAL))
 
-	return hbox
+	if selected and not item_data.description.is_empty():
+		var desc := _label(item_data.description, 14, COLOR_DIM)
+		desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		desc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		vbox.add_child(desc)
+
+	return vbox
 
 
 func _label(txt: String, size: int, color: Color) -> Label:
@@ -270,45 +284,93 @@ func _label(txt: String, size: int, color: Color) -> Label:
 	return l
 
 
-# ── Selección → DialogBox ───────────────────────────────────────────────
+# ── Selección ───────────────────────────────────────────────────────────
 
 func _select_current() -> void:
+	print("[InventoryMenu] _select_current — section: ", _section, "  row: ", _row)
 	if confirm_sfx: confirm_sfx.play()
-
-	var title : String = ""
-	var desc  : String = ""
 
 	if _section == 0:
 		var weapons := _weapons_list()
-		if _row < weapons.size():
-			var w : Node2D = weapons[_row]
-			title = w.weapon_name
-			# Si Weapon tiene campo "description" úsalo; si no, lo generamos
-			var custom_desc = w.get("description")
-			if custom_desc != null and not str(custom_desc).is_empty():
-				desc = str(custom_desc)
-			else:
-				var xp_needed : int = 0
-				if w.current_level < w.xp_to_level.size():
-					xp_needed = w.xp_to_level[w.current_level]
-				if w.current_level >= w.max_level:
-					desc = "Nivel MAX"
-				else:
-					desc = "Nivel %d  |  EXP: %d / %d" % [
-						w.current_level, w.current_xp, xp_needed
-					]
+		if _row >= weapons.size():
+			return
+		# Equipar el arma seleccionada y cerrar el inventario
+		if _weapon_manager != null:
+			_weapon_manager._equip(_row)
+		_close_menu()
+
 	else:
 		var keys := _key_items_list()
+		print("[InventoryMenu] key_items_list size: ", keys.size())
 		if _row < keys.size():
-			title = keys[_row].name
-			desc  = keys[_row].description
+			_use_item(keys[_row])
+		else:
+			print("[InventoryMenu] _row fuera de rango: ", _row)
 
-	if desc.is_empty():
+
+func _use_item(item) -> void:
+	if _dialog_active:
 		return
+	print("[InventoryMenu] _use_item — item.id: '", item.id, "'  item.name: '", item.name, "'")
+	print("[InventoryMenu] _item_dialog_reg: ", _item_dialog_reg)
+	print("[InventoryMenu] dialog_box: ", dialog_box)
 
-	if dialog_box and dialog_box.has_method("start"):
-		_close_menu()
-		dialog_box.start([{
-			"speaker": title,
-			"text":    desc,
-		}])
+	var pages  : Array    = []
+	var on_use : Callable = Callable()
+
+	if _item_dialog_reg != null:
+		var tiene : bool = _item_dialog_reg.has(item.id)
+		print("[InventoryMenu] registry.has('", item.id, "'): ", tiene)
+		if tiene:
+			pages  = _item_dialog_reg.get_pages(item.id)
+			on_use = _item_dialog_reg.get_on_use(item.id)
+			print("[InventoryMenu] pages del registry: ", pages.size(), " páginas")
+	else:
+		print("[InventoryMenu] ERROR: _item_dialog_reg es null — ¿está registrado el Autoload?")
+
+	if pages.is_empty():
+		pages = [{"speaker": item.name, "text": item.description}]
+		print("[InventoryMenu] usando fallback — description: '", item.description, "'")
+
+	if not on_use.is_valid() and item.on_use.is_valid():
+		on_use = item.on_use
+
+	var db_ok : bool = dialog_box != null and dialog_box.has_method("start")
+	print("[InventoryMenu] dialog_box disponible: ", db_ok)
+
+	if db_ok:
+		_dialog_active = true
+		# Desconectar cualquier conexión previa para evitar doble disparo
+		if dialog_box.dialog_finished.is_connected(_on_dialog_closed):
+			dialog_box.dialog_finished.disconnect(_on_dialog_closed)
+
+		var captured_item   = item
+		var captured_on_use = on_use
+		var conn : Callable = func():
+			print("[InventoryMenu] dialog_finished recibido")
+			if captured_on_use.is_valid():
+				captured_on_use.call()
+			if captured_item.type == ItemData.Type.MISC:
+				PlayerInventory.remove_key_item(captured_item.id)
+				_row = clamp(_row, 0, max(0, _key_items_list().size() - 1))
+			_on_dialog_closed()
+		dialog_box.dialog_finished.connect(conn, CONNECT_ONE_SHOT)
+		dialog_box.start(pages, false)
+		print("[InventoryMenu] dialog_box.start() llamado")
+	else:
+		print("[InventoryMenu] sin dialog_box — ejecutando on_use directo")
+		if on_use.is_valid():
+			on_use.call()
+		if item.type == ItemData.Type.MISC:
+			PlayerInventory.remove_key_item(item.id)
+			_row = clamp(_row, 0, max(0, _key_items_list().size() - 1))
+			_refresh()
+
+
+func _on_dialog_closed() -> void:
+	print("[InventoryMenu] _on_dialog_closed — volviendo al inventario")
+	print("[InventoryMenu] _on_dialog_closed — _dialog_active era: ", _dialog_active)
+	await get_tree().process_frame
+	_dialog_active     = false
+	Globals.playerStay = true
+	_refresh()

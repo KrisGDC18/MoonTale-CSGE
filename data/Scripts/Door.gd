@@ -3,8 +3,8 @@ extends Sprite2D
 var interactable   : bool = false
 var _transitioning : bool = false
 
-@export var target_map        : PackedScene
-@export var target_spawn      : String = ""
+@export_file("*.tscn") var target_map : String = ""
+@export var target_spawn                : String = ""
 @export var next_music_intro  : AudioStream = null
 @export var next_music_loop   : AudioStream = null
 
@@ -17,7 +17,7 @@ func _ready():
 
 @warning_ignore("unused_parameter")
 func _process(delta):
-	if Input.is_action_just_pressed("Down") and interactable and not _transitioning:
+	if Input.is_action_just_pressed("Down") and interactable and not _transitioning and !Globals.playerStay:
 		_transitioning = true
 		_do_transition()
 
@@ -33,12 +33,16 @@ func _on_area_2d_area_exited(area):
 
 
 func _do_transition() -> void:
-	if target_map == null:
+	if target_map.is_empty():
 		push_warning("Door: no tiene target_map asignado.")
 		_transitioning = false
 		return
 
-	var map    : PackedScene  = target_map
+	var map : PackedScene = load(target_map)
+	if map == null:
+		push_warning("Door: no se pudo cargar la escena: " + target_map)
+		_transitioning = false
+		return
 	var spawn  : String       = target_spawn
 	var intro  : AudioStream  = next_music_intro
 	var loop   : AudioStream  = next_music_loop

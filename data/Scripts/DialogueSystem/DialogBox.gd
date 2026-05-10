@@ -37,13 +37,18 @@ func _ready() -> void:
 
 
 # ── API pública ────────────────────────────────────────────────────────
-func start(pages: Array) -> void:
+
+# Si release_player_on_close=false, el llamador gestiona playerStay (ej. inventario).
+var _release_player_on_close : bool = true
+
+func start(pages: Array, release_player_on_close: bool = true) -> void:
 	_pages        = pages
 	_page_index   = 0
 	_in_choices   = false
 	_choice_index = 0
 	_typing       = false
 	_waiting      = false
+	_release_player_on_close = release_player_on_close
 	panel.show()
 	Globals.playerStay = true
 	_show_page(0)
@@ -167,9 +172,11 @@ func _advance() -> void:
 
 
 func _close() -> void:
+	print("[DialogBox] _close() llamado, stack: ", get_stack())
 	panel.hide()
 	choices_bg.hide()
-	Globals.playerStay = false
+	if _release_player_on_close:
+		Globals.playerStay = false
 	emit_signal("dialog_finished")
 
 
@@ -219,13 +226,16 @@ func _handle_choices() -> void:
 		_clear_choices()
 		choices.hide()
 		choices_bg.hide()
-		_page_index = next
-		_show_page(_page_index)
 
+		# Ejecutar la acción ANTES de avanzar la página,
+		# así no interfiere con _close() ni dialog_finished.
 		if chosen < actions.size():
 			var action = actions[chosen]
-			if action is Callable:
+			if action is Callable and action.is_valid():
 				action.call()
+
+		_page_index = next
+		_show_page(_page_index)
 
 
 func _refresh_cursor() -> void:

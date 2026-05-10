@@ -10,9 +10,10 @@ var _charge_level      : int   = 0
 var _prev_charge_level : int   = -1
 var _is_charging       : bool  = false
 var _max_charge_pinged : bool  = false
+var _locked_shoot_dir  : Vector2 = Vector2.RIGHT
 
-# La dirección se puede cambiar mientras se carga
-# _shoot_dir viene de Weapon y se actualiza cada frame con _update_aim()
+# La dirección se puede cambiar mientras se carga.
+# _locked_shoot_dir se fija al presionar Fire y se usa para el disparo cargado.
 
 # Cache nodos de audio
 var _charge_audio_nodes : Array[AudioStreamPlayer2D] = [null, null, null]
@@ -69,13 +70,14 @@ func _handle_aim(last_direction: int, looking_up: bool, looking_down: bool) -> v
 
 
 func _handle_fire(delta: float) -> void:
-	# ── Presión inicial: disparo normal inmediato + empezar carga ────────
+	# ── Presión inicial: disparo rápido + fijar dirección + empezar carga ─
 	if Input.is_action_just_pressed("Fire"):
-		_spawn_bullet(0)        # bala nivel 0 = disparo normal sin carga
+		_locked_shoot_dir = _shoot_dir   # capturar ANTES de que cambie
+		_spawn_bullet(0, true)           # force_normal=true → sin estela
 		_play_simple_shoot_sound()
-		_is_charging   = true   # empieza la carga desde este frame
+		_is_charging = true
 
-	# ── Mientras se mantiene: acumular carga ─────────────────────────────
+	# ── Mientras se mantiene: acumular carga ──────────────────────────────
 	if Input.is_action_pressed("Fire") and _is_charging:
 		_charge_timer += delta
 
@@ -89,7 +91,6 @@ func _handle_fire(delta: float) -> void:
 		else:
 			new_level = 0
 
-		# Cambió de nivel → cambiar sonido de carga
 		if new_level != _prev_charge_level:
 			_stop_all_charge_sounds()
 			_charge_level = new_level
@@ -102,16 +103,17 @@ func _handle_fire(delta: float) -> void:
 
 			_prev_charge_level = _charge_level
 
-	# ── Al soltar: disparar bala cargada (solo si había carga) ────────────
+	# ── Al soltar: disparar con la dirección actual ───────────────────────
 	elif Input.is_action_just_released("Fire"):
 		_stop_all_charge_sounds()
 		if _charge_level > 0:
-			# _shoot_dir ya tiene la dirección actual del jugador al momento de soltar
-			_spawn_bullet(_charge_level)
+			_spawn_bullet(_charge_level, false, false)
 		reset_charge()
 
 
-func _spawn_bullet(lvl: int) -> void:
+# Sobreescribe Weapon._spawn_bullet manteniendo la firma exacta del padre.
+# _shoot_dir ya tiene el valor correcto cuando se llega aquí.
+func _spawn_bullet(lvl: int, force_normal: bool = false, resize_collision: bool = true) -> void:
 	if bullet_scene == null:
 		return
 	if _bullet_count >= MAX_BULLETS:
@@ -121,7 +123,7 @@ func _spawn_bullet(lvl: int) -> void:
 	bullet.global_position = _get_bullet_spawn_pos()
 	bullet.tree_exiting.connect(func(): _bullet_count -= 1)
 	get_tree().root.add_child(bullet)
-	bullet.setup(lvl, _shoot_dir)
+	bullet.setup(lvl, _shoot_dir, force_normal, resize_collision)
 	_bullet_count += 1
 
 	if lvl > 0:
@@ -181,7 +183,7 @@ func _play_max_charge_sound() -> void:
 	_max_charge_audio.play()
 
 
-# ── Sonido disparo simple (al presionar Fire por primera vez) ─────────
+# ── Sonido disparo simple (al presionar Fire por primera vez)─────────
 # Nodo: ShootAudio0  (sin loop, se reproduce una sola vez)
 
 func _play_simple_shoot_sound() -> void:

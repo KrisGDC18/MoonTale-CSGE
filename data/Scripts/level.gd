@@ -31,6 +31,7 @@ func change_map(map_scene: PackedScene, spawn_point: String = "") -> void:
 func _unload_current() -> void:
 	if _current_map == null:
 		return
+	emit_signal("map_changed", "")  # avisa a las balas que se destruyan antes del cambio
 	_current_map.queue_free()
 	_current_map = null
 

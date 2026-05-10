@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://bfqwxlehn57if"]
+
+[ext_resource type="Script" uid="uid://6mynqps1ljoh" path="res://data/Scripts/player/weapons/Weaponpickup.gd" id="1_oju5c"]
+[ext_resource type="Texture2D" uid="uid://bo4nabp27meiw" path="res://data/Sprites/Weapons/Laser.png" id="2_55163"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_oju5c"]
+
+[node name="Weaponpickup" type="Node2D" unique_id=278533012]
+script = ExtResource("1_oju5c")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=725333485]
+texture = ExtResource("2_55163")
+
+[node name="Pickup_sfx" type="AudioStreamPlayer2D" parent="." unique_id=334360433]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=202431552]
+shape = SubResource("RectangleShape2D_oju5c")

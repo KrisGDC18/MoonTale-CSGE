@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://dhuq5bij0wyjp"]
+
+[ext_resource type="Script" uid="uid://bxnyvwbp42p86" path="res://data/Scripts/Enemies/Dummy.gd" id="1_mjefd"]
+[ext_resource type="Texture2D" uid="uid://cxsoo4epubj6u" path="res://data/Sprites/NPC/Kris_test.png" id="2_mlauq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lqvex"]
+size = Vector2(27, 34)
+
+[node name="Dummy" type="CharacterBody2D" unique_id=1962890258]
+collision_layer = 16
+collision_mask = 16
+script = ExtResource("1_mjefd")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1032115889]
+texture = ExtResource("2_mlauq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=475792038]
+position = Vector2(-0.5, 4)
+shape = SubResource("RectangleShape2D_lqvex")
+
+[node name="HPBarRoot" type="Node2D" parent="." unique_id=1941663966]
+
+[node name="HPBarBG" type="ColorRect" parent="HPBarRoot" unique_id=71264850]
+anchors_preset = -1
+anchor_left = -0.0067708334
+anchor_top = -0.018518519
+anchor_right = 0.0072916667
+anchor_bottom = -0.014814815
+color = Color(11.426685, 0, 0, 0.09411765)
+metadata/_edit_use_anchors_ = true
+
+[node name="HPBarFill" type="ColorRect" parent="HPBarRoot" unique_id=2059440814]
+offset_left = -15.0
+offset_top = -19.0
+offset_right = 16.0
+offset_bottom = -15.0
+color = Color(0.95686275, 0, 0, 1)

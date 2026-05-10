@@ -1,6 +1,5 @@
-extends CharacterBody2D
+extends NpcBase
 
-var interactable                 = false
 # Referencia al nodo DialogBox en tu escena
 @onready var dialog : CanvasLayer = $DialogBox
 
@@ -23,14 +22,15 @@ func _on_interact() -> void:
 		{
 			"speaker"  : "Kris",
 			"portrait" : preload("res://data/Sprites/Faces/Kris.png"),
-			"text"     : "¿Quieres activar el Booster?",
-			"choices"  : ["El 1.0", "El 2.0", "Ninguno", "item"],
-			"targets"  : [2, 2, 2, 3],
+			"text"     : "Que te gustaria hacer?",
+			"choices"  : ["El 1.0", "Guardar Partida", "Ninguno", "Polar Star", "Booster 2.0"],
+			"targets"  : [2, 2, 2, 3, 3],
 			"actions"  : [
 				func(): _activar_booster_1(),   # se ejecuta si elige opción 0
-				func(): _activar_booster_2(),   # se ejecuta si elige opción 1
+				func(): SaveSystem.save_game(1),   # se ejecuta si elige opción 1
 				func(): _disable_booster(),     # no hace nada si elige opción 2
-				func(): _give_jet2(),
+				func(): _give_weapon(preload("res://data/Entities/Weapons/PolarStar.tscn")),
+				func(): _give_item(preload("res://data/Items/jetpack2.tres")),
 			]
 		},
 		{
@@ -77,13 +77,3 @@ func _disable_booster() -> void:
 	player.jetpack_equipped = false
 	player.jetpack_upgrade = false
 	print("desactivado")
-
-
-func _on_area_2d_body_entered(body) -> void:
-	interactable = true
-func _on_area_2d_body_exited(body) -> void:
-	interactable = false
-func _on_area_2d_area_entered(area: Area2D) -> void:
-	interactable = true
-func _on_area_2d_area_exited(area: Area2D) -> void:
-	interactable = false

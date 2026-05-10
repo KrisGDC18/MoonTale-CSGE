@@ -9,7 +9,7 @@
 [ext_resource type="AudioStream" uid="uid://mvrc01e43j2n" path="res://data/Sounds/SFX/Player/ok.wav" id="5_dqkix"]
 
 [node name="DialogBox" type="CanvasLayer" unique_id=1282337130]
-layer = 10
+layer = 21
 script = ExtResource("1_yoo1p")
 
 [node name="Box" type="NinePatchRect" parent="." unique_id=191388762]

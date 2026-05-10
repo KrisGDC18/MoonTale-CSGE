@@ -3,14 +3,15 @@ extends Node2D
 # ─── Señal ────────────────────────────────────────────────────────────
 signal weapon_changed(weapon: Node2D)
 
-# ─── Armas disponibles ────────────────────────────────────────────────
+# ─── Armas de inicio (opcional, puede quedar vacío) ───────────────────
 @export var weapon_scenes : Array[PackedScene] = []
 
 # ─── Nodos ────────────────────────────────────────────────────────────
 @onready var switch_sfx : AudioStreamPlayer = $switch_sfx
 
 # ─── Variables ────────────────────────────────────────────────────────
-var _weapons        : Array  = []
+var _weapons        : Array  = []   # instancias de arma
+var _owned_scenes   : Array  = []   # PackedScene de cada arma obtenida
 var _current_index  : int    = 0
 var _current_weapon : Node2D = null
 var _player         : Node   = null
@@ -20,28 +21,23 @@ var _player         : Node   = null
 func init(player: Node) -> void:
 	add_to_group("weapon_manager")
 	_player = player
-	print("WeaponManager iniciado, weapon_scenes: ", weapon_scenes.size())
 	for scene in weapon_scenes:
-		_add_weapon(scene)
-	print("Armas agregadas: ", _weapons.size())
-	print("Arma actual: ", _current_weapon)
+		if scene != null:
+			_add_weapon(scene, false)
 
 
-func _add_weapon(weapon_scene: PackedScene) -> void:
-	var weapon : Node2D = weapon_scene.instantiate()
+# Añade un arma y la instancia. play_sound controla si suena el switch_sfx.
+func _add_weapon(scene: PackedScene, play_sound: bool = true) -> void:
+	var weapon : Node2D = scene.instantiate()
 	add_child(weapon)
 	weapon.init(_player)
 	weapon.visible = false
 	_weapons.append(weapon)
-	print("Arma agregada: ", weapon.name, " total: ", _weapons.size())
-
-	if _weapons.size() == 1:
-		print("Equipando primera arma...")
-		_equip(0)
-		print("_current_weapon despues de equip: ", _current_weapon)
+	_owned_scenes.append(scene)
+	_equip(_weapons.size() - 1, play_sound)
 
 
-func _equip(index: int) -> void:
+func _equip(index: int, play_sound: bool = true) -> void:
 	if _current_weapon != null:
 		_current_weapon.visible = false
 		_current_weapon.reset_charge()
@@ -49,20 +45,15 @@ func _equip(index: int) -> void:
 	_current_index  = index
 	_current_weapon = _weapons[index]
 	_current_weapon.visible = true
-	print("Equipando arma: ", _current_weapon.name)
 
-	# Notificar al HUD (y cualquier otro listener) que el arma cambió
 	emit_signal("weapon_changed", _current_weapon)
-	switch_sfx.play()
+	if play_sound:
+		switch_sfx.play()
 
 
 # ─── Proceso ──────────────────────────────────────────────────────────
 func _process(delta: float) -> void:
-	if _player == null:
-		print("ERROR: _player es null")
-		return
-	if _current_weapon == null:
-		print("ERROR: _current_weapon es null")
+	if _player == null or _current_weapon == null:
 		return
 	if _player.playerDead:
 		_current_weapon.visible = false
@@ -77,12 +68,10 @@ func _handle_weapon_switch() -> void:
 		return
 
 	if Input.is_action_just_pressed("Weapon+"):
-		var next : int = (_current_index + 1) % _weapons.size()
-		_equip(next)
+		_equip((_current_index + 1) % _weapons.size())
 
 	elif Input.is_action_just_pressed("Weapon-"):
-		var prev : int = (_current_index - 1 + _weapons.size()) % _weapons.size()
-		_equip(prev)
+		_equip((_current_index - 1 + _weapons.size()) % _weapons.size())
 
 
 # ─── API pública ──────────────────────────────────────────────────────
@@ -93,3 +82,13 @@ func get_current_weapon() -> Node2D:
 func add_xp_to_current(amount: int) -> void:
 	if _current_weapon != null:
 		_current_weapon.add_xp(amount)
+
+
+# Llamado por WeaponPickup cuando el jugador toca el objeto.
+# Si ya tiene el arma, le da XP a la activa en vez de duplicar.
+func give_weapon(scene: PackedScene, xp_if_owned: int = 50) -> void:
+	for owned in _owned_scenes:
+		if owned == scene:
+			add_xp_to_current(xp_if_owned)
+			return
+	_add_weapon(scene, false)  # sin sonido: el pickup tiene el suyo

@@ -1,145 +1,145 @@
 [gd_scene format=3 uid="uid://sniu0w5cff26"]
 
-[ext_resource type="Script" uid="uid://bsvyo23xutyy7" path="res://data/Scripts/player/playerMovement.gd" id="1_kspwo"]
-[ext_resource type="Texture2D" uid="uid://bem4ugaunkteb" path="res://data/Sprites/Players/MyChar.png" id="1_vtqvh"]
-[ext_resource type="PackedScene" uid="uid://c0kfcchm0g70e" path="res://data/Entities/Misc/question_mark.tscn" id="2_wb1qb"]
-[ext_resource type="Shader" uid="uid://b4qccg3b8b71j" path="res://data/Entities/player/Shaders/playerCite.gdshader" id="3_elhn1"]
-[ext_resource type="PackedScene" uid="uid://5mon82cad5le" path="res://data/Entities/Weapons/Spur.tscn" id="4_5o1rp"]
-[ext_resource type="Script" uid="uid://btos1thx1apeb" path="res://data/Scripts/player/weapons/WeaponManager.gd" id="4_brn1j"]
-[ext_resource type="AudioStream" uid="uid://dhlruiji2rswi" path="res://data/Sounds/SFX/Player/jump.wav" id="6_6d21t"]
-[ext_resource type="PackedScene" uid="uid://bk31ogs2o2jkm" path="res://data/Entities/Weapons/PolarStar.tscn" id="6_qpy3o"]
-[ext_resource type="AudioStream" uid="uid://b4cgk7e6n0uhu" path="res://data/Sounds/SFX/Player/land.wav" id="7_dnrcq"]
-[ext_resource type="AudioStream" uid="uid://bqhdgwvcky0jw" path="res://data/Sounds/SFX/Player/headbonk.wav" id="7_n6brj"]
-[ext_resource type="AudioStream" uid="uid://xnamdeki48on" path="res://data/Sounds/SFX/Player/step.wav" id="8_fb0eh"]
-[ext_resource type="AudioStream" uid="uid://b4dw3wlhk0nr2" path="res://data/Sounds/SFX/Player/Cursor.wav" id="8_qpy3o"]
-[ext_resource type="AudioStream" uid="uid://w1fdejlpkx1j" path="res://data/Sounds/SFX/Player/hurt.wav" id="10_tkctx"]
-[ext_resource type="AudioStream" uid="uid://c4wauark5be5a" path="res://data/Sounds/SFX/Player/dead.wav" id="11_tkctx"]
+[ext_resource type="Script" uid="uid://bsvyo23xutyy7" path="res://data/Scripts/player/player.gd" id="1_gj1n8"]
+[ext_resource type="PackedScene" uid="uid://c0kfcchm0g70e" path="res://data/Entities/Misc/question_mark.tscn" id="2_llrnl"]
+[ext_resource type="Shader" uid="uid://b4qccg3b8b71j" path="res://data/Entities/player/Shaders/playerCite.gdshader" id="3_akp86"]
+[ext_resource type="Texture2D" uid="uid://bem4ugaunkteb" path="res://data/Sprites/Players/MyChar.png" id="4_i7mxw"]
+[ext_resource type="Script" uid="uid://btos1thx1apeb" path="res://data/Scripts/player/weapons/WeaponManager.gd" id="5_uyekh"]
+[ext_resource type="PackedScene" uid="uid://5mon82cad5le" path="res://data/Entities/Weapons/Spur.tscn" id="6_2g7is"]
+[ext_resource type="PackedScene" uid="uid://bk31ogs2o2jkm" path="res://data/Entities/Weapons/PolarStar.tscn" id="7_v1emx"]
+[ext_resource type="AudioStream" uid="uid://b4dw3wlhk0nr2" path="res://data/Sounds/SFX/Player/Cursor.wav" id="8_jknpg"]
+[ext_resource type="AudioStream" uid="uid://dhlruiji2rswi" path="res://data/Sounds/SFX/Player/jump.wav" id="9_mljut"]
+[ext_resource type="AudioStream" uid="uid://bqhdgwvcky0jw" path="res://data/Sounds/SFX/Player/headbonk.wav" id="10_el42n"]
+[ext_resource type="AudioStream" uid="uid://b4cgk7e6n0uhu" path="res://data/Sounds/SFX/Player/land.wav" id="11_1mg3p"]
+[ext_resource type="AudioStream" uid="uid://xnamdeki48on" path="res://data/Sounds/SFX/Player/step.wav" id="12_u2uub"]
+[ext_resource type="AudioStream" uid="uid://w1fdejlpkx1j" path="res://data/Sounds/SFX/Player/hurt.wav" id="13_5kum8"]
+[ext_resource type="AudioStream" uid="uid://c4wauark5be5a" path="res://data/Sounds/SFX/Player/dead.wav" id="14_qan51"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jm4nm"]
-shader = ExtResource("3_elhn1")
+shader = ExtResource("3_akp86")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_k5mt1"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(224, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o4lfj"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(96, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kspwo"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(224, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5o1rp"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qpy3o"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(192, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kms3g"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(160, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_brn1j"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(32, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a2tq2"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(192, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hg7qs"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(128, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1i1uy"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wb1qb"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lqclf"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(0, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uheso"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dnrcq"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(192, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6d21t"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(128, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tkctx"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(64, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7wou7"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(160, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wsfsm"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8upy0"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_762p1"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_elhn1"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(128, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jm4nm"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wlwph"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(160, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jeo24"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(128, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n0ni4"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(96, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_52j3h"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(160, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ccmo1"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(32, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7fqlk"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(0, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6fmnq"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(64, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t4ka0"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(0, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_d8thv"]
-atlas = ExtResource("1_vtqvh")
+atlas = ExtResource("4_i7mxw")
 region = Rect2(192, 32, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_x1tpm"]
@@ -458,8 +458,8 @@ size = Vector2(10.5, 20.25)
 z_index = 1
 collision_layer = 2
 collision_mask = 5
-script = ExtResource("1_kspwo")
-qMark = ExtResource("2_wb1qb")
+script = ExtResource("1_gj1n8")
+qMark = ExtResource("2_llrnl")
 dmg = NodePath("DamageDetect")
 damage_material = SubResource("ShaderMaterial_jm4nm")
 
@@ -470,18 +470,18 @@ animation = &"FallingRightLookUp"
 
 [node name="WeaponManager" type="Node2D" parent="." unique_id=1572819859]
 z_index = -1
-script = ExtResource("4_brn1j")
-weapon_scenes = Array[PackedScene]([ExtResource("6_qpy3o"), ExtResource("4_5o1rp")])
+script = ExtResource("5_uyekh")
+weapon_scenes = Array[PackedScene]([ExtResource("6_2g7is"), null])
 
-[node name="PolarStar" parent="WeaponManager" unique_id=1630933231 instance=ExtResource("6_qpy3o")]
+[node name="PolarStar" parent="WeaponManager" unique_id=1630933231 instance=ExtResource("7_v1emx")]
 visible = false
 
-[node name="Spur" parent="WeaponManager" unique_id=1284685379 instance=ExtResource("4_5o1rp")]
+[node name="Spur" parent="WeaponManager" unique_id=1284685379 instance=ExtResource("6_2g7is")]
 visible = false
 weapon_name = "Spur"
 
 [node name="switch_sfx" type="AudioStreamPlayer" parent="WeaponManager" unique_id=1204701420]
-stream = ExtResource("8_qpy3o")
+stream = ExtResource("8_jknpg")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1454706974]
 position_smoothing_enabled = true
@@ -542,27 +542,27 @@ position = Vector2(-0.25, 5.875)
 shape = SubResource("RectangleShape2D_kspwo")
 
 [node name="jump_sfx" type="AudioStreamPlayer" parent="." unique_id=820140430]
-stream = ExtResource("6_6d21t")
+stream = ExtResource("9_mljut")
 
 [node name="bonk_sfx" type="AudioStreamPlayer" parent="." unique_id=1930589260]
-stream = ExtResource("7_n6brj")
+stream = ExtResource("10_el42n")
 
 [node name="land_sfx" type="AudioStreamPlayer" parent="." unique_id=238209823]
-stream = ExtResource("7_dnrcq")
+stream = ExtResource("11_1mg3p")
 
 [node name="water_sfx" type="AudioStreamPlayer" parent="." unique_id=25011371]
 
 [node name="step_sfx" type="AudioStreamPlayer" parent="." unique_id=459217647]
-stream = ExtResource("8_fb0eh")
+stream = ExtResource("12_u2uub")
 
 [node name="hurt_sfx" type="AudioStreamPlayer" parent="." unique_id=307617984]
-stream = ExtResource("10_tkctx")
+stream = ExtResource("13_5kum8")
 
 [node name="death_sfx" type="AudioStreamPlayer" parent="." unique_id=1837028717]
-stream = ExtResource("11_tkctx")
+stream = ExtResource("14_qan51")
 
 [node name="death_drown_sfx" type="AudioStreamPlayer" parent="." unique_id=1419141869]
-stream = ExtResource("7_dnrcq")
+stream = ExtResource("11_1mg3p")
 
 [node name="booster_sfx" type="AudioStreamPlayer" parent="." unique_id=2121917197]
 
