@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://ohj5vt0m2gx4"]
+
+[ext_resource type="Script" uid="uid://bffi0nvsf8nk4" path="res://data/Scripts/Scenary/Destructible Block/Destructibleblock.gd" id="1_d1j6d"]
+[ext_resource type="Texture2D" uid="uid://djaaqd2fkrxm6" path="res://data/Sprites/Misc/DestructibleBlock.png" id="2_lhum2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nj5ki"]
+size = Vector2(32, 32)
+
+[node name="DestructibleBlock" type="StaticBody2D" unique_id=981314026]
+collision_mask = 0
+script = ExtResource("1_d1j6d")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2016861188]
+shape = SubResource("RectangleShape2D_nj5ki")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2115825578]
+texture = ExtResource("2_lhum2")

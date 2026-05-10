@@ -30,6 +30,20 @@ signal game_started(slot: int, is_new: bool)
 # ── Recursos ───────────────────────────────────────────────────────────
 const FONT_PATH := "res://data/Fonts/monogatari.ttf"
 
+## Textura de fondo de la pantalla de título.
+## Asígnala en el Inspector del nodo CanvasLayer (Game.tscn).
+@export var background_texture : Texture2D = null
+
+## Sprite del título del juego. Se muestra centrado en posición fija.
+## Asígnala en el Inspector del nodo CanvasLayer (Game.tscn).
+@export var title_texture      : Texture2D = null
+
+## Posición en pantalla del sprite del título (esquina superior izquierda).
+@export var title_position     : Vector2   = Vector2(0.0, 40.0)
+
+## Escala del sprite del título (1.0 = tamaño original).
+@export var title_scale        : Vector2   = Vector2(1.0, 1.0)
+
 # ── Paleta estilo Cave Story ───────────────────────────────────────────
 const C_BG          := Color(0.04, 0.04, 0.09, 1.0)
 const C_PANEL       := Color(0.06, 0.06, 0.14, 0.98)
@@ -54,7 +68,8 @@ var _open        : bool      = false
 var _font : Font = null
 
 # ── Nodos UI (generados por código) ───────────────────────────────────
-var _full_bg      : ColorRect
+var _full_bg      : TextureRect
+var _title_sprite : TextureRect
 var _panel        : PanelContainer
 var _title_lbl    : Label
 var _main_vbox    : VBoxContainer
@@ -64,9 +79,14 @@ var _slots_vbox   : VBoxContainer
 var _sfx_cursor  : AudioStreamPlayer = null
 var _sfx_confirm : AudioStreamPlayer = null
 var _sfx_cancel  : AudioStreamPlayer = null
+var _music_intro : AudioStreamPlayer = null
+var _music_loop  : AudioStreamPlayer = null
+
+# ── Referencia al menú de opciones ────────────────────────────────────
+var _settings_menu : Node = null
 
 # ── Opciones ──────────────────────────────────────────────────────────
-const MAIN_OPTIONS := ["Nuevo Juego", "Continuar", "Salir"]
+const MAIN_OPTIONS := ["Nuevo Juego", "Continuar", "Opciones", "Salir"]
 const SLOT_COUNT   := 3
 
 
@@ -75,6 +95,7 @@ const SLOT_COUNT   := 3
 
 func _ready() -> void:
 	layer = 50   # por encima del inventario (layer 20)
+	add_to_group("title_screen")
 	_font = load(FONT_PATH) if ResourceLoader.exists(FONT_PATH) else null
 	_build_ui()
 	_find_sfx()
@@ -85,6 +106,18 @@ func _find_sfx() -> void:
 	_sfx_cursor  = get_node_or_null("CursorSFX")
 	_sfx_confirm = get_node_or_null("ConfirmSFX")
 	_sfx_cancel  = get_node_or_null("CancelSFX")
+	_music_intro = get_node_or_null("TitleMusicIntro")
+	_music_loop  = get_node_or_null("TitleMusicLoop")
+	# Conectar la señal finished de la intro para encadenar el loop
+	if _music_intro != null and not _music_intro.finished.is_connected(_on_intro_finished):
+		_music_intro.finished.connect(_on_intro_finished)
+	if _music_loop != null and not _music_loop.finished.is_connected(_on_loop_finished):
+		_music_loop.finished.connect(_on_loop_finished)
+	_settings_menu = get_tree().get_first_node_in_group("settings_menu")
+	if _settings_menu != null and not _settings_menu.closed.is_connected(_on_settings_closed):
+		_settings_menu.closed.connect(_on_settings_closed)
+	else:
+		push_warning("[TitleScreen] SettingsMenu no encontrado. Agrega el nodo a la escena.")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -98,6 +131,9 @@ func show_menu() -> void:
 	_lock_player(true)
 	_full_bg.show()
 	_panel.show()
+	if title_texture != null:
+		_title_sprite.show()
+	_play_music()
 	_refresh()
 
 
@@ -106,6 +142,8 @@ func hide_menu() -> void:
 	_open = false
 	_full_bg.hide()
 	_panel.hide()
+	_title_sprite.hide()
+	_stop_music()
 	_lock_player(false)
 
 
@@ -177,7 +215,13 @@ func _confirm() -> void:
 						_refresh()
 					# Si no hay guardados, no hace nada (opción gris)
 
-				2:   # ── Salir ───────────────────────────────────────
+				2:   # ── Opciones ────────────────────────────────────
+					if _settings_menu != null:
+						_panel.hide()
+						_full_bg.hide()
+						_settings_menu.open()
+
+				3:   # ── Salir ───────────────────────────────────────
 					get_tree().quit()
 
 		MenuState.SLOTS:
@@ -195,6 +239,16 @@ func _confirm() -> void:
 func _go_to_main() -> void:
 	_state  = MenuState.MAIN
 	_cursor = 0
+	_refresh()
+
+
+func _on_settings_closed() -> void:
+	# Restaurar el menú de título al cerrar opciones
+	_full_bg.show()
+	_panel.show()
+	if title_texture != null:
+		_title_sprite.show()
+	_cursor = 2   # dejar el cursor en "Opciones"
 	_refresh()
 
 
@@ -238,12 +292,47 @@ func _load_game(slot: int) -> void:
 # ─── CONSTRUCCIÓN DE UI ───────────────────────────────────────────────
 
 func _build_ui() -> void:
-	# ── Fondo negro pantalla completa ─────────────────────────────────
-	_full_bg           = ColorRect.new()
-	_full_bg.color     = C_BG
-	_full_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# ── Fondo con textura pantalla completa ───────────────────────────
+	_full_bg = TextureRect.new()
+	_full_bg.texture           = background_texture
+	_full_bg.stretch_mode      = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_full_bg.expand_mode       = TextureRect.EXPAND_IGNORE_SIZE
+	_full_bg.mouse_filter      = Control.MOUSE_FILTER_IGNORE
 	_full_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Fallback: color oscuro si no hay textura asignada
+	_full_bg.self_modulate     = Color(1, 1, 1, 1)
 	add_child(_full_bg)
+
+	# ── Fondo de color semitransparente de respaldo (detrás del panel) ─
+	var fallback := ColorRect.new()
+	fallback.color        = C_BG
+	fallback.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fallback.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Solo visible si no hay textura
+	fallback.visible = (background_texture == null)
+	_full_bg.add_child(fallback)
+
+	# ── Sprite del título del juego ────────────────────────────────────
+	_title_sprite = TextureRect.new()
+	_title_sprite.texture      = title_texture
+	_title_sprite.expand_mode  = TextureRect.EXPAND_IGNORE_SIZE
+	_title_sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
+	_title_sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Centrar horizontalmente usando anclas
+	_title_sprite.anchor_left   = 0.5
+	_title_sprite.anchor_right  = 0.5
+	_title_sprite.anchor_top    = 0.0
+	_title_sprite.anchor_bottom = 0.0
+	# La posición Y viene del export; X es relativa al centro
+	if title_texture != null:
+		var tw := title_texture.get_width()  * title_scale.x
+		var th := title_texture.get_height() * title_scale.y
+		_title_sprite.offset_left   = -tw / 2.0
+		_title_sprite.offset_right  =  tw / 2.0
+		_title_sprite.offset_top    = title_position.y
+		_title_sprite.offset_bottom = title_position.y + th
+	_title_sprite.visible = (title_texture != null)
+	add_child(_title_sprite)
 
 	# ── Panel centrado ─────────────────────────────────────────────────
 	_panel = PanelContainer.new()
@@ -276,7 +365,7 @@ func _build_ui() -> void:
 	_panel.add_child(root_vbox)
 
 	# Título
-	_title_lbl = _lbl("— MOONTALE —", 22, C_NORMAL)
+	_title_lbl = _lbl("— CAVE ENGINE —", 22, C_NORMAL)
 	_title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root_vbox.add_child(_title_lbl)
 
@@ -331,11 +420,10 @@ func _build_main_menu() -> void:
 		else:
 			color = C_NORMAL
 
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 8)
-		row.add_child(_lbl("▶ " if sel else "  ", 20, C_SELECTED))
-		row.add_child(_lbl(txt, 20, color))
-		_main_vbox.add_child(row)
+		var lbl := _lbl(txt, 20, color)
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_main_vbox.add_child(lbl)
 
 
 func _build_slot_menu() -> void:
@@ -417,6 +505,39 @@ func _lbl(txt: String, size: int, color: Color) -> Label:
 	l.add_theme_font_size_override("font_size", size)
 	l.add_theme_color_override("font_color", color)
 	return l
+
+
+func _play_music() -> void:
+	# Detener cualquier cosa que esté sonando antes de empezar
+	_stop_music()
+	if _music_intro != null and _music_intro.stream != null:
+		_music_intro.play()
+	elif _music_loop != null and _music_loop.stream != null:
+		# Si no hay intro, ir directo al loop
+		_music_loop.play()
+
+
+func _stop_music() -> void:
+	if _music_intro != null:
+		_music_intro.stop()
+	if _music_loop != null:
+		_music_loop.stop()
+
+
+func _on_intro_finished() -> void:
+	# Solo arrancar el loop si el menú sigue abierto
+	if not _open:
+		return
+	if _music_loop != null and _music_loop.stream != null:
+		_music_loop.play()
+
+
+func _on_loop_finished() -> void:
+	# Reiniciar el loop mientras el menú esté abierto
+	if not _open:
+		return
+	if _music_loop != null and _music_loop.stream != null:
+		_music_loop.play()
 
 
 func _play(sfx: AudioStreamPlayer) -> void:

@@ -87,13 +87,12 @@ const CAM_OVERRIDE_LERP   := 5.0
 @onready var death_drown_sfx : AudioStreamPlayer = $death_drown_sfx
 @onready var booster_sfx     : AudioStreamPlayer = $booster_sfx
 @onready var booster2_sfx    : AudioStreamPlayer = $booster2_sfx
-#@onready var spur : Node2D = $Spur
 @onready var weapon_manager = $WeaponManager
 
 
 # ─── Variables de booster ─────────────────────────────────────────────
-var jetpack_equipped    : bool  = true
-var jetpack_upgrade     : bool  = true
+var jetpack_equipped    : bool  = false
+var jetpack_upgrade     : bool  = false
 var jetpack_gas         : float = BOOSTER_GAS_MAX
 var jetpack_gas_max     : float = BOOSTER_GAS_MAX
 var _booster1_active    : bool  = false

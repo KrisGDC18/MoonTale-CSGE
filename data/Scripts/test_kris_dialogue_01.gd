@@ -27,7 +27,7 @@ func _on_interact() -> void:
 			"targets"  : [2, 2, 2, 3, 3],
 			"actions"  : [
 				func(): _activar_booster_1(),   # se ejecuta si elige opción 0
-				func(): SaveSystem.save_game(1),   # se ejecuta si elige opción 1
+				func(): SaveSystem.save_game(SaveSystem.current_slot),   # se ejecuta si elige opción 1
 				func(): _disable_booster(),     # no hace nada si elige opción 2
 				func(): _give_weapon(preload("res://data/Entities/Weapons/PolarStar.tscn")),
 				func(): _give_item(preload("res://data/Items/jetpack2.tres")),
@@ -49,14 +49,6 @@ func _on_interact() -> void:
 
 	dialog.start(pages)
 	await dialog.dialog_finished
-
-func _give_jet2():
-	var jet2 = preload("res://data/Items/jetpack2.tres")
-	jet2.on_use = func():
-		var player = get_tree().get_first_node_in_group("player")
-		player.currentLife = min(player.currentLife + 4, player.PLAYER_MAX_LIFE)
-	PlayerInventory.add_item(jet2)
-
 
 
 func _activar_booster_1() -> void:

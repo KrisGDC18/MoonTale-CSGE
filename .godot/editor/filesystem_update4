@@ -1,7 +1,7 @@
-res://data/EventSystem/Game.tscn
+res://data/Entities/Scenary/DestructibleBlock.tscn
 res://data/Tiles/Cave.tres
 res://data/Tiles/moon_base.tres
-res://data/EventSystem/Weaponpickup.tscn
-res://data/Entities/npc/test/test_kris_dialogue_01.tscn
-res://data/Scripts/test_kris_dialogue_01.gd
-res://data/Scripts/TitleScreen.gd
+res://data/Scenes/cave1.tscn
+res://data/Scripts/Scenary/Destructible Block/Destructibleblock.gd
+res://data/Scripts/player/player.gd
+res://data/Entities/player/player.tscn

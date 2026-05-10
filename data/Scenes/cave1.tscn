@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://by5a3lmi14my4" path="res://data/Sprites/Backgrounds/bkBlack.png" id="6_t27gg"]
 [ext_resource type="PackedScene" uid="uid://ci31taf705rx5" path="res://data/Entities/npc/test/test_kris_dialogue_01.tscn" id="7_3rmmu"]
 [ext_resource type="PackedScene" uid="uid://dhuq5bij0wyjp" path="res://data/Entities/Enemies/Dummy.tscn" id="8_117qx"]
+[ext_resource type="PackedScene" uid="uid://ohj5vt0m2gx4" path="res://data/Entities/Scenary/DestructibleBlock.tscn" id="9_xkv8h"]
 
 [node name="First Cave" type="Node2D" unique_id=982632796]
 script = ExtResource("1_gby17")
@@ -39,10 +40,10 @@ motion_scale = Vector2(2, 2.5)
 motion_mirroring = Vector2(1, 1)
 
 [node name="TextureRect" type="TextureRect" parent="ParallaxBackground/ParallaxLayer" unique_id=1391226291]
-offset_left = -3833.0
-offset_top = -2140.0
-offset_right = 6660.0
-offset_bottom = 3021.0
+offset_left = -3821.0
+offset_top = -2146.0
+offset_right = 6672.0
+offset_bottom = 3015.0
 texture = ExtResource("6_t27gg")
 
 [node name="TestKrisDialogue01" parent="." unique_id=571265759 instance=ExtResource("7_3rmmu")]
@@ -55,4 +56,16 @@ target_map = "uid://b2wa0bu06l5d5"
 target_spawn = "Door1"
 
 [node name="Dummy" parent="." unique_id=1962890258 instance=ExtResource("8_117qx")]
-position = Vector2(334, 11)
+position = Vector2(238, 8)
+
+[node name="DestructibleBlock2" parent="." unique_id=981314026 instance=ExtResource("9_xkv8h")]
+position = Vector2(336, 16)
+
+[node name="DestructibleBlock4" parent="." unique_id=653354452 instance=ExtResource("9_xkv8h")]
+position = Vector2(336, -48)
+
+[node name="DestructibleBlock" parent="." unique_id=974962287 instance=ExtResource("9_xkv8h")]
+position = Vector2(176, 16)
+
+[node name="DestructibleBlock3" parent="." unique_id=1394450785 instance=ExtResource("9_xkv8h")]
+position = Vector2(336, -16)

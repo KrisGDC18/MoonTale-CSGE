@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://c5vxbsyjx3bu"]
+[gd_scene format=4 uid="uid://b13hnafqokqde"]
 
 [ext_resource type="Script" uid="uid://c5i02m7gy0ted" path="res://data/Scripts/normal_room.gd" id="1_gby17"]
 [ext_resource type="TileSet" uid="uid://48ups7a06mvg" path="res://data/Tiles/Cave.tres" id="2_wnu3j"]

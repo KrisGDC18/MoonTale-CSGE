@@ -1,22 +1,33 @@
 [gd_scene format=3 uid="uid://dda4xf56ny4km"]
 
-[ext_resource type="PackedScene" uid="uid://bjpteorw70pd0" path="res://data/Scenes/StartPoint.tscn" id="1_7wqjn"]
 [ext_resource type="Script" uid="uid://dlnjel4b8kmgb" path="res://data/Scripts/level.gd" id="1_46wim"]
 [ext_resource type="Script" uid="uid://c6bvwvovccn1u" path="res://data/Scripts/TitleScreen.gd" id="1_631ni"]
 [ext_resource type="PackedScene" uid="uid://btcqrolg6nxi6" path="res://data/EventSystem/InventoryMenu.tscn" id="1_xfei7"]
+[ext_resource type="Texture2D" uid="uid://byrnmqifoxdif" path="res://data/Sprites/Title/Earth-set.jpeg.png" id="2_7tl0k"]
+[ext_resource type="AudioStream" uid="uid://b33mllt8p4mkg" path="res://data/Sounds/BGM/curly_intro.ogg" id="2_khc4h"]
+[ext_resource type="Texture2D" uid="uid://ylllg0go0n1a" path="res://data/Sprites/Title/title.png" id="3_dein5"]
+[ext_resource type="AudioStream" uid="uid://b4x12lrp2dr21" path="res://data/Sounds/BGM/curly_loop.ogg" id="3_ohavk"]
 [ext_resource type="PackedScene" uid="uid://bkvkpu5wgo631" path="res://data/Entities/Misc/HUD.tscn" id="4_m5ral"]
 [ext_resource type="PackedScene" uid="uid://cexb8qced5uet" path="res://data/EventSystem/DialogBox.tscn" id="5_631ni"]
+[ext_resource type="PackedScene" uid="uid://bjpteorw70pd0" path="res://data/Scenes/StartPoint.tscn" id="5_ohavk"]
 
 [node name="Game" type="Node" unique_id=1873560569]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1500088993]
 script = ExtResource("1_631ni")
+background_texture = ExtResource("2_7tl0k")
+title_texture = ExtResource("3_dein5")
+title_scale = Vector2(3, 3)
+
+[node name="TitleMusicIntro" type="AudioStreamPlayer" parent="CanvasLayer" unique_id=1111111111]
+stream = ExtResource("2_khc4h")
+
+[node name="TitleMusicLoop" type="AudioStreamPlayer" parent="CanvasLayer" unique_id=1111111112]
+stream = ExtResource("3_ohavk")
 
 [node name="Level" type="Node" parent="." unique_id=226742020]
 script = ExtResource("1_46wim")
-
-[node name="First Cave" parent="Level" unique_id=1679653225 instance=ExtResource("1_7wqjn")]
-position = Vector2(-15, 11)
+start_map = ExtResource("5_ohavk")
 
 [node name="InventoryMenu" parent="." unique_id=988026192 instance=ExtResource("1_xfei7")]
 

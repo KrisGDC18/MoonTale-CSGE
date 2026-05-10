@@ -471,7 +471,7 @@ animation = &"FallingRightLookUp"
 [node name="WeaponManager" type="Node2D" parent="." unique_id=1572819859]
 z_index = -1
 script = ExtResource("5_uyekh")
-weapon_scenes = Array[PackedScene]([ExtResource("6_2g7is"), null])
+weapon_scenes = Array[PackedScene]([null, null, null, null, null, null, null, null])
 
 [node name="PolarStar" parent="WeaponManager" unique_id=1630933231 instance=ExtResource("7_v1emx")]
 visible = false

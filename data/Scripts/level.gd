@@ -4,6 +4,7 @@ extends Node
 
 signal map_changed(map_name: String)
 
+## Mapa inicial para partidas nuevas. Asígnalo en el Inspector de Game.tscn.
 @export var start_map : PackedScene
 
 var _current_map  : Node = null
@@ -11,11 +12,22 @@ var _current_map  : Node = null
 
 func _ready() -> void:
 	add_to_group("level")
+	# Conectar con TitleScreen para saber cuándo iniciar/cargar partida
+	var title := get_tree().get_first_node_in_group("title_screen")
+	if title and title.has_signal("game_started"):
+		title.game_started.connect(_on_game_started)
 
-	if get_child_count() > 0:
-		_current_map = get_child(0)
-	elif start_map:
-		_load_map(start_map, "")
+
+# ── Señal de TitleScreen ───────────────────────────────────────────────
+
+func _on_game_started(slot: int, is_new: bool) -> void:
+	if is_new:
+		# Nuevo juego: cargar el mapa inicial y posicionar en SpawnStart
+		if start_map:
+			_load_map(start_map, "SpawnStart")
+		else:
+			push_error("[Level] start_map no asignado en el Inspector.")
+	# Si is_new == false, SaveSystem.load_game() ya llamó change_map() internamente
 
 
 # ── API pública ────────────────────────────────────────────────────────

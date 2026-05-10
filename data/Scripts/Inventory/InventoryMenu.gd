@@ -90,6 +90,8 @@ func _current_list() -> Array:
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("Menu") and not _dialog_active:
+		if Globals.playerStay:
+			return
 		if _open: _close_menu()
 		else:     _open_menu()
 		return
