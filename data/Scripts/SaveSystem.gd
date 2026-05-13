@@ -6,17 +6,9 @@
 ##   Nombre: SaveSystem    Ruta: res://ruta/SaveSystem.gd
 ##
 ## ─── Archivos guardados ──────────────────────────────────────────────
-##   user://save_slot_0.json              ← guardado activo
-##   user://save_slot_0.backup_0.json     ← respaldo más reciente
-##   user://save_slot_0.backup_1.json     ← respaldo anterior
-##   user://save_slot_0.backup_2.json     ← respaldo más antiguo
-##   (ídem para slots 1 y 2)
-##
-## ─── Sistema de respaldo ───────────────────────────────────────
-##   Antes de cada guardado se rotan los respaldos: backup_1→backup_2,
-##   backup_0→backup_1, save activo→backup_0. Se conservan los últimos 3.
-##   Si el save activo está corrupto, load_game() intenta los backups en
-##   orden (0→1→2) y avisa con push_warning cuál usó.
+##   user://save_slot_0.json
+##   user://save_slot_1.json
+##   user://save_slot_2.json
 ##
 ## ─── Estructura del JSON ─────────────────────────────────────────────
 ##   {
@@ -31,8 +23,6 @@
 ##     "weapons"  : [ { "id": "res://weapons/PolarStar.tscn", "level": 2, "xp": 30 } ],
 ##     "weapon_index"          : 0,
 ##     "key_items"             : [ "booster2", "map_system" ],
-##     "jetpack_equipped"      : false,
-##     "jetpack_upgrade"       : false,
 ##     "flags"                 : { "intro_done": true, ... },
 ##     "timestamp"             : "2025-01-01 12:00:00"
 ##   }
@@ -44,7 +34,6 @@
 ##   SaveSystem.slot_exists(slot)     → bool
 ##   SaveSystem.get_slot_info(slot)   → Dictionary con info resumida
 ##   SaveSystem.delete_slot(slot)
-##   SaveSystem.restore_backup(slot, index) → restaura backup 0, 1 ó 2
 ##   SaveSystem.current_slot          → int (slot activo, -1 si ninguno)
 
 extends Node
@@ -53,7 +42,6 @@ extends Node
 const SLOT_COUNT   : int    = 3
 const SAVE_PREFIX  : String = "user://save_slot_"
 const SAVE_EXT     : String = ".json"
-const BACKUP_COUNT : int    = 3
 
 # ── Estado ─────────────────────────────────────────────────────────────
 var current_slot       : int        = -1
@@ -69,9 +57,6 @@ signal new_game_started(slot: int)
 
 func _slot_path(slot: int) -> String:
 	return SAVE_PREFIX + str(slot) + SAVE_EXT
-
-func _backup_path(slot: int, index: int) -> String:
-	return SAVE_PREFIX + str(slot) + ".backup_" + str(index) + SAVE_EXT
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -178,19 +163,15 @@ func _collect_state() -> Dictionary:
 	# ── Jugador ────────────────────────────────────────────────────────
 	var player : Node = get_tree().get_first_node_in_group("player")
 	if player:
-		data["player_hp"]        = player.currentLife
-		data["player_max_hp"]    = player.PLAYER_MAX_LIFE
-		data["player_pos_x"]     = player.global_position.x
-		data["player_pos_y"]     = player.global_position.y
-		data["jetpack_equipped"] = player.jetpack_equipped
-		data["jetpack_upgrade"]  = player.jetpack_upgrade
+		data["player_hp"]      = player.currentLife
+		data["player_max_hp"]  = player.PLAYER_MAX_LIFE
+		data["player_pos_x"]   = player.global_position.x
+		data["player_pos_y"]   = player.global_position.y
 	else:
-		data["player_hp"]        = 3
-		data["player_max_hp"]    = 12
-		data["player_pos_x"]     = 0.0
-		data["player_pos_y"]     = 0.0
-		data["jetpack_equipped"] = false
-		data["jetpack_upgrade"]  = false
+		data["player_hp"]      = 3
+		data["player_max_hp"]  = 12
+		data["player_pos_x"]   = 0.0
+		data["player_pos_y"]   = 0.0
 
 	# ── Inventario ─────────────────────────────────────────────────────
 	var inv : Node = get_node_or_null("/root/PlayerInventory")
@@ -280,9 +261,7 @@ func _restore_player_deferred() -> void:
 
 	var player := get_tree().get_first_node_in_group("player")
 	if player:
-		player.currentLife       = _pending_restore.get("player_hp", player.PLAYER_MAX_LIFE)
-		player.jetpack_equipped  = _pending_restore.get("jetpack_equipped", false)
-		player.jetpack_upgrade   = _pending_restore.get("jetpack_upgrade", false)
+		player.currentLife = _pending_restore.get("player_hp", player.PLAYER_MAX_LIFE)
 		# Solo restaurar posición si no había spawn_point explícito
 		if _pending_restore.get("spawn_point", "") == "":
 			player.global_position = Vector2(
@@ -304,7 +283,6 @@ func _restore_player_deferred() -> void:
 # ─── HELPERS INTERNOS ─────────────────────────────────────────────────
 
 func _write_raw(slot: int, data: Dictionary) -> void:
-	_rotate_backups(slot)
 	var json_str : String = JSON.stringify(data, "\t")
 	var file     := FileAccess.open(_slot_path(slot), FileAccess.WRITE)
 	if file:
@@ -332,25 +310,6 @@ func _read_raw(slot: int) -> Dictionary:
 	if json.data is Dictionary:
 		return json.data
 	push_error("[SaveSystem] El slot %d no contiene un objeto JSON válido." % slot)
-	return _read_raw_fallback(slot)
-
-
-## Intenta leer los backups en orden cuando el save activo es inválido.
-func _read_raw_fallback(slot: int) -> Dictionary:
-	for i in range(BACKUP_COUNT):
-		var path := _backup_path(slot, i)
-		if not FileAccess.file_exists(path):
-			continue
-		var file := FileAccess.open(path, FileAccess.READ)
-		if not file:
-			continue
-		var content2 : String = file.get_as_text()
-		file.close()
-		var json2 := JSON.new()
-		if json2.parse(content2) == OK and json2.data is Dictionary:
-			push_warning("[SaveSystem] Slot %d corrupto — usando backup_%d." % [slot, i])
-			return json2.data
-	push_error("[SaveSystem] Slot %d y todos sus backups están corruptos." % slot)
 	return {}
 
 
