@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dlnjel4b8kmgb" path="res://data/Scripts/level.gd" id="1_46wim"]
 [ext_resource type="Script" uid="uid://c6bvwvovccn1u" path="res://data/Scripts/TitleScreen.gd" id="1_631ni"]
+[ext_resource type="Script" uid="uid://diny77hokvfxo" path="res://data/Scripts/Settings menu/Settingsmenu.gd" id="1_settings"]
 [ext_resource type="PackedScene" uid="uid://btcqrolg6nxi6" path="res://data/EventSystem/InventoryMenu.tscn" id="1_xfei7"]
 [ext_resource type="Texture2D" uid="uid://byrnmqifoxdif" path="res://data/Sprites/Title/Earth-set.jpeg.png" id="2_7tl0k"]
 [ext_resource type="AudioStream" uid="uid://b33mllt8p4mkg" path="res://data/Sounds/BGM/curly_intro.ogg" id="2_khc4h"]
@@ -25,6 +26,9 @@ stream = ExtResource("2_khc4h")
 [node name="TitleMusicLoop" type="AudioStreamPlayer" parent="CanvasLayer" unique_id=1111111112]
 stream = ExtResource("3_ohavk")
 
+[node name="SettingsMenu" type="CanvasLayer" parent="." unique_id=1222222222]
+script = ExtResource("1_settings")
+
 [node name="Level" type="Node" parent="." unique_id=226742020]
 script = ExtResource("1_46wim")
 start_map = ExtResource("5_ohavk")
@@ -34,4 +38,4 @@ start_map = ExtResource("5_ohavk")
 [node name="Hud" parent="." unique_id=776642068 instance=ExtResource("4_m5ral")]
 visible = false
 
-[node name="DialogBox" parent="." unique_id=1282337130 instance=ExtResource("5_631ni")]
+[node name="DialogBox" parent="." unique_id=1282337130 groups=["dialog_box"] instance=ExtResource("5_631ni")]

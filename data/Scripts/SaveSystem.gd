@@ -6,9 +6,17 @@
 ##   Nombre: SaveSystem    Ruta: res://ruta/SaveSystem.gd
 ##
 ## ─── Archivos guardados ──────────────────────────────────────────────
-##   user://save_slot_0.json
-##   user://save_slot_1.json
-##   user://save_slot_2.json
+##   user://save_slot_0.json              ← guardado activo
+##   user://save_slot_0.backup_0.json     ← respaldo más reciente
+##   user://save_slot_0.backup_1.json     ← respaldo anterior
+##   user://save_slot_0.backup_2.json     ← respaldo más antiguo
+##   (ídem para slots 1 y 2)
+##
+## ─── Sistema de respaldo ───────────────────────────────────────
+##   Antes de cada guardado se rotan los respaldos: backup_1→backup_2,
+##   backup_0→backup_1, save activo→backup_0. Se conservan los últimos 3.
+##   Si el save activo está corrupto, load_game() intenta los backups en
+##   orden (0→1→2) y avisa con push_warning cuál usó.
 ##
 ## ─── Estructura del JSON ─────────────────────────────────────────────
 ##   {
@@ -20,9 +28,11 @@
 ##     "player_max_hp_capsules": 5,
 ##     "player_pos_x"          : 320.0,
 ##     "player_pos_y"          : 200.0,
-##     "weapons"  : [ { "id": "polar_star", "level": 2, "exp": 5, "ammo": 0 } ],
+##     "weapons"  : [ { "id": "res://weapons/PolarStar.tscn", "level": 2, "xp": 30 } ],
 ##     "weapon_index"          : 0,
 ##     "key_items"             : [ "booster2", "map_system" ],
+##     "jetpack_equipped"      : false,
+##     "jetpack_upgrade"       : false,
 ##     "flags"                 : { "intro_done": true, ... },
 ##     "timestamp"             : "2025-01-01 12:00:00"
 ##   }
@@ -34,6 +44,7 @@
 ##   SaveSystem.slot_exists(slot)     → bool
 ##   SaveSystem.get_slot_info(slot)   → Dictionary con info resumida
 ##   SaveSystem.delete_slot(slot)
+##   SaveSystem.restore_backup(slot, index) → restaura backup 0, 1 ó 2
 ##   SaveSystem.current_slot          → int (slot activo, -1 si ninguno)
 
 extends Node
@@ -42,6 +53,7 @@ extends Node
 const SLOT_COUNT   : int    = 3
 const SAVE_PREFIX  : String = "user://save_slot_"
 const SAVE_EXT     : String = ".json"
+const BACKUP_COUNT : int    = 3
 
 # ── Estado ─────────────────────────────────────────────────────────────
 var current_slot       : int        = -1
@@ -57,6 +69,9 @@ signal new_game_started(slot: int)
 
 func _slot_path(slot: int) -> String:
 	return SAVE_PREFIX + str(slot) + SAVE_EXT
+
+func _backup_path(slot: int, index: int) -> String:
+	return SAVE_PREFIX + str(slot) + ".backup_" + str(index) + SAVE_EXT
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -163,36 +178,43 @@ func _collect_state() -> Dictionary:
 	# ── Jugador ────────────────────────────────────────────────────────
 	var player : Node = get_tree().get_first_node_in_group("player")
 	if player:
-		data["player_hp"]      = player.currentLife
-		data["player_max_hp"]  = player.PLAYER_MAX_LIFE
-		data["player_pos_x"]   = player.global_position.x
-		data["player_pos_y"]   = player.global_position.y
+		data["player_hp"]        = player.currentLife
+		data["player_max_hp"]    = player.PLAYER_MAX_LIFE
+		data["player_pos_x"]     = player.global_position.x
+		data["player_pos_y"]     = player.global_position.y
+		data["jetpack_equipped"] = player.jetpack_equipped
+		data["jetpack_upgrade"]  = player.jetpack_upgrade
 	else:
-		data["player_hp"]      = 3
-		data["player_max_hp"]  = 12
-		data["player_pos_x"]   = 0.0
-		data["player_pos_y"]   = 0.0
+		data["player_hp"]        = 3
+		data["player_max_hp"]    = 12
+		data["player_pos_x"]     = 0.0
+		data["player_pos_y"]     = 0.0
+		data["jetpack_equipped"] = false
+		data["jetpack_upgrade"]  = false
 
 	# ── Inventario ─────────────────────────────────────────────────────
 	var inv : Node = get_node_or_null("/root/PlayerInventory")
 	if inv:
-		var weapons_arr : Array = []
-		for ws in inv.weapons:
-			weapons_arr.append({
-				"id"    : ws.data.id,
-				"level" : ws.level,
-				"exp"   : ws.current_exp,
-				"ammo"  : ws.ammo,
-			})
-		data["weapons"]                = weapons_arr
-		data["weapon_index"]           = inv.weapon_index
-		data["key_items"]              = inv.key_items.keys()
+		# Key items: guardamos el resource_path del .tres para poder recargarlos al cargar.
+		# Formato: [ "res://items/booster2.tres", ... ]
+		var key_item_paths : Array = []
+		for item_data : ItemData in inv.key_items.values():
+			key_item_paths.append(item_data.resource_path)
+		data["key_items"]              = key_item_paths
 		data["player_max_hp_capsules"] = inv.max_hp
 	else:
-		data["weapons"]                = []
-		data["weapon_index"]           = 0
 		data["key_items"]              = []
 		data["player_max_hp_capsules"] = 3
+
+	# ── Armas (desde WeaponManager, que es la fuente de verdad) ────────
+	var wm : Node = get_tree().get_first_node_in_group("weapon_manager")
+	if wm and wm.has_method("get_save_data"):
+		var wm_data : Dictionary = wm.get_save_data()
+		data["weapons"]      = wm_data.get("weapons", [])
+		data["weapon_index"] = wm_data.get("weapon_index", 0)
+	else:
+		data["weapons"]      = []
+		data["weapon_index"] = 0
 
 	# ── Flags ──────────────────────────────────────────────────────────
 	data["flags"] = GameFlags.get_all()
@@ -210,20 +232,29 @@ func _apply_state(data: Dictionary) -> void:
 	# 1. Flags (primero para que el resto del juego las lea correctamente)
 	GameFlags.load_from(data.get("flags", {}))
 
-	# 2. Inventario (excepto armas — requieren PackedScenes del juego)
+	# 2. Key items y vida máxima en PlayerInventory
 	var inv : Node = get_node_or_null("/root/PlayerInventory")
 	if inv:
-		inv.weapons.clear()
 		inv.key_items.clear()
-		inv.weapon_index = data.get("weapon_index", 0)
-		inv.max_hp       = data.get("player_max_hp_capsules", 3)
-		inv.current_hp   = data.get("player_hp", 3)
-		# Los key items se guardan como flags para que el mapa los restaure
-		for item_id in data.get("key_items", []):
-			GameFlags.set_flag("has_item_" + item_id, true)
+		inv.max_hp     = data.get("player_max_hp_capsules", 3)
+		inv.current_hp = data.get("player_hp", 3)
+
+		# Cada entrada en "key_items" es el resource_path del .tres.
+		# Cargamos el ItemData y lo reinsertamos en inv.key_items directamente.
+		for res_path : String in data.get("key_items", []):
+			var item_data := ResourceLoader.load(res_path) as ItemData
+			if item_data != null:
+				inv.key_items[item_data.id] = item_data
+			else:
+				push_warning("[SaveSystem] No se pudo cargar key item: %s" % res_path)
+
 		inv.emit_signal("inventory_changed")
 
-	# 3. Mapa: cambiamos escena (level.gd mueve al jugador al spawn_point)
+	# 3. Armas: se delega completamente a WeaponManager.
+	# La restauración es diferida porque WeaponManager vive en el árbol del jugador,
+	# que se carga junto con el mapa en el paso 4.
+
+	# 4. Mapa: cambiamos escena (level.gd mueve al jugador al spawn_point)
 	var map_path    : String = data.get("map_path", "")
 	var spawn_point : String = data.get("spawn_point", "")
 
@@ -249,13 +280,22 @@ func _restore_player_deferred() -> void:
 
 	var player := get_tree().get_first_node_in_group("player")
 	if player:
-		player.currentLife = _pending_restore.get("player_hp", player.PLAYER_MAX_LIFE)
+		player.currentLife       = _pending_restore.get("player_hp", player.PLAYER_MAX_LIFE)
+		player.jetpack_equipped  = _pending_restore.get("jetpack_equipped", false)
+		player.jetpack_upgrade   = _pending_restore.get("jetpack_upgrade", false)
 		# Solo restaurar posición si no había spawn_point explícito
 		if _pending_restore.get("spawn_point", "") == "":
 			player.global_position = Vector2(
 				_pending_restore.get("player_pos_x", player.global_position.x),
 				_pending_restore.get("player_pos_y", player.global_position.y)
 			)
+
+	# Restaurar armas en WeaponManager (necesita que el jugador y el mapa ya existan)
+	var wm := get_tree().get_first_node_in_group("weapon_manager")
+	if wm and wm.has_method("restore_from_save"):
+		wm.restore_from_save(_pending_restore)
+	elif wm == null:
+		push_warning("[SaveSystem] WeaponManager no encontrado — las armas no se restauraron.")
 
 	_pending_restore = {}
 
@@ -264,6 +304,7 @@ func _restore_player_deferred() -> void:
 # ─── HELPERS INTERNOS ─────────────────────────────────────────────────
 
 func _write_raw(slot: int, data: Dictionary) -> void:
+	_rotate_backups(slot)
 	var json_str : String = JSON.stringify(data, "\t")
 	var file     := FileAccess.open(_slot_path(slot), FileAccess.WRITE)
 	if file:
@@ -291,6 +332,25 @@ func _read_raw(slot: int) -> Dictionary:
 	if json.data is Dictionary:
 		return json.data
 	push_error("[SaveSystem] El slot %d no contiene un objeto JSON válido." % slot)
+	return _read_raw_fallback(slot)
+
+
+## Intenta leer los backups en orden cuando el save activo es inválido.
+func _read_raw_fallback(slot: int) -> Dictionary:
+	for i in range(BACKUP_COUNT):
+		var path := _backup_path(slot, i)
+		if not FileAccess.file_exists(path):
+			continue
+		var file := FileAccess.open(path, FileAccess.READ)
+		if not file:
+			continue
+		var content2 : String = file.get_as_text()
+		file.close()
+		var json2 := JSON.new()
+		if json2.parse(content2) == OK and json2.data is Dictionary:
+			push_warning("[SaveSystem] Slot %d corrupto — usando backup_%d." % [slot, i])
+			return json2.data
+	push_error("[SaveSystem] Slot %d y todos sus backups están corruptos." % slot)
 	return {}
 
 

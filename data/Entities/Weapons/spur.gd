@@ -23,8 +23,9 @@ var _simple_shoot_audio : AudioStreamPlayer2D = null  # ShootAudio0 → disparo 
 
 func _ready() -> void:
 	weapon_name = "Spur"
-	max_level   = 3
-	xp_to_level = [0, 50, 100]
+	max_level   = 1
+	xp_to_level = [0]
+	current_level = 1
 
 
 func weapon_process(delta: float) -> void:

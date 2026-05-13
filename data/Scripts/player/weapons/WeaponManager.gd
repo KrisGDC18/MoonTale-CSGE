@@ -31,6 +31,7 @@ func _add_weapon(scene: PackedScene, play_sound: bool = true) -> void:
 	var weapon : Node2D = scene.instantiate()
 	add_child(weapon)
 	weapon.init(_player)
+	weapon.weapon_id = scene.resource_path   # ← id estable para guardar/cargar
 	weapon.visible = false
 	_weapons.append(weapon)
 	_owned_scenes.append(scene)
@@ -92,3 +93,44 @@ func give_weapon(scene: PackedScene, xp_if_owned: int = 50) -> void:
 			add_xp_to_current(xp_if_owned)
 			return
 	_add_weapon(scene, false)  # sin sonido: el pickup tiene el suyo
+
+
+# ─── Guardado / Carga ─────────────────────────────────────────────────
+
+## Devuelve el estado de todas las armas para SaveSystem.
+## Formato: [ { "id": "res://...", "level": 2, "xp": 30 }, ... ]
+func get_save_data() -> Dictionary:
+	var arr : Array = []
+	for w in _weapons:
+		arr.append(w.get_save_data())
+	return { "weapons": arr, "weapon_index": _current_index }
+
+
+## Restaura el inventario de armas desde los datos guardados.
+## Llámalo desde SaveSystem._apply_state(), después de que el jugador exista.
+func restore_from_save(save_data: Dictionary) -> void:
+	# Limpia las armas actuales (excepto las de inicio hardcodeadas en weapon_scenes,
+	# que ya se añadieron en init(); las reemplazamos completamente).
+	for w in _weapons:
+		w.queue_free()
+	_weapons.clear()
+	_owned_scenes.clear()
+	_current_weapon = null
+
+	var entries : Array = save_data.get("weapons", [])
+	for entry in entries:
+		var path  : String = entry.get("id", "")
+		if path.is_empty():
+			continue
+		var scene := ResourceLoader.load(path) as PackedScene
+		if scene == null:
+			push_warning("[WeaponManager] No se pudo cargar la escena del arma: %s" % path)
+			continue
+		_add_weapon(scene, false)
+		# Aplica nivel y XP al arma recién instanciada
+		_weapons.back().apply_save_data(entry)
+
+	# Restaura el arma activa
+	var idx : int = save_data.get("weapon_index", 0)
+	if not _weapons.is_empty():
+		_equip(clamp(idx, 0, _weapons.size() - 1), false)

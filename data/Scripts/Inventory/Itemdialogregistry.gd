@@ -51,13 +51,19 @@ func _register_all() -> void:
 				"choices": ["Activar", "Desactivar", "Cancelar"],
 				"actions": [
 					func():
-						player.jetpack_equipped = true
-						player.jetpack_upgrade  = true,
+						var p = _get_player()
+						if p:
+							p.jetpack_equipped = true
+							p.jetpack_upgrade  = true,
 					func():
-						player.jetpack_equipped = false
-						player.jetpack_upgrade  = false,
+						var p = _get_player()
+						if p:
+							p.jetpack_equipped = false
+							p.jetpack_upgrade  = false,
 					Callable(),
-				]
+				],
+				# null = avanzar a la siguiente página (cierra al ser la última)
+				"target_blocks": [null, null, null],
 			}
 		]
 	)
@@ -118,3 +124,13 @@ func get_on_use(item_id: String) -> Callable:
 ## True si el ítem tiene diálogo registrado.
 func has(item_id: String) -> bool:
 	return _registry.has(item_id)
+
+
+# ── Helpers internos ───────────────────────────────────────────────────
+
+## Devuelve el nodo del jugador de forma segura desde cualquier contexto.
+func _get_player() -> Node:
+	var loop = Engine.get_main_loop()
+	if loop and loop.has_method("get_first_node_in_group"):
+		return loop.get_first_node_in_group("player")
+	return null

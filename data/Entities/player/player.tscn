@@ -457,7 +457,6 @@ size = Vector2(10.5, 20.25)
 [node name="player" type="CharacterBody2D" unique_id=1798523650 node_paths=PackedStringArray("dmg")]
 z_index = 1
 collision_layer = 2
-collision_mask = 5
 script = ExtResource("1_gj1n8")
 qMark = ExtResource("2_llrnl")
 dmg = NodePath("DamageDetect")

@@ -113,11 +113,17 @@ func _find_sfx() -> void:
 		_music_intro.finished.connect(_on_intro_finished)
 	if _music_loop != null and not _music_loop.finished.is_connected(_on_loop_finished):
 		_music_loop.finished.connect(_on_loop_finished)
+	# Diferir la búsqueda del SettingsMenu para que todos los _ready() hayan corrido
+	call_deferred("_connect_settings_menu")
+
+
+func _connect_settings_menu() -> void:
 	_settings_menu = get_tree().get_first_node_in_group("settings_menu")
-	if _settings_menu != null and not _settings_menu.closed.is_connected(_on_settings_closed):
-		_settings_menu.closed.connect(_on_settings_closed)
+	if _settings_menu != null:
+		if not _settings_menu.closed.is_connected(_on_settings_closed):
+			_settings_menu.closed.connect(_on_settings_closed)
 	else:
-		push_warning("[TitleScreen] SettingsMenu no encontrado. Agrega el nodo a la escena.")
+		push_warning("[TitleScreen] SettingsMenu no encontrado en la escena.")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -127,7 +133,7 @@ func _find_sfx() -> void:
 func show_menu() -> void:
 	_open   = true
 	_state  = MenuState.MAIN
-	_cursor = 0
+	_cursor = 1 if _any_save_exists() else 0
 	_lock_player(true)
 	_full_bg.show()
 	_panel.show()
@@ -165,6 +171,8 @@ func _lock_player(locked: bool) -> void:
 
 func _process(_delta: float) -> void:
 	if not _open:
+		return
+	if _settings_menu != null and _settings_menu.visible:
 		return
 	_handle_input()
 
@@ -216,10 +224,16 @@ func _confirm() -> void:
 					# Si no hay guardados, no hace nada (opción gris)
 
 				2:   # ── Opciones ────────────────────────────────────
+					# Intento tardío por si _connect_settings_menu no lo encontró aún
+					if _settings_menu == null:
+						_connect_settings_menu()
 					if _settings_menu != null:
 						_panel.hide()
 						_full_bg.hide()
+						_title_sprite.hide()
 						_settings_menu.open()
+					else:
+						push_error("[TitleScreen] SettingsMenu sigue siendo null. Verifica que el nodo existe en Game.tscn y tiene SettingsMenu.gd asignado.")
 
 				3:   # ── Salir ───────────────────────────────────────
 					get_tree().quit()
@@ -365,14 +379,14 @@ func _build_ui() -> void:
 	_panel.add_child(root_vbox)
 
 	# Título
-	_title_lbl = _lbl("— CAVE ENGINE —", 22, C_NORMAL)
-	_title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	root_vbox.add_child(_title_lbl)
+	#_title_lbl = _lbl("— CAVE ENGINE —", 22, C_NORMAL)
+	#_title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	#root_vbox.add_child(_title_lbl)
 
 	# Línea separadora
-	var sep := HSeparator.new()
-	sep.add_theme_color_override("color", C_SEP)
-	root_vbox.add_child(sep)
+	#var sep := HSeparator.new()
+	#sep.add_theme_color_override("color", C_SEP)
+	#root_vbox.add_child(sep)
 
 	# ── Contenedor menú principal ───────────────────────────────────────
 	_main_vbox = VBoxContainer.new()

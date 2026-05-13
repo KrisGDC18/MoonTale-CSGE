@@ -24,7 +24,7 @@ config/icon="uid://cljbhrx02ncrc"
 player="*uid://sniu0w5cff26"
 Globals="*res://data/Scripts/globals.gd"
 AssetManager="*res://data/Scripts/asset_manager.gd"
-MusicManager="*uid://co26fyvsg3pjc"
+Audiomanager="*uid://co26fyvsg3pjc"
 HealSystem="*uid://clyrac4onqmqh"
 CamaraResize="*uid://dyggt8jkxabv4"
 PlayerInventory="*uid://s8glxqg0w8yk"
@@ -32,6 +32,7 @@ ItemDialogRegistry="*uid://dmvqdtb4e1u7o"
 DialogBox="*uid://cexb8qced5uet"
 SaveSystem="*uid://cjn6205gers6g"
 GameFlags="*uid://c0dtnfnv7skqj"
+ItemRegistry="*uid://qs4je8idlhbm"
 
 [display]
 

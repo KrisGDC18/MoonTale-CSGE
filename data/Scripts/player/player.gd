@@ -736,12 +736,20 @@ func handle_animation(anim):
 				anim = jump_base + "LookDown"
 
 		elif _is_falling:
-			anim = "FallingLeft" if lastDirection == 1 else "FallingRight"
+			var fall_base := "FallingLeft" if lastDirection == 1 else "FallingRight"
+			if Input.is_action_pressed("Down"):
+				anim = ("JumpLeft" if lastDirection == 1 else "JumpRight") + "LookDown"
+			elif Input.is_action_pressed("Up"):
+				anim = ("JumpLeft" if lastDirection == 1 else "JumpRight") + "LookUp"
+			else:
+				anim = fall_base
 
 		else:
 			anim = jump_base
 			if Input.is_action_pressed("Up"):
 				anim = jump_base + "LookUp"
+			elif Input.is_action_pressed("Down"):
+				anim = jump_base + "LookDown"
 
 	else:
 		if lastDirection == 1:

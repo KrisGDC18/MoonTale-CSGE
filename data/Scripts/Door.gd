@@ -72,7 +72,7 @@ func _do_transition() -> void:
 	Globals.needs_fade_in = true
 
 	if intro != null or loop != null:
-		MusicManager.play(intro, loop)
+		Audiomanager.play(intro, loop)
 
 	level.change_map(map, spawn)
 

@@ -11,6 +11,20 @@ extends Node2D
 
 var current_level  : int     = 1
 var current_xp     : int     = 0
+
+## Identificador único = ruta de la PackedScene (ej: "res://weapons/PolarStar.tscn").
+## WeaponManager lo asigna al instanciar. Úsalo para guardar/cargar sin ningún registro externo.
+var weapon_id      : String  = ""
+
+## Devuelve el estado mínimo para SaveSystem.
+func get_save_data() -> Dictionary:
+	return { "id": weapon_id, "level": current_level, "xp": current_xp }
+
+## Aplica el estado deserializado desde SaveSystem.
+func apply_save_data(d: Dictionary) -> void:
+	current_level = clamp(d.get("level", 1), 1, max_level)
+	current_xp    = d.get("xp", 0)
+
 var _shoot_dir     : Vector2 = Vector2.RIGHT
 var _player        : Node    = null
 const MAX_BULLETS  : int     = 3

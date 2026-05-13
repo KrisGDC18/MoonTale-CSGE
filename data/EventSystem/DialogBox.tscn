@@ -22,7 +22,7 @@ anchor_bottom = 0.95100003
 offset_left = -1.2799988
 offset_top = -53.52002
 offset_right = 1.0
-offset_bottom = -53.08008
+offset_bottom = -0.080078125
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 6
@@ -50,58 +50,63 @@ region_rect = Rect2(150.96107, 48, 85.963486, 31.283249)
 patch_margin_left = 88
 patch_margin_top = 32
 
-[node name="SpeakerName" type="Label" parent="Box" unique_id=899322137]
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 0
-offset_right = 483.0
-offset_bottom = 60.0
-size_flags_horizontal = 3
-size_flags_vertical = 0
-theme_override_fonts/font = ExtResource("2_03ai2")
-theme_override_font_sizes/font_size = 42
-autowrap_mode = 2
-
 [node name="Arrow" type="Label" parent="Box" unique_id=51332319]
 layout_mode = 0
-offset_left = 1077.0
-offset_top = 177.0
-offset_right = 1100.0
-offset_bottom = 205.0
+offset_left = 1062.0
+offset_top = 238.0
+offset_right = 1104.0
+offset_bottom = 278.0
 size_flags_horizontal = 8
 size_flags_vertical = 8
 text = "▼"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Box" unique_id=1913505497]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 21.0
-offset_top = 45.0
-offset_right = -23.0
-offset_bottom = -46.0
+anchors_preset = -1
+anchor_left = 0.008423866
+anchor_top = 0.04593745
+anchor_right = 0.9897952
+anchor_bottom = 0.9311974
+offset_left = -0.460001
+offset_top = 0.034999847
+offset_right = -0.54003906
+offset_bottom = -0.08401489
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 8
 metadata/_edit_use_anchors_ = true
 
 [node name="Portrait" type="TextureRect" parent="Box/HBoxContainer" unique_id=1879875388]
-custom_minimum_size = Vector2(160, 160)
+custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
-stretch_mode = 6
-metadata/_edit_use_anchors_ = true
+size_flags_horizontal = 4
+size_flags_vertical = 3
+expand_mode = 3
+stretch_mode = 5
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Box/HBoxContainer" unique_id=675862167]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Text" type="RichTextLabel" parent="Box/HBoxContainer/VBoxContainer" unique_id=1721038307]
 texture_filter = 1
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 218)
 layout_mode = 2
-size_flags_vertical = 3
+theme_override_constants/line_separation = 0
 theme_override_fonts/normal_font = ExtResource("2_03ai2")
 theme_override_font_sizes/normal_font_size = 42
+autowrap_mode = 2
+
+[node name="SpeakerName" type="Label" parent="Box" unique_id=899322137]
+layout_mode = 0
+offset_top = -45.0
+offset_right = 1100.0
+offset_bottom = 16.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("2_03ai2")
+theme_override_font_sizes/font_size = 42
 autowrap_mode = 2
 
 [node name="BeepSFX" type="AudioStreamPlayer" parent="." unique_id=140603759]

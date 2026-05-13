@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://bte1y2qu7als5" path="res://data/Sounds/BGM/vivi_intro.ogg" id="5_01qg7"]
 [ext_resource type="AudioStream" uid="uid://chalk28jw1ulm" path="res://data/Sounds/BGM/vivi_loop.ogg" id="6_h4vf1"]
 [ext_resource type="PackedScene" uid="uid://ci31taf705rx5" path="res://data/Entities/npc/test/test_kris_dialogue_01.tscn" id="7_h4vf1"]
+[ext_resource type="PackedScene" uid="uid://b0o2eu6quk0kt" path="res://data/Entities/Enemies/Slime.tscn" id="8_xfcvj"]
 
 [node name="First Cave" type="Node2D" unique_id=1056936284]
 script = ExtResource("1_01qg7")
@@ -52,6 +53,9 @@ stream = ExtResource("6_h4vf1")
 [node name="TestKrisDialogue01" parent="." unique_id=571265759 instance=ExtResource("7_h4vf1")]
 z_index = -2
 position = Vector2(151, 11)
+
+[node name="Slime" parent="TestKrisDialogue01" unique_id=805482129 instance=ExtResource("8_xfcvj")]
+position = Vector2(530, 5)
 
 [node name="Door1" type="Marker2D" parent="." unique_id=751608009]
 position = Vector2(-16, 22)

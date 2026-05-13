@@ -43,14 +43,18 @@ const BUS_SFX   := "SFX"
 
 # ── Acciones remapeables ──────────────────────────────────────────────
 const REMAPPABLE := [
-	{ "action": "Up",     "label": "Arriba"    },
-	{ "action": "Down",   "label": "Abajo"     },
-	{ "action": "Left",   "label": "Izquierda" },
-	{ "action": "Right",  "label": "Derecha"   },
-	{ "action": "Jump",   "label": "Saltar"    },
-	{ "action": "Accept", "label": "Aceptar"   },
-	{ "action": "Back",   "label": "Cancelar"  },
-	{ "action": "Menu",   "label": "Menú"      },
+	{ "action": "Up",          "label": "Arriba"        },
+	{ "action": "Down",        "label": "Abajo"         },
+	{ "action": "Left",        "label": "Izquierda"     },
+	{ "action": "Right",       "label": "Derecha"       },
+	{ "action": "Jump",        "label": "Saltar"        },
+	{ "action": "Fire",        "label": "Disparar"      },
+	{ "action": "Weapon-", "label": "Arma -"        },
+	{ "action": "Weapon+",  "label": "Arma +"        },
+	{ "action": "Map",         "label": "Mapa"          },
+	{ "action": "Accept",      "label": "Aceptar"       },
+	{ "action": "Back",        "label": "Cancelar"      },
+	{ "action": "Menu",        "label": "Menú"          },
 ]
 
 # ── Secciones ─────────────────────────────────────────────────────────
@@ -63,10 +67,14 @@ const SECTION_NAMES := ["AUDIO", "PANTALLA", "CONTROLES"]
 # CONTROLS:0-N según REMAPPABLE
 
 # ── Estado ────────────────────────────────────────────────────────────
-var _open          : bool    = false
-var _section       : Section = Section.AUDIO
-var _row           : int     = 0
-var _waiting_remap : bool    = false   # esperando tecla para remap
+var _open             : bool    = false
+var _section          : Section = Section.AUDIO
+var _row              : int     = 0
+var _waiting_remap    : bool    = false   # esperando input para remap
+var _confirm_reset    : bool    = false   # mostrando diálogo de confirmación
+
+# Tecla de emergencia — nunca remapeable, siempre activa en controles
+const RESET_KEY := KEY_DELETE
 
 # ── Valores ───────────────────────────────────────────────────────────
 var _vol_music  : float = 100.0   # 0–100
@@ -75,6 +83,9 @@ var _brightness : float = 100.0   # 0–100
 
 # ── Font ──────────────────────────────────────────────────────────────
 var _font : Font = null
+
+# ── Referencia al AudioManager ────────────────────────────────────────
+var _audio_manager : Node = null
 
 # ── Nodos UI ──────────────────────────────────────────────────────────
 var _full_bg     : ColorRect
@@ -92,21 +103,36 @@ func _ready() -> void:
 	add_to_group("settings_menu")
 	_font = load(FONT_PATH) if ResourceLoader.exists(FONT_PATH) else null
 	_load_settings()
-	_apply_audio()
 	_build_ui()
 	_build_brightness_overlay()
 	_apply_brightness()
 	hide()
+	call_deferred("_connect_audio_manager")
+
+
+func _connect_audio_manager() -> void:
+	_audio_manager = get_tree().get_first_node_in_group("audio_manager")
+	if _audio_manager == null:
+		push_warning("[SettingsMenu] AudioManager no encontrado.")
+		return
+	# Sincronizar sliders con el estado actual del AudioManager
+	_vol_music  = _audio_manager.get_music_volume() * 100.0
+	_vol_sfx    = _audio_manager.get_sfx_volume()   * 100.0
 
 
 # ═══════════════════════════════════════════════════════════════════════
 # ─── API PÚBLICA ──────────────────────────────────────────────────────
 
 func open() -> void:
-	_open     = true
-	_section  = Section.AUDIO
-	_row      = 0
+	_open          = true
+	_section       = Section.AUDIO
+	_row           = 0
 	_waiting_remap = false
+	_confirm_reset = false
+	# Sincronizar con el AudioManager antes de mostrar los sliders
+	if _audio_manager != null:
+		_vol_music = _audio_manager.get_music_volume() * 100.0
+		_vol_sfx   = _audio_manager.get_sfx_volume()   * 100.0
 	show()
 	_refresh()
 
@@ -125,9 +151,40 @@ func _input(event: InputEvent) -> void:
 	if not _open:
 		return
 
-	# ── Modo remapeo: espera cualquier tecla ──────────────────────────
+	# ── Tecla de emergencia: Delete siempre intercepta ────────────────
+	if event is InputEventKey and event.pressed and not event.is_echo():
+		if event.keycode == RESET_KEY:
+			if not _confirm_reset:
+				_confirm_reset = true
+				_waiting_remap = false
+				_refresh()
+			get_viewport().set_input_as_handled()
+			return
+
+	# ── Diálogo de confirmación — navegación hardcodeada ─────────────
+	if _confirm_reset:
+		if event is InputEventKey and event.pressed and not event.is_echo():
+			match event.keycode:
+				KEY_ENTER, KEY_KP_ENTER, KEY_Y:
+					_do_reset()
+					get_viewport().set_input_as_handled()
+				KEY_ESCAPE, KEY_BACKSPACE, KEY_N:
+					_confirm_reset = false
+					_refresh()
+					get_viewport().set_input_as_handled()
+		return
+
+	# ── Modo remapeo: detecta automáticamente el tipo de entrada ──────
 	if _waiting_remap:
 		if event is InputEventKey and event.pressed and not event.is_echo():
+			if event.keycode == RESET_KEY:
+				return   # Delete bloqueado como remapeo
+			_assign_remap(event)
+			get_viewport().set_input_as_handled()
+		elif event is InputEventJoypadButton and event.pressed:
+			_assign_remap(event)
+			get_viewport().set_input_as_handled()
+		elif event is InputEventJoypadMotion and absf(event.axis_value) > 0.5:
 			_assign_remap(event)
 			get_viewport().set_input_as_handled()
 		return
@@ -151,7 +208,6 @@ func _input(event: InputEvent) -> void:
 	elif event.is_action_pressed("Back"):
 		close()
 		get_viewport().set_input_as_handled()
-	# Cambiar sección con Q/E (usar Left/Right en la fila de tabs)
 	elif event is InputEventKey and event.pressed:
 		if event.keycode == KEY_Q:
 			_change_section(-1)
@@ -202,7 +258,7 @@ func _change_value(dir: int) -> void:
 	_refresh()
 
 
-# ── Confirmar fila (Accept en controles = iniciar remap) ──────────────
+# ── Confirmar fila ────────────────────────────────────────────────────
 
 func _confirm_row() -> void:
 	if _section == Section.CONTROLS:
@@ -212,15 +268,32 @@ func _confirm_row() -> void:
 
 # ── Asignar remap ─────────────────────────────────────────────────────
 
-func _assign_remap(event: InputEventKey) -> void:
+func _assign_remap(event: InputEvent) -> void:
 	var action : String = REMAPPABLE[_row]["action"]
-	# Limpiar eventos de teclado anteriores
 	var old_events := InputMap.action_get_events(action)
-	for e in old_events:
-		if e is InputEventKey:
-			InputMap.action_erase_event(action, e)
+
+	if event is InputEventKey:
+		# Solo limpiar eventos de teclado anteriores
+		for e in old_events:
+			if e is InputEventKey:
+				InputMap.action_erase_event(action, e)
+	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		# Solo limpiar eventos de mando anteriores
+		for e in old_events:
+			if e is InputEventJoypadButton or e is InputEventJoypadMotion:
+				InputMap.action_erase_event(action, e)
+
 	InputMap.action_add_event(action, event)
 	_waiting_remap = false
+	_save_settings()
+	_refresh()
+
+
+# ── Reset al mapping por defecto ──────────────────────────────────────
+
+func _do_reset() -> void:
+	InputMap.load_from_project_settings()
+	_confirm_reset = false
 	_save_settings()
 	_refresh()
 
@@ -229,8 +302,13 @@ func _assign_remap(event: InputEventKey) -> void:
 # ─── APLICAR VALORES ──────────────────────────────────────────────────
 
 func _apply_audio() -> void:
-	_set_bus_volume(BUS_MUSIC, _vol_music)
-	_set_bus_volume(BUS_SFX,   _vol_sfx)
+	if _audio_manager != null:
+		_audio_manager.set_music_volume(_vol_music / 100.0)
+		_audio_manager.set_sfx_volume(_vol_sfx   / 100.0)
+	else:
+		# Fallback directo al bus si AudioManager no está disponible
+		_set_bus_volume(BUS_MUSIC, _vol_music)
+		_set_bus_volume(BUS_SFX,   _vol_sfx)
 
 
 func _set_bus_volume(bus_name: String, pct: float) -> void:
@@ -261,15 +339,25 @@ func _save_settings() -> void:
 	cfg.set_value("audio",  "vol_sfx",    _vol_sfx)
 	cfg.set_value("screen", "brightness", _brightness)
 
-	# Guardar remapping
 	for entry in REMAPPABLE:
 		var action : String = entry["action"]
 		var events := InputMap.action_get_events(action)
 		var keys   : Array  = []
+		var pad_btns : Array = []
+		var pad_axes : Array = []
+
 		for e in events:
 			if e is InputEventKey:
-				keys.append(e.keycode)
-		cfg.set_value("controls", action, keys)
+				var kc : int = e.keycode if e.keycode != 0 else e.physical_keycode
+				keys.append(kc)
+			elif e is InputEventJoypadButton:
+				pad_btns.append(e.button_index)
+			elif e is InputEventJoypadMotion:
+				pad_axes.append({ "axis": e.axis, "value": e.axis_value })
+
+		cfg.set_value("controls_kbd", action, keys)
+		cfg.set_value("controls_pad", action + "_btn",  pad_btns)
+		cfg.set_value("controls_pad", action + "_axis", pad_axes)
 
 	cfg.save(SETTINGS_PATH)
 
@@ -283,24 +371,48 @@ func _load_settings() -> void:
 	_vol_sfx    = cfg.get_value("audio",  "vol_sfx",    100.0)
 	_brightness = cfg.get_value("screen", "brightness", 100.0)
 
-	# Restaurar remapping
 	for entry in REMAPPABLE:
 		var action : String = entry["action"]
-		if not cfg.has_section_key("controls", action):
-			continue
-		var keys : Array = cfg.get_value("controls", action, [])
-		if keys.is_empty():
-			continue
-		# Limpiar teclas actuales
-		var old_events := InputMap.action_get_events(action)
-		for e in old_events:
-			if e is InputEventKey:
-				InputMap.action_erase_event(action, e)
-		# Aplicar guardadas
-		for kc in keys:
-			var ev       := InputEventKey.new()
-			ev.keycode    = kc
-			InputMap.action_add_event(action, ev)
+
+		# ── Teclado ───────────────────────────────────────────────────
+		if cfg.has_section_key("controls_kbd", action):
+			var keys : Array = cfg.get_value("controls_kbd", action, [])
+			if not keys.is_empty():
+				var old := InputMap.action_get_events(action)
+				for e in old:
+					if e is InputEventKey:
+						InputMap.action_erase_event(action, e)
+				for kc in keys:
+					var ev      := InputEventKey.new()
+					ev.keycode   = kc
+					InputMap.action_add_event(action, ev)
+
+		# ── Mando — botones ───────────────────────────────────────────
+		if cfg.has_section_key("controls_pad", action + "_btn"):
+			var btns : Array = cfg.get_value("controls_pad", action + "_btn", [])
+			if not btns.is_empty():
+				var old := InputMap.action_get_events(action)
+				for e in old:
+					if e is InputEventJoypadButton:
+						InputMap.action_erase_event(action, e)
+				for idx in btns:
+					var ev           := InputEventJoypadButton.new()
+					ev.button_index   = idx
+					InputMap.action_add_event(action, ev)
+
+		# ── Mando — ejes ──────────────────────────────────────────────
+		if cfg.has_section_key("controls_pad", action + "_axis"):
+			var axes : Array = cfg.get_value("controls_pad", action + "_axis", [])
+			if not axes.is_empty():
+				var old := InputMap.action_get_events(action)
+				for e in old:
+					if e is InputEventJoypadMotion:
+						InputMap.action_erase_event(action, e)
+				for ax in axes:
+					var ev        := InputEventJoypadMotion.new()
+					ev.axis        = ax["axis"]
+					ev.axis_value  = ax["value"]
+					InputMap.action_add_event(action, ev)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -419,10 +531,69 @@ func _build_screen() -> void:
 
 
 func _build_controls() -> void:
+	# ── Diálogo de confirmación de reset ──────────────────────────────
+	if _confirm_reset:
+		var box := VBoxContainer.new()
+		box.add_theme_constant_override("separation", 16)
+		box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		box.size_flags_vertical   = Control.SIZE_EXPAND_FILL
+		box.alignment             = BoxContainer.ALIGNMENT_CENTER
+
+		var warn := _lbl("⚠ RESETEAR CONTROLES ⚠", 17, C_REMAP_W)
+		warn.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		box.add_child(warn)
+
+		var msg1 := _lbl("Todos los controles volverán", 14, C_NORMAL)
+		msg1.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		box.add_child(msg1)
+
+		var msg2 := _lbl("a sus valores originales.", 14, C_NORMAL)
+		msg2.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		box.add_child(msg2)
+
+		var sep := HSeparator.new()
+		sep.add_theme_color_override("color", C_SEP)
+		box.add_child(sep)
+
+		var confirm_lbl := _lbl("[ Enter / Y ]  Confirmar reset", 14, C_REMAP_OK)
+		confirm_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		box.add_child(confirm_lbl)
+
+		var cancel_lbl := _lbl("[ Esc / N ]  Cancelar", 14, C_DIM)
+		cancel_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		box.add_child(cancel_lbl)
+
+		var sep2 := HSeparator.new()
+		sep2.add_theme_color_override("color", C_SEP)
+		box.add_child(sep2)
+
+		var note := _lbl("(Teclas hardcodeadas — siempre funcionan)", 11, C_DIM)
+		note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		box.add_child(note)
+
+		_content_box.add_child(box)
+		return
+
 	if _waiting_remap:
-		var hint := _lbl("Presiona una tecla…", 16, C_REMAP_W)
+		var hint := _lbl("Presiona una tecla o botón del mando…", 15, C_REMAP_W)
 		hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_content_box.add_child(hint)
+
+	# Cabecera de columnas
+	var header := HBoxContainer.new()
+	header.add_theme_constant_override("separation", 10)
+	var h1 := _lbl("   ACCIÓN", 12, C_SUBTITLE)
+	h1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var h2 := _lbl("TECLADO", 12, C_SUBTITLE)
+	h2.custom_minimum_size = Vector2(70, 0)
+	h2.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var h3 := _lbl("MANDO", 12, C_SUBTITLE)
+	h3.custom_minimum_size = Vector2(70, 0)
+	h3.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	header.add_child(h1)
+	header.add_child(h2)
+	header.add_child(h3)
+	_content_box.add_child(header)
 
 	for i in REMAPPABLE.size():
 		var entry  : Dictionary = REMAPPABLE[i]
@@ -430,25 +601,39 @@ func _build_controls() -> void:
 		var label  : String     = entry["label"]
 		var sel    : bool       = (i == _row)
 
-		# Obtener tecla actual
-		var key_name := _get_key_name(action)
+		var kbd_name : String = _get_kbd_name(action)
+		var pad_name : String = _get_pad_name(action)
 
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 10)
 
-		var cursor_lbl := _lbl("▶ " if sel else "  ", 15, C_SELECTED)
+		var cursor_lbl := _lbl("▶ " if sel else "  ", 14, C_SELECTED)
 		row.add_child(cursor_lbl)
 
-		var action_lbl := _lbl(label, 15, C_SELECTED if sel else C_NORMAL)
+		var action_lbl := _lbl(label, 14, C_SELECTED if sel else C_NORMAL)
 		action_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(action_lbl)
 
-		var key_color := C_REMAP_W if (sel and _waiting_remap) else (C_REMAP_OK if sel else C_DIM)
-		var key_lbl   := _lbl(key_name, 15, key_color)
-		key_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		row.add_child(key_lbl)
+		# Columna teclado
+		var kbd_color : Color = C_REMAP_W if (sel and _waiting_remap) else (C_REMAP_OK if sel else C_DIM)
+		var kbd_lbl := _lbl(kbd_name, 13, kbd_color)
+		kbd_lbl.custom_minimum_size  = Vector2(70, 0)
+		kbd_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		row.add_child(kbd_lbl)
+
+		# Columna mando
+		var pad_color : Color = C_REMAP_W if (sel and _waiting_remap) else (C_REMAP_OK if sel else C_DIM)
+		var pad_lbl := _lbl(pad_name, 13, pad_color)
+		pad_lbl.custom_minimum_size  = Vector2(70, 0)
+		pad_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		row.add_child(pad_lbl)
 
 		_content_box.add_child(row)
+
+	# Hint de controles
+	var hint2 := _lbl("[Accept] Remap   tecla=teclado   botón=mando      [Delete] Reset", 11, C_DIM)
+	hint2.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_content_box.add_child(hint2)
 
 
 func _add_slider_row(label: String, value: float, row_idx: int) -> void:
@@ -495,11 +680,22 @@ func _add_slider_row(label: String, value: float, row_idx: int) -> void:
 # ═══════════════════════════════════════════════════════════════════════
 # ─── HELPERS ──────────────────────────────────────────────────────────
 
-func _get_key_name(action: String) -> String:
-	var events := InputMap.action_get_events(action)
-	for e in events:
+func _get_kbd_name(action: String) -> String:
+	for e in InputMap.action_get_events(action):
 		if e is InputEventKey:
-			return OS.get_keycode_string(e.keycode)
+			var kc : int = e.keycode if e.keycode != 0 else e.physical_keycode
+			if kc != 0:
+				return OS.get_keycode_string(kc)
+	return "---"
+
+
+func _get_pad_name(action: String) -> String:
+	for e in InputMap.action_get_events(action):
+		if e is InputEventJoypadButton:
+			return "Btn %d" % e.button_index
+		elif e is InputEventJoypadMotion:
+			var dir : String = "+" if e.axis_value > 0 else "-"
+			return "Axis%d%s" % [e.axis, dir]
 	return "---"
 
 

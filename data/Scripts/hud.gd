@@ -200,19 +200,24 @@ func _update_xp() -> void:
 		xp_max_label.visible = false
 		return
 
-	# ── Spur cargando: la barra muestra progreso de carga ─────────────
+	# ── Spur: cargando → progreso / sin cargar → nivel 1, barra vacía ──
 	if _current_weapon is Spur:
 		var spur := _current_weapon as Spur
 		if spur._is_charging:
-			xp_bar.max_value = Spur.CHARGE_TIME_LV3
-			xp_bar.value     = clamp(spur._charge_timer, 0.0, Spur.CHARGE_TIME_LV3)
-			# Siempre muestra un número: mínimo 1, máximo 3
+			xp_bar.max_value     = Spur.CHARGE_TIME_LV3
+			xp_bar.value         = clamp(spur._charge_timer, 0.0, Spur.CHARGE_TIME_LV3)
 			xp_label.text        = str(clampi(max(1, spur._charge_level), 1, 3))
 			xp_label.visible     = true
 			xp_max_label.visible = spur._charge_level >= 3
-			return
+		else:
+			xp_bar.max_value     = 1
+			xp_bar.value         = 0
+			xp_label.text        = "1"
+			xp_label.visible     = true
+			xp_max_label.visible = false
+		return
 
-	# ── XP normal: cualquier arma (o Spur cuando no carga) ────────────
+	# ── XP normal: cualquier otra arma ───────────────────────────────
 	var lvl        : int   = _current_weapon.get("current_level")
 	var xp         : int   = _current_weapon.get("current_xp")
 	var max_lvl    : int   = _current_weapon.get("max_level")

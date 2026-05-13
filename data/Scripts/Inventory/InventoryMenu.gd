@@ -357,7 +357,10 @@ func _use_item(item) -> void:
 				_row = clamp(_row, 0, max(0, _key_items_list().size() - 1))
 			_on_dialog_closed()
 		dialog_box.dialog_finished.connect(conn, CONNECT_ONE_SHOT)
-		dialog_box.start(pages, false)
+		# El nuevo DialogBox espera un Dictionary de bloques y un bloque inicial.
+		# Convertimos el Array de páginas plano al formato { "main": [...] }.
+		var blocks : Dictionary = { "main": pages }
+		dialog_box.start(blocks, "main", false)
 		print("[InventoryMenu] dialog_box.start() llamado")
 	else:
 		print("[InventoryMenu] sin dialog_box — ejecutando on_use directo")
