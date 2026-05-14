@@ -122,6 +122,24 @@ theme_override_fonts/font = ExtResource("2_03ai2")
 theme_override_font_sizes/font_size = 42
 autowrap_mode = 2
 
+[node name="ItemBox" type="NinePatchRect" parent="." unique_id=124044918]
+anchors_preset = -1
+anchor_left = 0.41875
+anchor_top = 0.49814814
+anchor_right = 0.5932292
+anchor_bottom = 0.6333333
+texture = ExtResource("3_dqkix")
+metadata/_edit_use_anchors_ = true
+
+[node name="Icon" type="TextureRect" parent="ItemBox" unique_id=160340244]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.14328358
+anchor_top = 0.1849315
+anchor_right = 0.8746269
+anchor_bottom = 0.8356164
+metadata/_edit_use_anchors_ = true
+
 [node name="BeepSFX" type="AudioStreamPlayer" parent="." unique_id=140603759]
 stream = ExtResource("3_btt7u")
 

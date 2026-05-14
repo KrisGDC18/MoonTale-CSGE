@@ -11,8 +11,6 @@ extends CharacterBody2D
 @onready var damarea: Area2D = $DamageArea
 
 
-enum StatePhase { PATRULLAR, ALERTA, PERSEGUIR, ATAQUE, MUERTO }
-
 
 # ── Stats ─────────────────────────────────────────────────────────────
 const MAX_HP        : int   = 20
@@ -26,7 +24,7 @@ var _regenerating   : bool  = false
 var _hp_bar_visible : bool  = false
 var _bar_full_width : float = 0.0
 var dead: bool = false
-
+enum StatePhase { PATRULLAR, ALERTA, PERSEGUIR, ATAQUE, MUERTO }
 var estado_enemigo: StatePhase = StatePhase.PATRULLAR
 var playerOnArea: bool = false
 var tiempo_vigia: float = 0.0
@@ -57,6 +55,7 @@ func _ready():
 	hp_bar_bg.color   = Color(0.1, 0.0, 0.0, 0.8)
 	hp_bar_fill.color = Color(0.9, 0.1, 0.1)
 
+
 func _physics_process(delta: float):
 	if Globals.playerStay:
 		return
@@ -64,7 +63,8 @@ func _physics_process(delta: float):
 		return
 	if !is_on_floor():
 		velocity.y += grav * delta
-		
+	if _hp <= 0:
+		estado_enemigo = StatePhase.MUERTO
 	move_and_slide()
 	# ── Número de daño: esperar y desvanecer ──────────────────────────
 	if _dmg_label != null and not _dmg_fading:
@@ -86,9 +86,7 @@ func _physics_process(delta: float):
 			_atacar(delta)
 		StatePhase.MUERTO:
 			_muerto()
-	if _hp <= 0:
-		estado_enemigo = StatePhase.MUERTO
-		
+
 
 func _patrullar(delta: float):
 	tiempo_vigia += delta
@@ -96,12 +94,15 @@ func _patrullar(delta: float):
 		tiempo_vigia = 0.0
 		dir_vista *= -1
 		asprite.flip_h = (dir_vista == -1)
-		
+
 
 func _alerta():
 	if playerOnArea == true:
 		estado_enemigo = StatePhase.PERSEGUIR
-	
+	elif global_position.distance_to(jugador.global_position) >= 200.0:
+		estado_enemigo = StatePhase.PATRULLAR
+
+
 func _perseguir():
 	asprite.play("default")
 	var direccion = sign(jugador.global_position.x - global_position.x)
@@ -109,7 +110,9 @@ func _perseguir():
 	asprite.flip_h = (direccion == -1)
 	if global_position.distance_to(jugador.global_position) <= 80.0:
 		estado_enemigo = StatePhase.ATAQUE
-		
+	if global_position.distance_to(jugador.global_position) >= 200.0:
+		estado_enemigo = StatePhase.ALERTA
+
 
 func _atacar(delta):
 	var direccion = sign(jugador.global_position.x - global_position.x)
@@ -125,25 +128,25 @@ func _atacar(delta):
 	if global_position.distance_to(jugador.global_position) >= 80.0:
 		estado_enemigo = StatePhase.PERSEGUIR
 
+
 func _muerto():
-	
-	if !dead:
-		print("slimemuerto")
-		velocity.x = 0
-		move_and_slide()
-		dead = true
-		asprite.play("dead")
-		await asprite.animation_finished
-		damarea.monitoring = false
-		_clear_dmg_label()
-		queue_free()
-		
+	print("slimemuerto")
+	velocity.x = 0
+	move_and_slide()
+	dead = true
+	asprite.play("dead")
+	await asprite.animation_finished
+	damarea.monitoring = false
+	_clear_dmg_label()
+	queue_free()
+
 
 func _on_vision_area_body_entered(body: Node2D):
 	if body.is_in_group("player"):
 		playerOnArea = true
 		print("jugador entro al area")
 		estado_enemigo = StatePhase.PERSEGUIR
+
 
 func _on_vison_area_body_exited(body: Node2D):
 	if body.is_in_group("player"):
@@ -161,6 +164,7 @@ func _clear_dmg_label() -> void:
 
 
 # ── API de daño ───────────────────────────────────────────────────────
+@warning_ignore("unused_parameter")
 func take_damage(amount: int, hit_pos: Vector2) -> void:
 	estado_enemigo = StatePhase.PERSEGUIR
 	if _hp <= 0:
@@ -178,7 +182,6 @@ func take_damage(amount: int, hit_pos: Vector2) -> void:
 
 	_update_hp_bar()
 	_update_damage_number(amount)
-
 
 
 func _update_hp_bar() -> void:
@@ -208,6 +211,7 @@ func _update_damage_number(amount: int) -> void:
 	_dmg_label.text     = "-%d" % _dmg_accumulated
 
 
+@warning_ignore("unused_parameter")
 func _on_attack_area_body_entered(body: Node2D) -> void:
 	estado_enemigo = StatePhase.ATAQUE
 

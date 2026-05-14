@@ -6,7 +6,7 @@
 ## - Se regenera a 4000 HP tras 3 segundos sin recibir daño
 ##
 ## Estructura del nodo:
-##   CharacterBody2D  ← este script
+##   CharacterBody2D  ← script
 ##   ├── CollisionShape2D
 ##   ├── Sprite2D (o AnimatedSprite2D)
 ##   └── HPBarRoot  (Node2D, posiciónalo encima del sprite en el editor)

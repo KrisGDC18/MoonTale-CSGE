@@ -74,6 +74,18 @@ const CAM_V_LERP          := 3.0
 const CAM_LOOK_LERP       := 2.5
 const CAM_OVERRIDE_LERP   := 5.0
 
+# ─── Cooldown post-diálogo ────────────────────────────────────────────
+# Tiempo en segundos que el jugador ignora inputs después de que
+# playerStay vuelve a false (evita saltos/acciones accidentales).
+const POST_STAY_COOLDOWN  := 0.20
+
+# ─── Diálogo de muerte ────────────────────────────────────────────────
+# Acción positiva: asígnala desde fuera antes de que el jugador muera,
+# o conecta la señal "death_positive_chosen".
+# La acción negativa siempre reinicia la escena actual.
+signal death_positive_chosen
+var death_dialog_positive_action : Callable = Callable()
+
 # ─── Nodos ────────────────────────────────────────────────────────────
 @onready var animator        = $AnimatedSprite2D
 @onready var camera          = $Camera2D
@@ -135,6 +147,10 @@ var _is_jumping         := false
 var _coyote_timer       := 0.0
 var _jump_buffer_timer  := 0.0
 var _prev_position : Vector2 = Vector2.ZERO
+# Cooldown activo tras soltar el control al jugador (playerStay → false).
+# Mientras sea > 0 se bloquean saltos y movimiento igual que playerStay.
+var _post_stay_timer    : float = 0.0
+var _prev_player_stay   : bool  = false   # para detectar el flanco descendente
 
 # ─── Variables de agua ────────────────────────────────────────────────
 var airSupply           : float = AIR_MAX
@@ -162,6 +178,9 @@ var cam_quake_speed       := 22.0
 var _quake_offset         := Vector2.ZERO
 var _quake_time           := 0.0
 
+# ─── Fade de carga de partida ─────────────────────────────────────────
+var _fade_rect            : ColorRect = null
+
 
 # ═══════════════════════════════════════════════════════════════════════
 func _ready():
@@ -173,17 +192,31 @@ func _ready():
 	camera.position_smoothing_enabled = false
 	weapon_manager.init(self)
 	# ─── Asignar todos los SFX del jugador al bus "SFX" ──────────────────
-	# Así el AudioManager puede controlar su volumen desde el menú de ajustes.
 	for sfx in [jump_sfx, step_sfx, land_sfx, water_sfx,
 				bonk_sfx, hurt_sfx, death_sfx, death_drown_sfx,
 				booster_sfx, booster2_sfx]:
 		sfx.bus = "SFX"
-	
+	# ─── Crear el ColorRect de fade ──────────────────────────────────────
+	_fade_rect = ColorRect.new()
+	_fade_rect.color        = Color(0.0, 0.0, 0.0, 0.0)
+	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fade_rect.z_index      = 100
+	camera.add_child(_fade_rect)
+
 
 # ═══════════════════════════════════════════════════════════════════════
 func _physics_process(delta):
 	if Globals.playerPlayable == false:
 		return
+
+	# ─── Cooldown post-diálogo ────────────────────────────────────────
+	# Detecta el flanco descendente de playerStay (true → false) e inicia
+	# el cooldown para evitar saltos/acciones accidentales al cerrar el diálogo.
+	if _prev_player_stay and not Globals.playerStay:
+		_post_stay_timer = POST_STAY_COOLDOWN
+	_prev_player_stay = Globals.playerStay
+	if _post_stay_timer > 0.0:
+		_post_stay_timer -= delta
 
 	if playerDead:
 		if canContinue:
@@ -247,13 +280,16 @@ func _physics_process(delta):
 	handle_animation(anim)
 	_handle_sounds(delta)
 	_update_iframes(delta)
-	
-
-	
 	_update_camera(delta)
 
 	if _jump_grace_frame:
 		_jump_grace_frame = false
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# ─── Helper: ¿está el jugador bloqueado por diálogo o cooldown? ───────
+func _is_stayed() -> bool:
+	return Globals.playerStay or _post_stay_timer > 0.0
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -285,7 +321,7 @@ func _handle_jump() -> void:
 		_booster2_locked_dir = 0.0
 		_booster2_locked_vert = 0.0 
 		_jump_grace_frame    = false
-	if Globals.playerStay:  
+	if _is_stayed():
 		return
 
 	var can_jump       := is_on_floor() or (_coyote_timer > 0.0 and not _is_jumping)
@@ -319,14 +355,14 @@ func _handle_jump() -> void:
 				_booster1_active     = false
 
 				if locked != 0.0:
-					_booster2_locked_vert = 0.0             # dash horizontal, Y congelada
+					_booster2_locked_vert = 0.0
 					velocity.x = locked * BOOSTER2_SPEED_X
 					velocity.y = 0.0
 				elif Input.is_action_pressed("Down"):
-					_booster2_locked_vert = 1.0             # disparo hacia abajo
+					_booster2_locked_vert = 1.0
 					velocity.x = 0.0
 					velocity.y = 0.0
-				else:                                       # Up presionado o neutro → arriba
+				else:
 					_booster2_locked_vert = -1.0
 					velocity.x = 0.0
 					velocity.y = BOOSTER2_MAX_UP_SPEED
@@ -377,28 +413,23 @@ func _handle_booster2(delta: float) -> void:
 	if not booster2_sfx.playing:
 		booster2_sfx.play()
 
-	# Mantener velocidad horizontal fija en la dirección bloqueada
 	if _booster2_locked_dir != 0.0:
 		velocity.x = _booster2_locked_dir * BOOSTER2_SPEED_X
 
 	if _booster2_locked_vert == 1.0:
-		# Disparo hacia abajo bloqueado al activarse
 		velocity.x  = 0.0
 		velocity.y += (GRAVITY_DOWN + BOOSTER2_DOWN_FORCE) * delta
 		velocity.y  = min(velocity.y, MAX_FALL_SPEED)
 
 	elif _booster2_locked_vert == -1.0 and _booster2_locked_dir == 0.0:
-		# Disparo hacia arriba bloqueado al activarse
 		velocity.y = BOOSTER2_MAX_UP_SPEED
 		var input_dir := Input.get_axis("Left", "Right")
 		velocity.x = move_toward(velocity.x, input_dir * (MAX_SPEED * 0.4), AIR_ACCR * delta)
 
 	else:
-		# Dash horizontal: control lateral reducido, Y congelada
 		var input_dir := Input.get_axis("Left", "Right")
 		velocity.x = move_toward(velocity.x, input_dir * (MAX_SPEED * 0.4), AIR_ACCR * delta)
 
-	# Si el dash horizontal choca con una pared, empujar suavemente hacia arriba
 	if _booster2_locked_dir != 0.0:
 		if abs(global_position.x - _prev_position.x) < 0.5:
 			velocity.y = move_toward(velocity.y, -80.0, 300.0 * delta)
@@ -420,7 +451,7 @@ func _handle_booster2(delta: float) -> void:
 func _handle_horizontal(delta: float) -> void:
 	if _booster2_active:
 		return
-	if Globals.playerStay:  # ← agrega esto
+	if _is_stayed():
 		velocity.x = move_toward(velocity.x, 0, FRICTION * delta)
 		return
 	var direction = Input.get_axis("Left", "Right")
@@ -609,7 +640,6 @@ func _update_death_flash(delta: float) -> void:
 	_death_flash_timer += delta
 
 	if _death_phase == 1:
-		# rojo → blanco en 0.3 segundos
 		var t : float = min(_death_flash_timer / 0.3, 1.0)
 		animator.modulate = Color(1.0, t, t, 1.0)
 		if t >= 1.0:
@@ -617,13 +647,67 @@ func _update_death_flash(delta: float) -> void:
 			_death_flash_timer = 0.0
 
 	elif _death_phase == 2:
-		# blanco fijo 0.5 segundos
 		if _death_flash_timer >= 0.5:
 			_death_phase       = 3
 			_death_flash_timer = 0.0
 			animator.modulate  = Color(1.0, 1.0, 1.0, 0.0)
 
-	# fase 3: invisible permanente hasta el respawn
+	elif _death_phase == 3:
+		# Esperar un breve instante invisible antes de mostrar el diálogo
+		if _death_flash_timer >= 0.3:
+			_death_phase = 4
+			_show_death_dialog()
+
+
+func _show_death_dialog() -> void:
+	# Las lambdas se declaran fuera del diccionario para evitar
+	# errores de indentación de GDScript con lambdas multilínea en arrays.
+	var action_positive := func():
+		if death_dialog_positive_action.is_valid():
+			death_dialog_positive_action.call()
+			canContinue = true
+		else:
+			_load_save_with_fade()
+
+	var action_negative := func():
+		get_tree().change_scene_to_file("res://scenes/Main.tscn")
+
+	var bloques := {
+		"muerte": [
+			{
+				"text":          "¿Qué deseas hacer?",
+				"choices":       ["Continuar", "Reiniciar"],
+				"target_blocks": [null, null],
+				"actions":       [action_positive, action_negative]
+			}
+		]
+	}
+	DialogBox.start(bloques, "muerte", false)
+
+# ═══════════════════════════════════════════════════════════════════════
+# ─── Carga de partida con fade ────────────────────────────────────────
+
+func _load_save_with_fade() -> void:
+	# Bloquea al jugador durante el fade
+	Globals.playerStay = true
+
+	# Ajustar tamaño del fade_rect al viewport (coordenadas locales de la cámara)
+	var vp     : Vector2 = get_viewport().get_visible_rect().size
+	var half   : Vector2 = vp * 0.5
+	_fade_rect.size     = vp
+	_fade_rect.position = -half
+
+	var tween := create_tween()
+	#tween.tween_property(_fade_rect, "color", Color(0.0, 0.0, 0.0, 1.0), 0.6) \
+		#.set_trans(Tween.TRANS_LINEAR)
+	tween.tween_callback(func():
+		SaveSystem.load_game(SaveSystem.current_slot)
+		Globals.playerStay = false 
+		#tween.tween_property(_fade_rect, "color", Color(0.0, 0.0, 0.0, 0.0), 0.6) \
+		#.set_trans(Tween.TRANS_LINEAR)
+		print("Cargo partida")
+		canContinue = true
+	)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -652,7 +736,7 @@ func _update_air_supply(delta: float) -> void:
 # ─── Acción de inspección ─────────────────────────────────────────────
 
 func _handle_check_action() -> void:
-	if Globals.playerStay:
+	if _is_stayed():
 		checking   = false
 		hasChecked = false
 		return
@@ -701,7 +785,7 @@ func handle_animation(anim):
 	if playerDead:
 		return
 		
-	if Globals.playerStay:  # ← agrega esto
+	if _is_stayed():
 		var idle := "Check" if lastDirection == 1 else "Check"
 		if _current_anim != idle:
 			_current_anim = idle
@@ -805,9 +889,6 @@ func _handle_sounds(delta: float) -> void:
 # ─── Cámara estilo Cave Story ─────────────────────────────────────────
 
 func _update_camera(delta: float) -> void:
-	
-	
-	
 	_cam_small_room = Globals.small_room
 
 	if _cam_small_room:
@@ -835,7 +916,7 @@ func _update_camera(delta: float) -> void:
 		_cam_offset = _cam_offset.lerp(dest, _cam_override_speed * delta)
 
 	else:
-		if not Globals.playerStay:  # ← agrega esto
+		if not _is_stayed():
 			var lead_x := CAM_H_LEAD if lastDirection == 0 else -CAM_H_LEAD
 			var lead_y := 0.0
 			if Input.is_action_pressed("Up"):

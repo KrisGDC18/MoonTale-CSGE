@@ -7,7 +7,9 @@ var dialogo : Dictionary = {
 	"inicio": [
 		{
 			"speaker": "Kris:",
+			"text_valignment": VERTICAL_ALIGNMENT_CENTER,
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
+			"portrait_side": "right",
 			"text": "Hola! Que tal [color=red]Kiruma[/color]? Que te gustaria hacer?",
 			"choices": ["Dame un arma", "Guardar la partida", "Dame el Booster 2.0", "Nada"],
 			"target_blocks": ["armeria", "guardar", "booster", ""]
@@ -50,6 +52,7 @@ var dialogo : Dictionary = {
 		{
 			"speaker": "Kris:",
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
+			"item_texture": preload("res://data/Sprites/Items/Jetpack_Upgraded.png"),
 			"text": "Aqui tienes el Booster 2.0.",
 			"action": func(): _give_item(preload("res://data/Items/jetpack2.tres"))
 		}

@@ -7,11 +7,14 @@ signal block_changed(name: String)
 @onready var panel       : NinePatchRect     = $Box
 @onready var portrait          : TextureRect       = $Box/HBoxContainer/Portrait
 @onready var portrait_animated : AnimatedSprite2D  = $Box/HBoxContainer/PortraitAnimated
+@onready var hbox              : HBoxContainer     = $Box/HBoxContainer
 @onready var speaker     : Label             = $Box/SpeakerName
 @onready var text_lbl    : RichTextLabel     = $Box/HBoxContainer/VBoxContainer/Text
 @onready var arrow       : Label             = $Box/Arrow
 @onready var choices     : VBoxContainer     = $Box/ChoicesBG/Choices
 @onready var choices_bg  : TextureRect       = $Box/ChoicesBG
+@onready var item_box    : Control           = $ItemBox
+@onready var item_icon   : TextureRect       = $ItemBox/Icon
 @onready var beep_sfx    : AudioStreamPlayer = $BeepSFX
 @onready var cursor_sfx  : AudioStreamPlayer = $CursorSFX
 @onready var confirm_sfx : AudioStreamPlayer = $ConfirmSFX
@@ -21,14 +24,20 @@ const BEEP_EVERY          := 2
 const CHARS_PER_SEC       := 40.0
 const CHOICE_FONT         := preload("res://data/Fonts/monogatari.ttf")
 const MAX_CHARS_PER_LINE  := 30
-const MAX_LINES_PER_PAGE  := 4
+const MAX_LINES_PER_PAGE  := 7
 const MAX_CHOICES_PER_PAGE := 4
 
 # Fuente y tamaño por defecto del texto del diálogo.
 # Se pueden sobreescribir por página con las claves "font" y "font_size".
 # _ready() los inicializa con la fuente que tenga el nodo en su tema si no se precargan.
-var default_font      : Font = null
-var default_font_size : int  = 0
+var default_font           : Font           = null
+var default_font_size      : int            = 0
+# Alineación de texto por defecto. Se puede sobreescribir por página con la clave
+# "text_alignment". Valores: HORIZONTAL_ALIGNMENT_LEFT / _CENTER / _RIGHT / _FILL
+var default_text_alignment  : HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT
+# Alineación vertical por defecto. Se puede sobreescribir por página con la clave
+# "text_valignment". Valores: VERTICAL_ALIGNMENT_TOP / _CENTER / _BOTTOM
+var default_text_valignment : VerticalAlignment   = VERTICAL_ALIGNMENT_TOP
 
 # ── Estado interno ─────────────────────────────────────────────────────
 var _blocks       : Dictionary = {}
@@ -61,6 +70,7 @@ func _ready() -> void:
 	panel.hide()
 	choices_bg.hide()
 	portrait_animated.hide()
+	item_box.hide()
 	$Box/HBoxContainer.resized.connect(_sync_portrait_size)
 	# Habilitar BBCode para soporte de colores y efectos de texto
 	text_lbl.bbcode_enabled = true
@@ -83,7 +93,7 @@ func _sync_portrait_size() -> void:
 	var h : float = $Box/HBoxContainer.size.y
 	portrait.custom_minimum_size = Vector2(h, h)
 
-func _sync_animated_portrait_size() -> void:
+func _sync_animated_portrait_size(side: String = "left") -> void:
 	# Escala el AnimatedSprite2D para que ocupe el mismo espacio que el TextureRect estático.
 	# Asume que el sprite tiene su origen en el centro (por defecto en Godot).
 	var h     : float   = $Box/HBoxContainer.size.y
@@ -100,8 +110,10 @@ func _sync_animated_portrait_size() -> void:
 	if tex_size.x > 0 and tex_size.y > 0:
 		var scale_factor : float = h / tex_size.y
 		portrait_animated.scale  = Vector2(scale_factor, scale_factor)
-	# Posicionar para que coincida visualmente con el TextureRect
-	portrait_animated.position = Vector2(h * 0.5, h * 0.5)
+	# Posicionar según el lado: izquierda → x = h*0.5, derecha → x = hbox ancho - h*0.5
+	var hbox_w : float = $Box/HBoxContainer.size.x
+	var pos_x  : float = h * 0.5 if side == "left" else hbox_w - h * 0.5
+	portrait_animated.position = Vector2(pos_x, h * 0.5)
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -178,10 +190,12 @@ func _show_page(index: int) -> void:
 	_portrait_anim_idle   = ""
 
 	var portrait_value = page.get("portrait", null)
+	var portrait_flip  : bool = page.get("portrait_flip_h", false)
 
 	if portrait_value is SpriteFrames:
 		portrait.hide()
 		portrait_animated.sprite_frames = portrait_value
+		portrait_animated.flip_h        = portrait_flip
 
 		# Resolver nombres de animación con fallbacks en cascada
 		var fallback : String = page.get("portrait_anim", "")
@@ -202,16 +216,34 @@ func _show_page(index: int) -> void:
 		# Arrancar con la animación de typing
 		portrait_animated.play(_portrait_anim_typing)
 		portrait_animated.show()
-		_sync_animated_portrait_size()
+		_sync_animated_portrait_size(page.get("portrait_side", "left"))
 	elif portrait_value is Texture2D:
 		portrait_animated.stop()
 		portrait_animated.hide()
-		portrait.texture = portrait_value
+		portrait.texture  = portrait_value
+		portrait.flip_h   = portrait_flip
 		portrait.show()
 	else:
 		portrait.hide()
 		portrait_animated.stop()
 		portrait_animated.hide()
+
+	# Lado del portrait — "portrait_side": "left" (default) o "right"
+	# Mueve tanto el TextureRect como el AnimatedSprite2D al índice correcto del HBoxContainer.
+	var portrait_side : String = page.get("portrait_side", "left")
+	var portrait_index : int   = 0 if portrait_side == "left" else hbox.get_child_count() - 1
+	hbox.move_child(portrait,          portrait_index)
+	hbox.move_child(portrait_animated, portrait_index)
+
+	# Cuadro de item sobre el textbox
+	# Clave: "item_texture" (Texture2D). Si no está presente el cuadro se oculta.
+	var item_tex : Texture2D = page.get("item_texture", null)
+
+	if item_tex != null:
+		item_icon.texture = item_tex
+		item_box.show()
+	else:
+		item_box.hide()
 
 	# Speaker
 	speaker.text    = page.get("speaker", "")
@@ -240,9 +272,16 @@ func _show_page(index: int) -> void:
 	else:
 		_current_beep_stream = default_beep_stream
 
+	# Alineación de texto por página
+	# Acepta "text_alignment" (HorizontalAlignment). Si no se define usa default_text_alignment.
+	text_lbl.horizontal_alignment = page.get("text_alignment", default_text_alignment)
+
 	# Texto paginado — se preservan los tags BBCode del texto original
 	var raw_text : String = page.get("text", "")
-	_full_text = _get_text_page(raw_text, page.get("text_page", 0))
+	_full_text = _apply_valignment(
+		_get_text_page(raw_text, page.get("text_page", 0)),
+		page.get("text_valignment", default_text_valignment)
+	)
 
 	_chars_shown  = 0
 	_timer        = 0.0
@@ -414,6 +453,7 @@ func _advance() -> void:
 func _close() -> void:
 	panel.hide()
 	choices_bg.hide()
+	item_box.hide()
 	if _release_player_on_close:
 		Globals.playerStay = false
 	emit_signal("dialog_finished")
@@ -638,3 +678,27 @@ func _bbcode_substr(bbtext: String, plain_start: int, plain_length: int) -> Stri
 				break
 
 	return result
+
+
+## Envuelve el texto con saltos de línea vacíos para simular alineación vertical
+## dentro del RichTextLabel, que no expone vertical_alignment de forma funcional.
+## Usa MAX_LINES_PER_PAGE para calcular el padding necesario.
+func _apply_valignment(text: String, valign: VerticalAlignment) -> String:
+	if valign == VERTICAL_ALIGNMENT_TOP:
+		return text  # sin cambios
+
+	# Contar líneas reales del texto (incluyendo wraps ya resueltos por _get_text_page)
+	var line_count  : int = text.count("\n") + 1
+	var empty_lines : int = MAX_LINES_PER_PAGE - line_count
+
+	if empty_lines <= 0:
+		return text
+
+	var pad_lines : int = empty_lines / 2 if valign == VERTICAL_ALIGNMENT_CENTER else empty_lines
+	var padding   : String = "\n".repeat(pad_lines)
+
+	match valign:
+		VERTICAL_ALIGNMENT_CENTER, VERTICAL_ALIGNMENT_BOTTOM:
+			return padding + text
+		_:
+			return text
