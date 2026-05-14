@@ -5,7 +5,8 @@ signal choice_made(index: int)
 signal block_changed(name: String)
 
 @onready var panel       : NinePatchRect     = $Box
-@onready var portrait    : TextureRect       = $Box/HBoxContainer/Portrait
+@onready var portrait          : TextureRect       = $Box/HBoxContainer/Portrait
+@onready var portrait_animated : AnimatedSprite2D  = $Box/HBoxContainer/PortraitAnimated
 @onready var speaker     : Label             = $Box/SpeakerName
 @onready var text_lbl    : RichTextLabel     = $Box/HBoxContainer/VBoxContainer/Text
 @onready var arrow       : Label             = $Box/Arrow
@@ -23,6 +24,12 @@ const MAX_CHARS_PER_LINE  := 30
 const MAX_LINES_PER_PAGE  := 4
 const MAX_CHOICES_PER_PAGE := 4
 
+# Fuente y tamaño por defecto del texto del diálogo.
+# Se pueden sobreescribir por página con las claves "font" y "font_size".
+# _ready() los inicializa con la fuente que tenga el nodo en su tema si no se precargan.
+var default_font      : Font = null
+var default_font_size : int  = 0
+
 # ── Estado interno ─────────────────────────────────────────────────────
 var _blocks       : Dictionary = {}
 var _current_block: String     = ""
@@ -37,16 +44,64 @@ var _choice_index : int        = 0
 var _choice_page  : int        = 0
 var _beep_counter : int        = 0
 var _release_player_on_close : bool = true
+# Animaciones activas del portrait animado para la página actual.
+# Se leen de las claves "portrait_anim_typing" y "portrait_anim_idle" de cada página.
+var _portrait_anim_typing : String = ""
+var _portrait_anim_idle   : String = ""
+
+# Audio de typing por defecto. Se captura automáticamente en _ready() desde el nodo
+# BeepSFX. Puede sobreescribirse globalmente asignando esta variable, o por página
+# con la clave "beep_stream" (AudioStream). null = sin sonido.
+var default_beep_stream   : AudioStream = null
+# Stream activo para la página actual (se resetea en cada _show_page).
+var _current_beep_stream  : AudioStream = null
 
 
 func _ready() -> void:
 	panel.hide()
 	choices_bg.hide()
+	portrait_animated.hide()
 	$Box/HBoxContainer.resized.connect(_sync_portrait_size)
+	# Habilitar BBCode para soporte de colores y efectos de texto
+	text_lbl.bbcode_enabled = true
+	# Capturar la fuente y tamaño del tema del nodo como predeterminados,
+	# solo si no fueron asignados manualmente antes de _ready().
+	if default_font == null:
+		default_font = text_lbl.get_theme_font("normal_font")
+	if default_font_size <= 0:
+		default_font_size = text_lbl.get_theme_font_size("normal_font_size")
+	# Asignar todos los SFX del diálogo al bus "SFX"
+	for sfx in [beep_sfx, cursor_sfx, confirm_sfx]:
+		if sfx != null:
+			sfx.bus = "SFX"
+	# Capturar el stream del nodo BeepSFX como predeterminado,
+	# solo si no fue asignado manualmente antes de _ready().
+	if default_beep_stream == null and beep_sfx != null:
+		default_beep_stream = beep_sfx.stream
 
 func _sync_portrait_size() -> void:
 	var h : float = $Box/HBoxContainer.size.y
 	portrait.custom_minimum_size = Vector2(h, h)
+
+func _sync_animated_portrait_size() -> void:
+	# Escala el AnimatedSprite2D para que ocupe el mismo espacio que el TextureRect estático.
+	# Asume que el sprite tiene su origen en el centro (por defecto en Godot).
+	var h     : float   = $Box/HBoxContainer.size.y
+	var frames          = portrait_animated.sprite_frames
+	if frames == null:
+		return
+	var anim  : String  = portrait_animated.animation
+	if not frames.has_animation(anim) or frames.get_frame_count(anim) == 0:
+		return
+	var tex   : Texture2D = frames.get_frame_texture(anim, 0)
+	if tex == null:
+		return
+	var tex_size : Vector2 = tex.get_size()
+	if tex_size.x > 0 and tex_size.y > 0:
+		var scale_factor : float = h / tex_size.y
+		portrait_animated.scale  = Vector2(scale_factor, scale_factor)
+	# Posicionar para que coincida visualmente con el TextureRect
+	portrait_animated.position = Vector2(h * 0.5, h * 0.5)
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -112,18 +167,80 @@ func _show_page(index: int) -> void:
 			"bottom":
 				panel.position = Vector2(panel.position.x, vp.y * 0.85)
 
-	# Portrait
-	if page.get("portrait"):
-		portrait.texture = page["portrait"]
+	# Portrait — soporta tres modos según el valor de "portrait":
+	#   • Texture2D    → imagen estática (TextureRect)
+	#   • SpriteFrames → animado, con soporte de animaciones por estado:
+	#       "portrait_anim_typing" : animación mientras se escribe el texto
+	#       "portrait_anim_idle"   : animación al terminar de escribir
+	#       "portrait_anim"        : fallback si no se definen typing/idle
+	#   • null / ausente → oculta ambos nodos
+	_portrait_anim_typing = ""
+	_portrait_anim_idle   = ""
+
+	var portrait_value = page.get("portrait", null)
+
+	if portrait_value is SpriteFrames:
+		portrait.hide()
+		portrait_animated.sprite_frames = portrait_value
+
+		# Resolver nombres de animación con fallbacks en cascada
+		var fallback : String = page.get("portrait_anim", "")
+		if fallback == "" or not portrait_value.has_animation(fallback):
+			fallback = portrait_value.get_animation_names()[0]
+
+		var anim_typing : String = page.get("portrait_anim_typing", fallback)
+		if not portrait_value.has_animation(anim_typing):
+			anim_typing = fallback
+
+		var anim_idle : String = page.get("portrait_anim_idle", fallback)
+		if not portrait_value.has_animation(anim_idle):
+			anim_idle = fallback
+
+		_portrait_anim_typing = anim_typing
+		_portrait_anim_idle   = anim_idle
+
+		# Arrancar con la animación de typing
+		portrait_animated.play(_portrait_anim_typing)
+		portrait_animated.show()
+		_sync_animated_portrait_size()
+	elif portrait_value is Texture2D:
+		portrait_animated.stop()
+		portrait_animated.hide()
+		portrait.texture = portrait_value
 		portrait.show()
 	else:
 		portrait.hide()
+		portrait_animated.stop()
+		portrait_animated.hide()
 
 	# Speaker
 	speaker.text    = page.get("speaker", "")
 	speaker.visible = speaker.text != ""
 
-	# Texto paginado
+	# Fuente dinámica por página
+	# Acepta "font" (Font o null) y "font_size" (int o 0) en el diccionario de página.
+	var page_font      : Font = page.get("font",      default_font)
+	var page_font_size : int  = page.get("font_size", default_font_size)
+
+	if page_font != null:
+		text_lbl.add_theme_font_override("normal_font", page_font)
+	else:
+		text_lbl.remove_theme_font_override("normal_font")
+
+	if page_font_size > 0:
+		text_lbl.add_theme_font_size_override("normal_font_size", page_font_size)
+	else:
+		text_lbl.remove_theme_font_size_override("normal_font_size")
+
+	# Audio de typing por página
+	# Acepta "beep_stream" (AudioStream o null). null = sin sonido para esta página.
+	# Si la clave no existe, usa default_beep_stream.
+	if page.has("beep_stream"):
+		_current_beep_stream = page["beep_stream"]
+	else:
+		_current_beep_stream = default_beep_stream
+
+	# Texto paginado — se preservan los tags BBCode del texto original
 	var raw_text : String = page.get("text", "")
 	_full_text = _get_text_page(raw_text, page.get("text_page", 0))
 
@@ -134,8 +251,9 @@ func _show_page(index: int) -> void:
 	_in_choices   = false
 	_beep_counter = 0
 
-	text_lbl.text               = _full_text
-	text_lbl.visible_characters = 0
+	text_lbl.bbcode_enabled = true
+	text_lbl.text           = _full_text
+	text_lbl.visible_ratio  = 0.0   # ← visible_ratio en lugar de visible_characters
 	arrow.hide()
 	choices.hide()
 	choices_bg.hide()
@@ -144,12 +262,17 @@ func _show_page(index: int) -> void:
 
 # ══════════════════════════════════════════════════════════════════════
 # PAGINACIÓN DE TEXTO
+# Nota: la paginación opera sobre el texto plano (sin tags BBCode) para
+# calcular líneas correctamente, pero conserva los tags en el resultado.
 # ══════════════════════════════════════════════════════════════════════
 
 func _get_text_page(full: String, sub_page: int) -> String:
-	var words   := full.split(" ")
-	var lines   : Array[String] = []
-	var current : String = ""
+	# Trabajamos con el texto plano para calcular el ajuste de líneas,
+	# pero devolvemos el texto BBCode original recortado por líneas.
+	var plain  : String = _strip_bbcode(full)
+	var words          := plain.split(" ")
+	var lines  : Array[String] = []
+	var current: String = ""
 
 	for word in words:
 		var parts := word.split("\n")
@@ -169,12 +292,30 @@ func _get_text_page(full: String, sub_page: int) -> String:
 	if current != "":
 		lines.append(current)
 
-	var start : int = sub_page * MAX_LINES_PER_PAGE
-	var end   : int = mini(start + MAX_LINES_PER_PAGE, lines.size())
-	var slice : Array[String] = []
-	for i in range(start, end):
-		slice.append(lines[i])
-	return "\n".join(slice)
+	# Calcular cuántos caracteres planos corresponden al rango de líneas
+	var start      : int = sub_page * MAX_LINES_PER_PAGE
+	var end_line   : int = mini(start + MAX_LINES_PER_PAGE, lines.size())
+
+	if start >= lines.size():
+		return ""
+
+	# Contar caracteres planos hasta el inicio y fin de la página
+	var plain_start : int = 0
+	var plain_end   : int = 0
+	var char_count  : int = 0
+
+	for i in lines.size():
+		if i == start:
+			plain_start = char_count
+		char_count += lines[i].length()
+		if i < lines.size() - 1:
+			char_count += 1  # espacio o \n entre líneas
+		if i == end_line - 1:
+			plain_end = char_count
+			break
+
+	# Extraer el trozo equivalente del texto BBCode original
+	return _bbcode_substr(full, plain_start, plain_end - plain_start)
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -206,32 +347,38 @@ func _tick(delta: float) -> void:
 		return
 	_timer = 0.0
 
+	var plain_len : int = _get_plain_length(_full_text)
+
 	for i in add:
-		if _chars_shown >= _full_text.length():
+		if _chars_shown >= plain_len:
 			break
-		var ch := _full_text[_chars_shown]
+		var ch : String = _get_plain_char(_full_text, _chars_shown)
 		_chars_shown += 1
 		if ch not in SKIP_CHARS:
 			_beep_counter += 1
 			if _beep_counter >= BEEP_EVERY:
 				_beep_counter = 0
-				if beep_sfx and not beep_sfx.playing:
+				if beep_sfx and _current_beep_stream != null and not beep_sfx.playing:
+					beep_sfx.stream = _current_beep_stream
 					beep_sfx.play()
 
-	text_lbl.visible_characters = _chars_shown
+	# visible_ratio respeta los tags BBCode automáticamente
+	text_lbl.visible_ratio = float(_chars_shown) / float(plain_len) if plain_len > 0 else 1.0
 
-	if _chars_shown >= _full_text.length():
+	if _chars_shown >= plain_len:
 		_typing       = false
 		_waiting      = true
 		_beep_counter = 0
+		_portrait_play_idle()
 		_on_end()
 
 
 func _skip() -> void:
-	_chars_shown                = _full_text.length()
-	text_lbl.visible_characters = _chars_shown
+	_chars_shown           = _get_plain_length(_full_text)
+	text_lbl.visible_ratio = 1.0
 	_typing  = false
 	_waiting = true
+	_portrait_play_idle()
 	_on_end()
 
 
@@ -249,6 +396,13 @@ func _on_end() -> void:
 		_show_choices(page["choices"])
 	else:
 		arrow.show()
+
+
+## Cambia el portrait animado a la animación idle si está activo.
+func _portrait_play_idle() -> void:
+	if portrait_animated.visible and _portrait_anim_idle != "":
+		if portrait_animated.animation != _portrait_anim_idle:
+			portrait_animated.play(_portrait_anim_idle)
 
 
 func _advance() -> void:
@@ -402,3 +556,85 @@ func _refresh_cursor() -> void:
 func _clear_choices() -> void:
 	for child in choices.get_children():
 		child.free()
+
+
+# ══════════════════════════════════════════════════════════════════════
+# HELPERS BBCODE
+# ══════════════════════════════════════════════════════════════════════
+
+## Elimina todos los tags BBCode y devuelve el texto plano.
+func _strip_bbcode(text: String) -> String:
+	var result : String = ""
+	var in_tag : bool   = false
+	for ch in text:
+		if ch == "[":
+			in_tag = true
+		elif ch == "]":
+			in_tag = false
+		elif not in_tag:
+			result += ch
+	return result
+
+
+## Devuelve la cantidad de caracteres visibles (ignorando tags BBCode).
+func _get_plain_length(bbtext: String) -> int:
+	var count  : int  = 0
+	var in_tag : bool = false
+	for ch in bbtext:
+		if ch == "[":
+			in_tag = true
+		elif ch == "]":
+			in_tag = false
+		elif not in_tag:
+			count += 1
+	return count
+
+
+## Devuelve el carácter N del texto ignorando tags BBCode.
+func _get_plain_char(bbtext: String, n: int) -> String:
+	var count  : int  = 0
+	var in_tag : bool = false
+	for ch in bbtext:
+		if ch == "[":
+			in_tag = true
+		elif ch == "]":
+			in_tag = false
+		elif not in_tag:
+			if count == n:
+				return ch
+			count += 1
+	return ""
+
+
+## Extrae una subcadena del texto BBCode basándose en posiciones del texto plano.
+## Preserva intactos todos los tags BBCode que queden dentro del rango.
+func _bbcode_substr(bbtext: String, plain_start: int, plain_length: int) -> String:
+	var result      : String = ""
+	var plain_count : int    = 0
+	var in_tag      : bool   = false
+	var tag_buf     : String = ""
+
+	for ch in bbtext:
+		if ch == "[":
+			in_tag  = true
+			tag_buf = "["
+		elif ch == "]":
+			in_tag   = false
+			tag_buf += "]"
+			# Incluir el tag si estamos dentro del rango o es un tag de cierre
+			# que puede afectar el texto ya incluido
+			if plain_count > plain_start:
+				result += tag_buf
+			elif plain_count == plain_start and plain_length > 0:
+				result += tag_buf
+			tag_buf = ""
+		elif in_tag:
+			tag_buf += ch
+		else:
+			if plain_count >= plain_start and plain_count < plain_start + plain_length:
+				result += ch
+			plain_count += 1
+			if plain_count >= plain_start + plain_length:
+				break
+
+	return result

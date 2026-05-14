@@ -6,9 +6,17 @@
 ##   Nombre: SaveSystem    Ruta: res://ruta/SaveSystem.gd
 ##
 ## ─── Archivos guardados ──────────────────────────────────────────────
-##   user://save_slot_0.json
-##   user://save_slot_1.json
-##   user://save_slot_2.json
+##   user://save_slot_0.json              <- guardado activo
+##   user://save_slot_0.backup_0.json     <- respaldo mas reciente
+##   user://save_slot_0.backup_1.json     <- respaldo anterior
+##   user://save_slot_0.backup_2.json     <- respaldo mas antiguo
+##   (idem para slots 1 y 2)
+##
+## --- Sistema de respaldo -----------------------------------------------
+##   Antes de cada guardado se rotan los respaldos: backup_1->backup_2,
+##   backup_0->backup_1, save activo->backup_0. Se conservan los ultimos 3.
+##   Si el save activo esta corrupto, load_game() intenta los backups en
+##   orden (0->1->2) y avisa con push_warning cual uso.
 ##
 ## ─── Estructura del JSON ─────────────────────────────────────────────
 ##   {
@@ -34,6 +42,7 @@
 ##   SaveSystem.slot_exists(slot)     → bool
 ##   SaveSystem.get_slot_info(slot)   → Dictionary con info resumida
 ##   SaveSystem.delete_slot(slot)
+##   SaveSystem.restore_backup(slot, index) -> restaura backup 0, 1 o 2
 ##   SaveSystem.current_slot          → int (slot activo, -1 si ninguno)
 
 extends Node
@@ -42,6 +51,7 @@ extends Node
 const SLOT_COUNT   : int    = 3
 const SAVE_PREFIX  : String = "user://save_slot_"
 const SAVE_EXT     : String = ".json"
+const BACKUP_COUNT : int    = 3
 
 # ── Estado ─────────────────────────────────────────────────────────────
 var current_slot       : int        = -1
@@ -57,6 +67,9 @@ signal new_game_started(slot: int)
 
 func _slot_path(slot: int) -> String:
 	return SAVE_PREFIX + str(slot) + SAVE_EXT
+
+func _backup_path(slot: int, index: int) -> String:
+	return SAVE_PREFIX + str(slot) + ".backup_" + str(index) + SAVE_EXT
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -163,15 +176,19 @@ func _collect_state() -> Dictionary:
 	# ── Jugador ────────────────────────────────────────────────────────
 	var player : Node = get_tree().get_first_node_in_group("player")
 	if player:
-		data["player_hp"]      = player.currentLife
-		data["player_max_hp"]  = player.PLAYER_MAX_LIFE
-		data["player_pos_x"]   = player.global_position.x
-		data["player_pos_y"]   = player.global_position.y
+		data["player_hp"]        = player.currentLife
+		data["player_max_hp"]    = player.PLAYER_MAX_LIFE
+		data["player_pos_x"]     = player.global_position.x
+		data["player_pos_y"]     = player.global_position.y
+		data["jetpack_equipped"] = player.jetpack_equipped
+		data["jetpack_upgrade"]  = player.jetpack_upgrade
 	else:
-		data["player_hp"]      = 3
-		data["player_max_hp"]  = 12
-		data["player_pos_x"]   = 0.0
-		data["player_pos_y"]   = 0.0
+		data["player_hp"]        = 3
+		data["player_max_hp"]    = 12
+		data["player_pos_x"]     = 0.0
+		data["player_pos_y"]     = 0.0
+		data["jetpack_equipped"] = false
+		data["jetpack_upgrade"]  = false
 
 	# ── Inventario ─────────────────────────────────────────────────────
 	var inv : Node = get_node_or_null("/root/PlayerInventory")
@@ -261,7 +278,9 @@ func _restore_player_deferred() -> void:
 
 	var player := get_tree().get_first_node_in_group("player")
 	if player:
-		player.currentLife = _pending_restore.get("player_hp", player.PLAYER_MAX_LIFE)
+		player.currentLife      = _pending_restore.get("player_hp", player.PLAYER_MAX_LIFE)
+		player.jetpack_equipped = _pending_restore.get("jetpack_equipped", false)
+		player.jetpack_upgrade  = _pending_restore.get("jetpack_upgrade", false)
 		# Solo restaurar posición si no había spawn_point explícito
 		if _pending_restore.get("spawn_point", "") == "":
 			player.global_position = Vector2(
@@ -282,7 +301,39 @@ func _restore_player_deferred() -> void:
 # ═══════════════════════════════════════════════════════════════════════
 # ─── HELPERS INTERNOS ─────────────────────────────────────────────────
 
+# ================================================================
+# --- RESPALDOS --------------------------------------------------
+
+## Rota los backups y copia el save activo como backup_0.
+## backup_2 (el mas viejo) se sobreescribe, los demas avanzan un lugar.
+func _rotate_backups(slot: int) -> void:
+	for i in range(BACKUP_COUNT - 1, 0, -1):
+		var src  := _backup_path(slot, i - 1)
+		var dest := _backup_path(slot, i)
+		if FileAccess.file_exists(src):
+			DirAccess.copy_absolute(src, dest)
+	var active := _slot_path(slot)
+	if FileAccess.file_exists(active):
+		DirAccess.copy_absolute(active, _backup_path(slot, 0))
+
+
+## Restaura un backup concreto (index 0-2) como save activo.
+## Devuelve true si tuvo exito.
+func restore_backup(slot: int, index: int) -> bool:
+	var path := _backup_path(slot, index)
+	if not FileAccess.file_exists(path):
+		push_warning("[SaveSystem] Backup %d del slot %d no existe." % [index, slot])
+		return false
+	DirAccess.copy_absolute(path, _slot_path(slot))
+	push_warning("[SaveSystem] Slot %d restaurado desde backup_%d." % [slot, index])
+	return true
+
+
+# ================================================================
+# --- HELPERS INTERNOS -------------------------------------------
+
 func _write_raw(slot: int, data: Dictionary) -> void:
+	_rotate_backups(slot)
 	var json_str : String = JSON.stringify(data, "\t")
 	var file     := FileAccess.open(_slot_path(slot), FileAccess.WRITE)
 	if file:
@@ -309,7 +360,27 @@ func _read_raw(slot: int) -> Dictionary:
 		return {}
 	if json.data is Dictionary:
 		return json.data
-	push_error("[SaveSystem] El slot %d no contiene un objeto JSON válido." % slot)
+	push_error("[SaveSystem] El slot %d no contiene un objeto JSON valido." % slot)
+	return _read_raw_fallback(slot)
+
+
+
+## Intenta leer los backups en orden cuando el save activo es invalido.
+func _read_raw_fallback(slot: int) -> Dictionary:
+	for i in range(BACKUP_COUNT):
+		var path := _backup_path(slot, i)
+		if not FileAccess.file_exists(path):
+			continue
+		var file := FileAccess.open(path, FileAccess.READ)
+		if not file:
+			continue
+		var text : String = file.get_as_text()
+		file.close()
+		var json2 := JSON.new()
+		if json2.parse(text) == OK and json2.data is Dictionary:
+			push_warning("[SaveSystem] Slot %d corrupto, usando backup_%d." % [slot, i])
+			return json2.data
+	push_error("[SaveSystem] Slot %d y todos sus backups estan corruptos." % slot)
 	return {}
 
 

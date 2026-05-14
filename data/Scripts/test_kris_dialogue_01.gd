@@ -1,13 +1,14 @@
 extends NpcBase
 
 @onready var dialog_box = get_tree().get_first_node_in_group("dialog_box")
+@onready var anim: AnimatedSprite2D = $Body
 
 var dialogo : Dictionary = {
 	"inicio": [
 		{
 			"speaker": "Kris:",
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
-			"text": "Hola! Que tal Kiruma? Que te gustaria hacer?",
+			"text": "Hola! Que tal [color=red]Kiruma[/color]? Que te gustaria hacer?",
 			"choices": ["Dame un arma", "Guardar la partida", "Dame el Booster 2.0", "Nada"],
 			"target_blocks": ["armeria", "guardar", "booster", ""]
 		}
@@ -56,7 +57,7 @@ var dialogo : Dictionary = {
 }
 
 func _ready():
-	pass
+	anim.play("idle")
 
 func _physics_process(_delta: float):
 	if Input.is_action_just_pressed("Down") and interactable and !Globals.playerStay:

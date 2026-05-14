@@ -17,7 +17,8 @@
 extends CanvasLayer
 
 # ── Señal ─────────────────────────────────────────────────────────────
-signal closed()
+signal closed()              # cerrar → volver al origen (inventario o título)
+signal closed_to_game()      # Back desde settings con origen inventario → cerrar todo
 
 # ── Recursos ──────────────────────────────────────────────────────────
 const FONT_PATH    := "res://data/Fonts/monogatari.ttf"
@@ -55,6 +56,8 @@ const REMAPPABLE := [
 	{ "action": "Accept",      "label": "Aceptar"       },
 	{ "action": "Back",        "label": "Cancelar"      },
 	{ "action": "Menu",        "label": "Menú"          },
+	{ "action": "MenuC-",      "label": "Opciones ←"    },
+	{ "action": "MenuC+",      "label": "Opciones →"    },
 ]
 
 # ── Secciones ─────────────────────────────────────────────────────────
@@ -72,6 +75,7 @@ var _section          : Section = Section.AUDIO
 var _row              : int     = 0
 var _waiting_remap    : bool    = false   # esperando input para remap
 var _confirm_reset    : bool    = false   # mostrando diálogo de confirmación
+var _origin           : String  = ""      # "inventory", "title" u ""
 
 # Tecla de emergencia — nunca remapeable, siempre activa en controles
 const RESET_KEY := KEY_DELETE
@@ -102,12 +106,12 @@ func _ready() -> void:
 	layer = 60   # sobre TitleScreen (layer 50)
 	add_to_group("settings_menu")
 	_font = load(FONT_PATH) if ResourceLoader.exists(FONT_PATH) else null
-	_load_settings()
+	_load_settings()         # carga valores en variables (buses aún no disponibles)
 	_build_ui()
-	_build_brightness_overlay()
-	_apply_brightness()
+	_build_brightness_overlay()  # crea el overlay ANTES de aplicar brillo
+	_apply_brightness()          # ahora sí existe _brightness_overlay
 	hide()
-	call_deferred("_connect_audio_manager")
+	call_deferred("_connect_audio_manager")  # empuja valores al AudioManager cuando esté listo
 
 
 func _connect_audio_manager() -> void:
@@ -115,24 +119,23 @@ func _connect_audio_manager() -> void:
 	if _audio_manager == null:
 		push_warning("[SettingsMenu] AudioManager no encontrado.")
 		return
-	# Sincronizar sliders con el estado actual del AudioManager
-	_vol_music  = _audio_manager.get_music_volume() * 100.0
-	_vol_sfx    = _audio_manager.get_sfx_volume()   * 100.0
+	# Empujar los valores cargados desde settings.cfg al AudioManager.
+	# NO leer del manager (siempre arranca en 1.0 y sobreescribiría las prefs guardadas).
+	_audio_manager.set_music_volume(_vol_music / 100.0)
+	_audio_manager.set_sfx_volume(_vol_sfx   / 100.0)
 
 
 # ═══════════════════════════════════════════════════════════════════════
 # ─── API PÚBLICA ──────────────────────────────────────────────────────
 
-func open() -> void:
+func open(origin: String = "") -> void:
 	_open          = true
+	_origin        = origin
 	_section       = Section.AUDIO
 	_row           = 0
 	_waiting_remap = false
 	_confirm_reset = false
-	# Sincronizar con el AudioManager antes de mostrar los sliders
-	if _audio_manager != null:
-		_vol_music = _audio_manager.get_music_volume() * 100.0
-		_vol_sfx   = _audio_manager.get_sfx_volume()   * 100.0
+	Globals.playerStay = true
 	show()
 	_refresh()
 
@@ -141,7 +144,20 @@ func close() -> void:
 	_open = false
 	_save_settings()
 	hide()
+	# Si el origen es inventario, playerStay lo gestiona el InventoryMenu
+	if _origin == "":
+		Globals.playerStay = false
 	emit_signal("closed")
+
+
+# Cierra el settings y además indica que hay que cerrar el inventario.
+func close_to_game() -> void:
+	_open   = false
+	_origin = ""
+	_save_settings()
+	hide()
+	# El InventoryMenu llamará _close_menu() que libera playerStay
+	emit_signal("closed_to_game")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -205,8 +221,16 @@ func _input(event: InputEvent) -> void:
 	elif event.is_action_pressed("Accept") or event.is_action_pressed("Jump"):
 		_confirm_row()
 		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("Back"):
+	elif event.is_action_pressed("MenuC-") and _origin == "inventory":
+		# Volver al inventario
 		close()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("Back"):
+		if _origin == "inventory":
+			# Cerrar settings + inventario → volver al juego
+			close_to_game()
+		else:
+			close()
 		get_viewport().set_input_as_handled()
 	elif event is InputEventKey and event.pressed:
 		if event.keycode == KEY_Q:
@@ -249,9 +273,11 @@ func _change_value(dir: int) -> void:
 				0:
 					_vol_music = clamp(_vol_music + dir * step, 0.0, 100.0)
 					_apply_audio()
+					_save_settings()
 				1:
 					_vol_sfx = clamp(_vol_sfx + dir * step, 0.0, 100.0)
 					_apply_audio()
+					_save_settings()
 		Section.SCREEN:
 			_brightness = clamp(_brightness + dir * step, 0.0, 100.0)
 			_apply_brightness()
@@ -370,6 +396,11 @@ func _load_settings() -> void:
 	_vol_music  = cfg.get_value("audio",  "vol_music",  100.0)
 	_vol_sfx    = cfg.get_value("audio",  "vol_sfx",    100.0)
 	_brightness = cfg.get_value("screen", "brightness", 100.0)
+
+	# Aplicar al bus directamente (el AudioManager aún no está listo en _ready).
+	# _connect_audio_manager() lo reenviará al manager en el siguiente frame.
+	_set_bus_volume(BUS_MUSIC, _vol_music)
+	_set_bus_volume(BUS_SFX,   _vol_sfx)
 
 	for entry in REMAPPABLE:
 		var action : String = entry["action"]
@@ -661,11 +692,13 @@ func _add_slider_row(label: String, value: float, row_idx: int) -> void:
 
 	var bar_fill := ColorRect.new()
 	bar_fill.color = C_BAR_FILL if sel else C_BAR_FILL.darkened(0.3)
+	# Usar anchor_right proporcional: así el fill se escala con el contenedor
+	# sin depender del tamaño real del nodo (que aún no existe al construirlo).
 	bar_fill.anchor_left   = 0.0
 	bar_fill.anchor_top    = 0.0
-	bar_fill.anchor_right  = 0.0
+	bar_fill.anchor_right  = value / 100.0
 	bar_fill.anchor_bottom = 1.0
-	bar_fill.offset_right  = (value / 100.0) * 160.0
+	bar_fill.offset_right  = 0.0
 	bar_container.add_child(bar_fill)
 	row.add_child(bar_container)
 

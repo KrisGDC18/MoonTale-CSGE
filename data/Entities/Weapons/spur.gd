@@ -26,6 +26,14 @@ func _ready() -> void:
 	max_level   = 1
 	xp_to_level = [0]
 	current_level = 1
+	# Asignar todos los AudioStreamPlayer hijos al bus "SFX"
+	call_deferred("_assign_sfx_bus")
+
+
+func _assign_sfx_bus() -> void:
+	for child in get_children():
+		if child is AudioStreamPlayer or child is AudioStreamPlayer2D:
+			child.bus = "SFX"
 
 
 func weapon_process(delta: float) -> void:

@@ -86,6 +86,9 @@ func _physics_process(delta: float):
 			_atacar(delta)
 		StatePhase.MUERTO:
 			_muerto()
+	if _hp <= 0:
+		estado_enemigo = StatePhase.MUERTO
+		
 
 func _patrullar(delta: float):
 	tiempo_vigia += delta
@@ -159,6 +162,7 @@ func _clear_dmg_label() -> void:
 
 # ── API de daño ───────────────────────────────────────────────────────
 func take_damage(amount: int, hit_pos: Vector2) -> void:
+	estado_enemigo = StatePhase.PERSEGUIR
 	if _hp <= 0:
 		return
 
@@ -166,8 +170,7 @@ func take_damage(amount: int, hit_pos: Vector2) -> void:
 	_regen_timer  = 0.0
 	_regenerating = false
 	_hp           = max(_hp - amount, 0)
-	if _hp <= 0:
-		estado_enemigo = StatePhase.MUERTO
+
 
 	if not _hp_bar_visible:
 		hp_bar_root.show()

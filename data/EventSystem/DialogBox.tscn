@@ -8,6 +8,14 @@
 [ext_resource type="AudioStream" uid="uid://b4dw3wlhk0nr2" path="res://data/Sounds/SFX/Player/Cursor.wav" id="4_03ai2"]
 [ext_resource type="AudioStream" uid="uid://mvrc01e43j2n" path="res://data/Sounds/SFX/Player/ok.wav" id="5_dqkix"]
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_dqkix"]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
 [node name="DialogBox" type="CanvasLayer" unique_id=1282337130]
 layer = 21
 script = ExtResource("1_yoo1p")
@@ -64,9 +72,9 @@ text = "▼"
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.008423866
-anchor_top = 0.04593745
+anchor_top = 0.08212166
 anchor_right = 0.9897952
-anchor_bottom = 0.9311974
+anchor_bottom = 0.921329
 offset_left = -0.460001
 offset_top = 0.034999847
 offset_right = -0.54003906
@@ -83,6 +91,11 @@ size_flags_horizontal = 4
 size_flags_vertical = 3
 expand_mode = 3
 stretch_mode = 5
+
+[node name="PortraitAnimated" type="AnimatedSprite2D" parent="Box/HBoxContainer" unique_id=952730565]
+visible = false
+sprite_frames = SubResource("SpriteFrames_dqkix")
+animation = &"idle"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Box/HBoxContainer" unique_id=675862167]
 layout_mode = 2

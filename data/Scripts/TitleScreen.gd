@@ -108,6 +108,15 @@ func _find_sfx() -> void:
 	_sfx_cancel  = get_node_or_null("CancelSFX")
 	_music_intro = get_node_or_null("TitleMusicIntro")
 	_music_loop  = get_node_or_null("TitleMusicLoop")
+
+	# ── Asignar buses para que el AudioManager controle el volumen ────
+	for sfx in [_sfx_cursor, _sfx_confirm, _sfx_cancel]:
+		if sfx != null:
+			sfx.bus = "SFX"
+	for mus in [_music_intro, _music_loop]:
+		if mus != null:
+			mus.bus = "Music"
+
 	# Conectar la señal finished de la intro para encadenar el loop
 	if _music_intro != null and not _music_intro.finished.is_connected(_on_intro_finished):
 		_music_intro.finished.connect(_on_intro_finished)
@@ -257,7 +266,10 @@ func _go_to_main() -> void:
 
 
 func _on_settings_closed() -> void:
-	# Restaurar el menú de título al cerrar opciones
+	# Solo restaurar si la pantalla de título sigue activa.
+	# Si el settings se abrió desde el inventario, _open es false → ignorar.
+	if not _open:
+		return
 	_full_bg.show()
 	_panel.show()
 	if title_texture != null:

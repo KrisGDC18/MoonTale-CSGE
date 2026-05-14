@@ -172,6 +172,12 @@ func _ready():
 	camera.position                   = Vector2.ZERO
 	camera.position_smoothing_enabled = false
 	weapon_manager.init(self)
+	# ─── Asignar todos los SFX del jugador al bus "SFX" ──────────────────
+	# Así el AudioManager puede controlar su volumen desde el menú de ajustes.
+	for sfx in [jump_sfx, step_sfx, land_sfx, water_sfx,
+				bonk_sfx, hurt_sfx, death_sfx, death_drown_sfx,
+				booster_sfx, booster2_sfx]:
+		sfx.bus = "SFX"
 	
 
 # ═══════════════════════════════════════════════════════════════════════

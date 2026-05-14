@@ -28,8 +28,11 @@ var _dialog_active  : bool = false
 var _section        : int  = 0
 var _row            : int  = 0
 
-var _weapon_manager : Node = null
-var _inventory      : Node = null
+var _weapon_manager  : Node = null
+var _inventory       : Node = null
+var _settings_menu   : Node = null   # referencia al SettingsMenu
+var _settings_from_inventory : bool = false  # true si se abrió desde aquí
+var _settings_open   : bool = false  # true mientras el SettingsMenu está visible
 
 # ── Paleta estilo Cave Story ────────────────────────────────────────────
 const COLOR_SELECTED  := Color(1.0,  0.85, 0.2)
@@ -51,6 +54,9 @@ func _ready() -> void:
 	layer = 20
 	print("[InventoryMenu] _ready — dialog_box: ", dialog_box)
 	print("[InventoryMenu] _ready — _item_dialog_reg: ", _item_dialog_reg)
+	for sfx in [cursor_sfx, confirm_sfx, close_sfx]:
+		if sfx != null:
+			sfx.bus = "SFX"
 
 
 func _resolve_refs() -> void:
@@ -68,6 +74,14 @@ func _resolve_refs() -> void:
 			_inventory = get_node_or_null("/root/PlayerInventory")
 		if _inventory and not _inventory.inventory_changed.is_connected(_refresh):
 			_inventory.inventory_changed.connect(_refresh)
+
+	if _settings_menu == null:
+		_settings_menu = get_tree().get_first_node_in_group("settings_menu")
+		if _settings_menu != null:
+			if not _settings_menu.closed.is_connected(_on_settings_closed):
+				_settings_menu.closed.connect(_on_settings_closed)
+			if not _settings_menu.closed_to_game.is_connected(_on_settings_closed_to_game):
+				_settings_menu.closed_to_game.connect(_on_settings_closed_to_game)
 
 
 # ── Helpers: listas activas ─────────────────────────────────────────────
@@ -89,6 +103,10 @@ func _current_list() -> Array:
 # ── Process ─────────────────────────────────────────────────────────────
 
 func _process(_delta: float) -> void:
+	# Mientras el SettingsMenu está abierto, el inventario no procesa nada
+	if _settings_open:
+		return
+
 	if Input.is_action_just_pressed("Menu") and not _dialog_active:
 		if Globals.playerStay:
 			return
@@ -127,6 +145,11 @@ func _close_menu() -> void:
 
 func _handle_input() -> void:
 	var list := _current_list()
+
+	# ── Abrir Settings desde el inventario con MenuC+ ───────────────────
+	if Input.is_action_just_pressed("MenuC+"):
+		_open_settings_from_inventory()
+		return
 
 	if Input.is_action_just_pressed("Left") or Input.is_action_just_pressed("Right"):
 		_section = 1 - _section
@@ -284,6 +307,37 @@ func _label(txt: String, size: int, color: Color) -> Label:
 	l.add_theme_font_size_override("font_size", size)
 	l.add_theme_color_override("font_color", color)
 	return l
+
+
+# ── Settings desde inventario ─────────────────────────────────────────
+
+func _open_settings_from_inventory() -> void:
+	if _settings_menu == null:
+		_resolve_refs()
+	if _settings_menu == null:
+		return
+	_settings_from_inventory = true
+	_settings_open           = true
+	panel.hide()
+	_settings_menu.open("inventory")
+
+
+func _on_settings_closed() -> void:
+	# Settings cerrado con MenuC- → volver al inventario
+	if not _settings_from_inventory:
+		return
+	_settings_from_inventory = false
+	_settings_open           = false
+	Globals.playerStay = true
+	_refresh()
+	panel.show()
+
+
+func _on_settings_closed_to_game() -> void:
+	# Settings cerrado con Back → cerrar inventario y volver al juego
+	_settings_from_inventory = false
+	_settings_open           = false
+	_close_menu()
 
 
 # ── Selección ───────────────────────────────────────────────────────────

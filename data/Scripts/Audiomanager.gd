@@ -50,6 +50,7 @@ var _is_playing    : bool        = false
 
 func _ready() -> void:
 	add_to_group(GROUP)
+	_ensure_buses()
 
 	_intro_player      = AudioStreamPlayer.new()
 	_loop_player       = AudioStreamPlayer.new()
@@ -63,6 +64,18 @@ func _ready() -> void:
 
 	_apply_music_volume()
 	_apply_sfx_volume()
+
+
+# ── Crea los buses Music y SFX si no existen en el proyecto ──────────
+func _ensure_buses() -> void:
+	for bus_name in [BUS_MUSIC, BUS_SFX]:
+		if AudioServer.get_bus_index(bus_name) < 0:
+			AudioServer.add_bus()
+			var idx := AudioServer.get_bus_count() - 1
+			AudioServer.set_bus_name(idx, bus_name)
+			# Enviar al Master (bus 0) para que salga audio
+			AudioServer.set_bus_send(idx, "Master")
+			print("[AudioManager] Bus '%s' creado automáticamente." % bus_name)
 
 
 # ═══════════════════════════════════════════════════════════════════════
