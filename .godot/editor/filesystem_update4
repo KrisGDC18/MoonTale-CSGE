@@ -1,9 +1,8 @@
 res://data/EventSystem/DialogBox.tscn
 res://data/Tiles/Cave.tres
 res://data/Tiles/moon_base.tres
-res://data/Scripts/Enemies/slime.gd
-res://data/Scripts/Enemies/Dummy.gd
-res://data/Scripts/DialogueSystem/DialogBox.gd
-res://data/Scripts/test_kris_dialogue_01.gd
 res://data/Scripts/player/player.gd
 res://data/Scripts/SaveSystem.gd
+res://data/Scripts/Settings menu/Settingsmenu.gd
+res://data/Scripts/hud.gd
+res://data/Scripts/TitleScreen.gd

@@ -202,6 +202,12 @@ func _ready():
 	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_fade_rect.z_index      = 100
 	camera.add_child(_fade_rect)
+	# ─── Invencibilidad al aparecer en el mapa ───────────────────────────
+	# Cubre tanto nuevo juego como carga de partida. Se conecta a map_changed
+	# del Level para aplicar los iframes cada vez que se entra a un mapa.
+	var level := get_tree().get_first_node_in_group("level")
+	if level and level.has_signal("map_changed"):
+		level.map_changed.connect(_on_map_changed)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -670,7 +676,25 @@ func _show_death_dialog() -> void:
 			_load_save_with_fade()
 
 	var action_negative := func():
-		get_tree().change_scene_to_file("res://scenes/Main.tscn")
+		# Detener la música del mapa via AudioManager antes de abrir el título
+		var am := get_tree().get_first_node_in_group("audio_manager")
+		if am:
+			am.stop()
+		# Sacar al jugador del mapa inmediatamente para evitar daño
+		global_position   = Vector2(-99999.0, -99999.0)
+		velocity          = Vector2.ZERO
+		visible           = false
+		# Limpiar estado del jugador
+		playerDead        = false
+		_death_phase      = 0
+		_is_invincible    = false
+		animator.modulate = Color(1.0, 1.0, 1.0, 1.0)
+		# Mostrar la pantalla de título — está siempre en el árbol,
+		# solo necesita show_menu() para activarse. Ella sola bloquea
+		# al jugador y lo oculta vía _lock_player().
+		var title := get_tree().get_first_node_in_group("title_screen")
+		if title and title.has_method("show_menu"):
+			title.call_deferred("show_menu")
 
 	var bloques := {
 		"muerte": [
@@ -687,27 +711,105 @@ func _show_death_dialog() -> void:
 # ═══════════════════════════════════════════════════════════════════════
 # ─── Carga de partida con fade ────────────────────────────────────────
 
+func _on_map_changed(_map_name: String) -> void:
+	# Se dispara al cargar cualquier mapa (nuevo juego o carga de partida).
+	# Usamos call_deferred para que los iframes se apliquen DESPUÉS de que
+	# SaveSystem._restore_player_deferred termine de restaurar el estado
+	# (que incluye resetear _is_invincible a false).
+	if _map_name == "":   # señal de descarga, ignorar
+		return
+	_apply_spawn_iframes.call_deferred()
+
+
+func _apply_spawn_iframes() -> void:
+	# Esperar suficientes frames para que _restore_player_deferred haya terminado
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_is_invincible    = true
+	_iframes_timer    = 0.5
+	_flash_timer      = 0.0
+	_iframes_drowning = false
+
 func _load_save_with_fade() -> void:
-	# Bloquea al jugador durante el fade
-	Globals.playerStay = true
+	# Bloquea al jugador durante el fade out
+	Globals.playerStay     = true
+	Globals.playerPlayable = false
+
+	# Mover al jugador fuera del mapa inmediatamente para que no reciba
+	# daño ni colisione mientras está en el lugar de muerte durante la carga.
+	global_position        = Vector2(-99999.0, -99999.0)
+	velocity               = Vector2.ZERO
+	visible                = false
+	set_collision_layer_value(1, false)
+	set_collision_mask_value(1, false)
 
 	# Ajustar tamaño del fade_rect al viewport (coordenadas locales de la cámara)
-	var vp     : Vector2 = get_viewport().get_visible_rect().size
-	var half   : Vector2 = vp * 0.5
+	var vp   : Vector2 = get_viewport().get_visible_rect().size
+	var half : Vector2 = vp * 0.5
 	_fade_rect.size     = vp
 	_fade_rect.position = -half
 
+	# Conectar load_completed UNA sola vez para hacer el fade in después de cargar
+	if not SaveSystem.load_completed.is_connected(_on_save_loaded):
+		SaveSystem.load_completed.connect(_on_save_loaded, CONNECT_ONE_SHOT)
+
+	# Fade a negro y luego cargar
 	var tween := create_tween()
-	#tween.tween_property(_fade_rect, "color", Color(0.0, 0.0, 0.0, 1.0), 0.6) \
-		#.set_trans(Tween.TRANS_LINEAR)
+	tween.tween_property(_fade_rect, "color", Color(0.0, 0.0, 0.0, 1.0), 0.6) \
+		.set_trans(Tween.TRANS_LINEAR)
 	tween.tween_callback(func():
 		SaveSystem.load_game(SaveSystem.current_slot)
-		Globals.playerStay = false 
-		#tween.tween_property(_fade_rect, "color", Color(0.0, 0.0, 0.0, 0.0), 0.6) \
-		#.set_trans(Tween.TRANS_LINEAR)
-		print("Cargo partida")
-		canContinue = true
 	)
+
+
+func _on_save_loaded(_slot: int) -> void:
+	# load_completed se emite al inicio de _apply_state, ANTES de que
+	# _restore_player_deferred termine. Esperamos suficientes frames para
+	# que change_map y _restore_player_deferred hayan concluido del todo.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+	# Reasignar _fade_rect por si el cambio de mapa destruyó el nodo anterior
+	if not is_instance_valid(_fade_rect):
+		_fade_rect = ColorRect.new()
+		_fade_rect.color        = Color(0.0, 0.0, 0.0, 1.0)
+		_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_fade_rect.z_index      = 100
+		camera.add_child(_fade_rect)
+
+	var vp   : Vector2 = get_viewport().get_visible_rect().size
+	var half : Vector2 = vp * 0.5
+	_fade_rect.size     = vp
+	_fade_rect.position = -half
+	_fade_rect.color    = Color(0.0, 0.0, 0.0, 1.0)
+
+	# Restaurar visibilidad, colisiones y control del jugador
+	visible = true
+	set_collision_layer_value(1, true)
+	set_collision_mask_value(1, true)
+	animator.modulate  = Color(1.0, 1.0, 1.0, 1.0)
+	playerDead         = false   # ← debe ir ANTES de refrescar el arma
+	_death_phase       = 0
+	# Medio segundo de invencibilidad al revivir
+	_is_invincible     = true
+	_iframes_timer     = 0.5
+	_flash_timer       = 0.0
+	_iframes_drowning  = false
+
+	# Refrescar el arma: _process del WeaponManager la oculta mientras
+	# playerDead == true, así que reequipamos DESPUÉS de poner playerDead = false.
+	if weapon_manager != null and not weapon_manager._weapons.is_empty():
+		weapon_manager._equip(weapon_manager._current_index, false)
+
+	Globals.playerPlayable = true
+	Globals.playerStay     = false
+
+	var tween := create_tween()
+	tween.tween_property(_fade_rect, "color", Color(0.0, 0.0, 0.0, 0.0), 0.5) \
+		.set_trans(Tween.TRANS_LINEAR)
 
 
 # ═══════════════════════════════════════════════════════════════════════

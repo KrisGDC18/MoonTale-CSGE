@@ -23,6 +23,7 @@ var _current_weapon  : Node2D          = null
 
 
 func _ready():
+	add_to_group("hud")
 	# Escuchar cuando el árbol de escena cambia para re-obtener al jugador
 	get_tree().node_added.connect(_on_node_added)
 	_find_player()

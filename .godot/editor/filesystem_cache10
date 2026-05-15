@@ -1,5 +1,5 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1778699249
+::res://::1778883519
 Moontale icon.png::CompressedTexture2D::5563572194341131588::1778188111::1778188111::1::::<><><>0<>0<>e2fa5f05e07ef64d8a92c8d3294f5102<>res://.godot/imported/Moontale icon.png-3309fbc06a94fce02b63dc995f1e1ed0.ctex::
 ::res://data/::1778189156
 ::res://data/dialogues/::1778188111
@@ -29,8 +29,8 @@ PolarStar.gd::GDScript::5898875789899622772::1778698538::0::1::::PolarStar<>Weap
 PolarStar.tscn::PackedScene::3147715684306812700::1778275888::0::1::::<><><>0<>0<><>::uid://cqbpvfryn2357::::res://data/Entities/Weapons/PolarStar.gd<>uid://dv12negrr0pm2::::res://data/Entities/Bullets/Bullet.tscn<>uid://d1ycqukwujxlc::::res://data/Sprites/Weapons/Arms.png<>uid://bo4nabp27meiw::::res://data/Sprites/Weapons/Laser.png<>uid://bl681rgwqicvl::::res://data/Sounds/SFX/Weapons/ID20_snd_polar_star_l1_2.wav<>uid://cnxhhbjlh0sqo::::res://data/Sounds/SFX/Weapons/ID31_snd_polar_star_l3.wav
 spur.gd::GDScript::3307840091519253305::1778698576::0::1::::Spur<>Weapon<><>0<>0<><>::
 Spur.tscn::PackedScene::2131312870480480778::1778277062::0::1::::<><><>0<>0<><>::uid://bnelv4lqtr1cv::::res://data/Entities/Weapons/spur.gd<>uid://d1ycqukwujxlc::::res://data/Sprites/Weapons/Arms.png<>uid://dv12negrr0pm2::::res://data/Entities/Bullets/Bullet.tscn<>uid://c3g4cmoodtiem::::res://data/Sprites/Weapons/Super_Laser.png<>uid://cnxhhbjlh0sqo::::res://data/Sounds/SFX/Weapons/ID31_snd_polar_star_l3.wav<>uid://b5ouenx8a3rd1::::res://data/Sounds/SFX/Weapons/ID3c_snd_spur_charge1.wav<>uid://e43sn3hnlije::::res://data/Sounds/SFX/Weapons/ID3e_snd_spur_fire_l2.wav<>uid://dctnoaq1pnywg::::res://data/Sounds/SFX/Weapons/ID3d_snd_spur_charge2.wav<>uid://dkbbt2pum2xwm::::res://data/Sounds/SFX/Weapons/ID3f_snd_spur_fire_l3.wav<>uid://bbddss5kijxp0::::res://data/Sounds/SFX/Weapons/ID41_snd_spur_charged.wav<>uid://bjx08xhdfmuc4::::res://data/Sounds/SFX/Weapons/ID40_snd_spur_fire_max.wav
-::res://data/EventSystem/::1778707938
-DialogBox.tscn::PackedScene::5101197922123498763::1778707938::0::1::::<><><>0<>0<><>::uid://ci1hxujl6dyjd::::res://data/Scripts/DialogueSystem/DialogBox.gd<>uid://dqo6c4v5cqvos::::res://data/Fonts/monogatari.ttf<>uid://dnpsui34jucl::::res://data/Sprites/UI/msgbox.png<>uid://dgvo0pf15afx3::::res://data/Sounds/SFX/Player/Beep.wav<>uid://x8n4h4rjmcy8::::res://data/Sprites/UI/ChoiceBox.png<>uid://b4dw3wlhk0nr2::::res://data/Sounds/SFX/Player/Cursor.wav<>uid://mvrc01e43j2n::::res://data/Sounds/SFX/Player/ok.wav
+::res://data/EventSystem/::1778789639
+DialogBox.tscn::PackedScene::5101197922123498763::1778789639::0::1::::<><><>0<>0<><>::uid://ci1hxujl6dyjd::::res://data/Scripts/DialogueSystem/DialogBox.gd<>uid://dqo6c4v5cqvos::::res://data/Fonts/monogatari.ttf<>uid://dnpsui34jucl::::res://data/Sprites/UI/msgbox.png<>uid://dgvo0pf15afx3::::res://data/Sounds/SFX/Player/Beep.wav<>uid://x8n4h4rjmcy8::::res://data/Sprites/UI/ChoiceBox.png<>uid://b4dw3wlhk0nr2::::res://data/Sounds/SFX/Player/Cursor.wav<>uid://mvrc01e43j2n::::res://data/Sounds/SFX/Player/ok.wav
 Game.tscn::PackedScene::7371630758431171268::1778690936::0::1::::<><><>0<>0<><>::uid://dlnjel4b8kmgb::::res://data/Scripts/level.gd<>uid://c6bvwvovccn1u::::res://data/Scripts/TitleScreen.gd<>uid://diny77hokvfxo::::res://data/Scripts/Settings menu/Settingsmenu.gd<>uid://btcqrolg6nxi6::::res://data/EventSystem/InventoryMenu.tscn<>uid://byrnmqifoxdif::::res://data/Sprites/Title/Earth-set.jpeg.png<>uid://b33mllt8p4mkg::::res://data/Sounds/BGM/curly_intro.ogg<>uid://ylllg0go0n1a::::res://data/Sprites/Title/title.png<>uid://b4x12lrp2dr21::::res://data/Sounds/BGM/curly_loop.ogg<>uid://bkvkpu5wgo631::::res://data/Entities/Misc/HUD.tscn<>uid://cexb8qced5uet::::res://data/EventSystem/DialogBox.tscn<>uid://bjpteorw70pd0::::res://data/Scenes/StartPoint.tscn
 InventoryMenu.tscn::PackedScene::3725140051338809955::1778435754::0::1::::<><><>0<>0<><>::uid://cxvakx88sh8p4::::res://data/Scripts/Inventory/InventoryMenu.gd<>uid://dqo6c4v5cqvos::::res://data/Fonts/monogatari.ttf<>uid://b4dw3wlhk0nr2::::res://data/Sounds/SFX/Player/Cursor.wav<>uid://mvrc01e43j2n::::res://data/Sounds/SFX/Player/ok.wav<>uid://dgvo0pf15afx3::::res://data/Sounds/SFX/Player/Beep.wav
 WeaponInventoryUI.tscn::PackedScene::7123818141059957507::1778435754::0::1::::<><><>0<>0<><>::uid://bjld6o5ewjcn1::::res://data/Scripts/player/weapons/WeaponInventory.gd
@@ -45,7 +45,7 @@ cave1.tscn::PackedScene::2791968043597708716::1778690936::0::1::::<><><>0<>0<><>
 first_cave.tscn::PackedScene::4269581438135854874::1778451188::0::1::::<><><>0<>0<><>::uid://c5i02m7gy0ted::::res://data/Scripts/normal_room.gd<>uid://48ups7a06mvg::::res://data/Tiles/Cave.tres<>uid://diiq1u1doxfaq::::res://data/Entities/door.tscn<>uid://bte1y2qu7als5::::res://data/Sounds/BGM/vivi_intro.ogg<>uid://chalk28jw1ulm::::res://data/Sounds/BGM/vivi_loop.ogg
 First_cave.tscn::PackedScene::4326980501954130532::1778690936::0::1::::<><><>0<>0<><>::uid://c5i02m7gy0ted::::res://data/Scripts/normal_room.gd<>uid://48ups7a06mvg::::res://data/Tiles/Cave.tres<>uid://diiq1u1doxfaq::::res://data/Entities/door.tscn<>uid://b5c3gejdo7vqc::::res://data/Tiles/moon_base.tres<>uid://bte1y2qu7als5::::res://data/Sounds/BGM/vivi_intro.ogg<>uid://chalk28jw1ulm::::res://data/Sounds/BGM/vivi_loop.ogg<>uid://ci31taf705rx5::::res://data/Entities/npc/test/test_kris_dialogue_01.tscn<>uid://b0o2eu6quk0kt::::res://data/Entities/Enemies/Slime.tscn
 StartPoint.tscn::PackedScene::3050247471416390787::1778444737::0::1::::<><><>0<>0<><>::uid://dfm6d52vf3idd::::res://data/Scripts/small_room.gd<>uid://by5a3lmi14my4::::res://data/Sprites/Backgrounds/bkBlack.png<>uid://48ups7a06mvg::::res://data/Tiles/Cave.tres<>uid://diiq1u1doxfaq::::res://data/Entities/door.tscn<>uid://chalk28jw1ulm::::res://data/Sounds/BGM/vivi_loop.ogg<>uid://bte1y2qu7als5::::res://data/Sounds/BGM/vivi_intro.ogg
-::res://data/Scripts/::1778707178
+::res://data/Scripts/::1778788805
 asset_manager.gd::GDScript::6384872172497799811::1778188111::0::1::::<>Node<><>0<>0<><>::
 Audiomanager.gd::GDScript::5813115827251824304::1778707178::0::1::::<>Node<><>0<>0<><>::
 camara_resize.gd::GDScript::8856580544616117211::1778188111::0::1::::<>Node<><>0<>0<><>::
@@ -60,16 +60,16 @@ level.gd::GDScript::7958730460657075517::1778444737::0::1::::<>Node<><>0<>0<><>:
 normal_room.gd::GDScript::6896588519833877983::1778690936::0::1::::<>Node2D<><>0<>0<><>::
 npc_base.gd::GDScript::3467525302584621446::1778435754::0::1::::NpcBase<>CharacterBody2D<><>0<>0<><>::
 QuestionMark.gd::GDScript::5391971595018689489::1778188111::0::1::::<>Node<><>0<>0<><>::
-SaveSystem.gd::GDScript::5433309673848997236::1778700883::0::1::::<>Node<><>0<>0<><>::
+SaveSystem.gd::GDScript::5433309673848997236::1778788805::0::1::::<>Node<><>0<>0<><>::
 small_room.gd::GDScript::7536868004847816473::1778690936::0::1::::<>Node2D<><>0<>0<><>::
 stamp.gd::GDScript::8735051628246739595::1778435754::0::1::::<>Area2D<><>0<>0<><>::
-test_kris_dialogue_01.gd::GDScript::7373784156891131159::1778705903::0::1::::<>NpcBase<><>0<>0<><>::
+test_kris_dialogue_01.gd::GDScript::7373784156891131159::1778787540::0::1::::<>NpcBase<><>0<>0<><>::
 TitleScreen.gd::GDScript::6952075367807795212::1778700263::0::1::::<>CanvasLayer<><>0<>0<><>::
-::res://data/Scripts/DialogueSystem/::1778707938
-DialogBox.gd::GDScript::5388493095216797885::1778707938::0::1::::<>CanvasLayer<><>0<>0<><>::
-::res://data/Scripts/Enemies/::1778707333
-Dummy.gd::GDScript::4029096865448893317::1778435754::0::1::::Dummy<>CharacterBody2D<><>0<>0<><>::
-slime.gd::GDScript::4834002250337389143::1778707333::0::1::::<>CharacterBody2D<><>0<>0<><>::
+::res://data/Scripts/DialogueSystem/::1778787478
+DialogBox.gd::GDScript::5388493095216797885::1778787478::0::1::::<>CanvasLayer<><>0<>0<><>::
+::res://data/Scripts/Enemies/::1778786530
+Dummy.gd::GDScript::4029096865448893317::1778786300::0::1::::Dummy<>CharacterBody2D<><>0<>0<><>::
+slime.gd::GDScript::4834002250337389143::1778786530::0::1::::<>CharacterBody2D<><>0<>0<><>::
 ::res://data/Scripts/Inventory/::1778700149
 InventoryMenu.gd::GDScript::6430555822374587095::1778700149::0::1::::<>CanvasLayer<><>0<>0<><>::
 ItemData.gd::GDScript::2495792551427434685::1778435754::0::1::::ItemData<>Resource<><>0<>0<><>::
@@ -78,9 +78,9 @@ ItemRegistry.gd::GDScript::1161957424156844818::1778690936::0::1::::<>Node<><>0<
 PlayerInventory.gd::GDScript::1331908830118956734::1778435754::0::1::::<>Node<><>0<>0<><>::
 ::res://data/Scripts/Plantillas/::1778435754
 pantilla_de_objeto_interactuables.gd::GDScript::4020599119128891890::1778435754::0::1::::<>Sprite2D<><>0<>0<><>::
-::res://data/Scripts/player/::1778697737
+::res://data/Scripts/player/::1778789639
 HealSystem.gd::GDScript::5595496052879162791::1778188111::0::1::::<>Node<><>0<>0<><>::
-player.gd::GDScript::3694655473411497320::1778697737::0::1::::<>CharacterBody2D<><>0<>0<><>::
+player.gd::GDScript::3694655473411497320::1778789639::0::1::::<>CharacterBody2D<><>0<>0<><>::
 ::res://data/Scripts/player/weapons/::1778690936
 Weapon.gd::GDScript::1923365067288018873::1778690936::0::1::::Weapon<>Node2D<><>0<>0<><>::
 WeaponData.gd::GDScript::8471941271935317845::1778188228::0::1::::WeaponData<>Resource<><>0<>0<><>::
@@ -189,6 +189,6 @@ Icons.png::CompressedTexture2D::8493223971964146047::1678852328::1778263399::1::
 Laser.png::CompressedTexture2D::3429720847364664118::1778263543::1778263579::1::::<><><>0<>0<>fbcbe597a6e5cc71edbd517c3c8582c6<>res://.godot/imported/Laser.png-9a3f5db948b90dfdfa55550f38ac0f96.ctex::
 None.png::CompressedTexture2D::8487188262616347377::1778263572::1778263579::1::::<><><>0<>0<>5bf9f641a0fc93ffef76a8c490298fa6<>res://.godot/imported/None.png-8948515a3e7a57d0ea07f8f4937839ca.ctex::
 Super_Laser.png::CompressedTexture2D::6752280272701829436::1778263515::1778263579::1::::<><><>0<>0<>4082bda7a4024a02cf9bc19bc1de1ab2<>res://.godot/imported/Super_Laser.png-5e03410c318dc022b2039cea6f4a786f.ctex::
-::res://data/Tiles/::1778697737
-Cave.tres::TileSet::2104843053039499784::1778697737::0::1::::<><><>0<>0<><>::uid://ws7ewfbkt48::::res://data/Sprites/Terrain/Cave.png
-moon_base.tres::TileSet::4497925763056020342::1778697737::0::1::::<><><>0<>0<><>::uid://dhbdwjuahvoqo::::res://data/Sprites/Terrain/Moon/moon_base..png
+::res://data/Tiles/::1778786214
+Cave.tres::TileSet::2104843053039499784::1778786214::0::1::::<><><>0<>0<><>::uid://ws7ewfbkt48::::res://data/Sprites/Terrain/Cave.png
+moon_base.tres::TileSet::4497925763056020342::1778786214::0::1::::<><><>0<>0<><>::uid://dhbdwjuahvoqo::::res://data/Sprites/Terrain/Moon/moon_base..png

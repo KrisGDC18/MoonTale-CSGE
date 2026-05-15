@@ -136,6 +136,13 @@ func open(origin: String = "") -> void:
 	_waiting_remap = false
 	_confirm_reset = false
 	Globals.playerStay = true
+	# Cuando se abre desde la pantalla de título, el fondo debe ser
+	# completamente opaco para tapar el mapa del juego que hay detrás.
+	# Desde el inventario en partida, se mantiene semitransparente.
+	if _origin == "title":
+		_full_bg.color = Color(C_BG.r, C_BG.g, C_BG.b, 1.0)
+	else:
+		_full_bg.color = Color(0.0, 0.0, 0.0, 0.75)
 	show()
 	_refresh()
 

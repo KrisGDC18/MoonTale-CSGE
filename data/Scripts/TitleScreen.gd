@@ -148,6 +148,7 @@ func show_menu() -> void:
 	_panel.show()
 	if title_texture != null:
 		_title_sprite.show()
+	_set_hud_visible(false)
 	_play_music()
 	_refresh()
 
@@ -160,6 +161,7 @@ func hide_menu() -> void:
 	_title_sprite.hide()
 	_stop_music()
 	_lock_player(false)
+	_set_hud_visible(true)
 
 
 # Inmoviliza/libera al jugador y lo hace visible/invisible
@@ -237,10 +239,14 @@ func _confirm() -> void:
 					if _settings_menu == null:
 						_connect_settings_menu()
 					if _settings_menu != null:
+						# Ocultar solo el panel y el título del menú,
+						# pero NO _full_bg — el fondo de la pantalla de título
+						# debe seguir visible detrás del settings.
 						_panel.hide()
-						_full_bg.hide()
 						_title_sprite.hide()
-						_settings_menu.open()
+						# Ocultar el HUD si existe, para que no se solape.
+						_set_hud_visible(false)
+						_settings_menu.open("title")
 					else:
 						push_error("[TitleScreen] SettingsMenu sigue siendo null. Verifica que el nodo existe en Game.tscn y tiene SettingsMenu.gd asignado.")
 
@@ -270,12 +276,23 @@ func _on_settings_closed() -> void:
 	# Si el settings se abrió desde el inventario, _open es false → ignorar.
 	if not _open:
 		return
-	_full_bg.show()
+	# _full_bg no se ocultó al abrir settings, así que no hace falta mostrarlo.
 	_panel.show()
 	if title_texture != null:
 		_title_sprite.show()
+	# Restaurar el HUD si estaba visible antes.
+	_set_hud_visible(true)
 	_cursor = 2   # dejar el cursor en "Opciones"
 	_refresh()
+
+
+## Oculta o muestra el HUD (nodos del grupo "hud").
+func _set_hud_visible(is_visible: bool) -> void:
+	for node in get_tree().get_nodes_in_group("hud"):
+		if is_visible:
+			node.show()
+		else:
+			node.hide()
 
 
 # ═══════════════════════════════════════════════════════════════════════
