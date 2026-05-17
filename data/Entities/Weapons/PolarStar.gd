@@ -9,7 +9,7 @@ var _fire_timer : float = -1.0
 func _ready() -> void:
 	weapon_name = "PolarStar"
 	max_level   = 3
-	xp_to_level = [0, 50, 100]
+	xp_to_level = [30, 50, 100]
 	# Asignar todos los AudioStreamPlayer hijos al bus "SFX"
 	call_deferred("_assign_sfx_bus")
 

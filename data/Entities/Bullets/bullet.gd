@@ -260,7 +260,9 @@ func _deal_laser_damage() -> void:
 
 # ─── Colisión ─────────────────────────────────────────────────────────
 func _on_body_entered(body: Node2D) -> void:
-	print("[bullet] body_entered: ", body.name, "  groups: ", body.get_groups())
+	if body.is_in_group("player"):
+		return
+
 	if _is_laser:
 		if body.is_in_group("enemies"):
 			# Daño de contacto mientras el láser viaja
@@ -272,7 +274,6 @@ func _on_body_entered(body: Node2D) -> void:
 				_enter_hold()
 				_play_wall_hit()
 	else:
-		print("[bullet] es bala normal — en grupo enemies: ", body.is_in_group("enemies"))
 		if body.is_in_group("enemies") and body.has_method("take_damage"):
 			body.take_damage(damage, global_position)
 		elif body.is_in_group("destructible") and body.has_method("take_damage"):

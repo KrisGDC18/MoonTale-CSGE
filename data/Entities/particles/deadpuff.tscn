@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://c5r0eitwg2355"]
+
+[ext_resource type="Script" uid="uid://kxxm3ppq5csq" path="res://data/Scripts/Particles/deadpuff.gd" id="1_6grwr"]
+[ext_resource type="Texture2D" uid="uid://jl3xtmuykmo1" path="res://data/Sprites/particles/explode.png" id="2_wsoqo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tptb1"]
+atlas = ExtResource("2_wsoqo")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_11eya"]
+atlas = ExtResource("2_wsoqo")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_63so0"]
+atlas = ExtResource("2_wsoqo")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e1dv2"]
+atlas = ExtResource("2_wsoqo")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6vtwl"]
+atlas = ExtResource("2_wsoqo")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yyptj"]
+atlas = ExtResource("2_wsoqo")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vodtt"]
+atlas = ExtResource("2_wsoqo")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_54fay"]
+atlas = ExtResource("2_wsoqo")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hlbuf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tptb1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_11eya")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_63so0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e1dv2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6vtwl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yyptj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vodtt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_54fay")
+}],
+"loop": false,
+"name": &"puff",
+"speed": 10.0
+}]
+
+[node name="Deadpuff" type="Node2D" unique_id=638968625]
+script = ExtResource("1_6grwr")
+
+[node name="DeadPuff" type="AnimatedSprite2D" parent="." unique_id=1572844853]
+sprite_frames = SubResource("SpriteFrames_hlbuf")
+animation = &"puff"
+frame_progress = 0.39864522

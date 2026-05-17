@@ -56,6 +56,14 @@ func add_xp(amount: int) -> void:
 		current_level = min(current_level + 1, max_level)
 		_on_level_up()
 
+func remove_xp(amount: int):
+	current_xp -= amount
+	if current_xp <= 0:
+		if current_level > 1:
+			current_level -= 1
+			current_xp = xp_to_level[current_level] - 1
+		elif current_level == 1:
+			current_xp = 0
 
 func _on_level_up() -> void:
 	print("%s subio a nivel %d" % [weapon_name, current_level])

@@ -33,6 +33,7 @@ DialogBox="*uid://cexb8qced5uet"
 SaveSystem="*uid://cjn6205gers6g"
 GameFlags="*uid://c0dtnfnv7skqj"
 ItemRegistry="*uid://qs4je8idlhbm"
+CameraController="*uid://bmtn6reeou7nw"
 
 [display]
 

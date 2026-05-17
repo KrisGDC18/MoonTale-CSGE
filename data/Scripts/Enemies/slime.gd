@@ -10,7 +10,10 @@ extends CharacterBody2D
 @onready var attackarea: Area2D = $AttackArea
 @onready var damarea: Area2D = $DamageArea
 
-
+const deadpuff:= preload("res://data/Entities/particles/deadpuff.tscn")
+const xpdrop:= preload("res://data/Entities/Misc/xp_point.tscn")
+const healthdrop:= preload("res://data/Entities/Misc/health.tscn")
+const drops: = [xpdrop, healthdrop]
 
 # ── Stats ─────────────────────────────────────────────────────────────
 const MAX_HP        : int   = 20
@@ -130,16 +133,33 @@ func _atacar(delta):
 
 
 func _muerto():
-	print("slimemuerto")
-	velocity.x = 0
-	move_and_slide()
-	dead = true
-	asprite.play("dead")
-	await asprite.animation_finished
-	damarea.monitoring = false
-	_clear_dmg_label()
-	queue_free()
-
+	if !dead:
+		print("slimemuerto")
+		velocity.x = 0
+		move_and_slide()
+		dead = true
+		asprite.play("dead")
+		await asprite.animation_finished
+		damarea.monitoring = false
+		_clear_dmg_label()
+		var puff = deadpuff.instantiate()
+		get_parent().add_child(puff)
+		puff.global_position = global_position
+		
+		var tipo = drops.pick_random()  # elegir el tipo sin instanciar aún
+		print(tipo)
+		if tipo == xpdrop:
+			for i in range(randi_range(3, 4)):
+				var drop = tipo.instantiate()
+				drop.xp_value = randi_range(1, 3)
+				get_parent().add_child(drop)
+				drop.global_position = global_position
+		else:
+			var drop = tipo.instantiate()
+			get_parent().add_child(drop)
+			drop.global_position = global_position
+			
+		queue_free()
 
 func _on_vision_area_body_entered(body: Node2D):
 	if body.is_in_group("player"):

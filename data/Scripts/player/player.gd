@@ -66,13 +66,6 @@ const BOOSTER2_GAS_DRAIN      := 100.0
 # ─── Animación de caída ───────────────────────────────────────────────
 const FALL_ANIM_TIME      := 0.35
 
-# ─── Cámara ───────────────────────────────────────────────────────────
-const CAM_H_LEAD          := 48.0
-const CAM_V_LOOK_UP       := 64.0
-const CAM_H_LERP          := 4.0
-const CAM_V_LERP          := 3.0
-const CAM_LOOK_LERP       := 2.5
-const CAM_OVERRIDE_LERP   := 5.0
 
 # ─── Cooldown post-diálogo ────────────────────────────────────────────
 # Tiempo en segundos que el jugador ignora inputs después de que
@@ -164,44 +157,18 @@ var _was_on_ceiling     := false
 var _step_timer         := 0.0
 const STEP_INTERVAL      := 0.28
 
-# ─── Variables de cámara ──────────────────────────────────────────────
-var _cam_offset           := Vector2.ZERO
-var _cam_target           := Vector2.ZERO
-var _cam_small_room       := false
-var _cam_override_active  := false
-var _cam_override_target  := Vector2.ZERO
-var _cam_override_speed   := CAM_OVERRIDE_LERP
-var _cam_focus_node       : Node2D = null
-var cam_quake             := false
-var cam_quake_intensity   := 4.0
-var cam_quake_speed       := 22.0
-var _quake_offset         := Vector2.ZERO
-var _quake_time           := 0.0
-
-# ─── Fade de carga de partida ─────────────────────────────────────────
-var _fade_rect            : ColorRect = null
 
 
 # ═══════════════════════════════════════════════════════════════════════
 func _ready():
 	add_to_group("player")
 	dmg.body_entered.connect(_on_damage_detect_body_entered)
-	camera.anchor_mode                = Camera2D.ANCHOR_MODE_DRAG_CENTER
-	camera.offset                     = Vector2.ZERO
-	camera.position                   = Vector2.ZERO
-	camera.position_smoothing_enabled = false
 	weapon_manager.init(self)
 	# ─── Asignar todos los SFX del jugador al bus "SFX" ──────────────────
 	for sfx in [jump_sfx, step_sfx, land_sfx, water_sfx,
 				bonk_sfx, hurt_sfx, death_sfx, death_drown_sfx,
 				booster_sfx, booster2_sfx]:
 		sfx.bus = "SFX"
-	# ─── Crear el ColorRect de fade ──────────────────────────────────────
-	_fade_rect = ColorRect.new()
-	_fade_rect.color        = Color(0.0, 0.0, 0.0, 0.0)
-	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_fade_rect.z_index      = 100
-	camera.add_child(_fade_rect)
 	# ─── Invencibilidad al aparecer en el mapa ───────────────────────────
 	# Cubre tanto nuevo juego como carga de partida. Se conecta a map_changed
 	# del Level para aplicar los iframes cada vez que se entra a un mapa.
@@ -286,8 +253,6 @@ func _physics_process(delta):
 	handle_animation(anim)
 	_handle_sounds(delta)
 	_update_iframes(delta)
-	_update_camera(delta)
-
 	if _jump_grace_frame:
 		_jump_grace_frame = false
 
@@ -543,6 +508,8 @@ func take_damage(amount: int, source_global_pos: Vector2,
 			_iframes_timer    = AIR_DMG_INTERVAL
 			_flash_timer      = 0.0
 			_iframes_drowning = true
+		else:
+			remove_weapon_xp(amount)
 
 
 func _die(is_drowning: bool = false) -> void:
@@ -744,20 +711,12 @@ func _load_save_with_fade() -> void:
 	set_collision_layer_value(1, false)
 	set_collision_mask_value(1, false)
 
-	# Ajustar tamaño del fade_rect al viewport (coordenadas locales de la cámara)
-	var vp   : Vector2 = get_viewport().get_visible_rect().size
-	var half : Vector2 = vp * 0.5
-	_fade_rect.size     = vp
-	_fade_rect.position = -half
-
 	# Conectar load_completed UNA sola vez para hacer el fade in después de cargar
 	if not SaveSystem.load_completed.is_connected(_on_save_loaded):
 		SaveSystem.load_completed.connect(_on_save_loaded, CONNECT_ONE_SHOT)
 
 	# Fade a negro y luego cargar
-	var tween := create_tween()
-	tween.tween_property(_fade_rect, "color", Color(0.0, 0.0, 0.0, 1.0), 0.6) \
-		.set_trans(Tween.TRANS_LINEAR)
+	var tween: Tween = camera.fade_to_black(0.6)
 	tween.tween_callback(func():
 		SaveSystem.load_game(SaveSystem.current_slot)
 	)
@@ -771,20 +730,6 @@ func _on_save_loaded(_slot: int) -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	await get_tree().process_frame
-
-	# Reasignar _fade_rect por si el cambio de mapa destruyó el nodo anterior
-	if not is_instance_valid(_fade_rect):
-		_fade_rect = ColorRect.new()
-		_fade_rect.color        = Color(0.0, 0.0, 0.0, 1.0)
-		_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_fade_rect.z_index      = 100
-		camera.add_child(_fade_rect)
-
-	var vp   : Vector2 = get_viewport().get_visible_rect().size
-	var half : Vector2 = vp * 0.5
-	_fade_rect.size     = vp
-	_fade_rect.position = -half
-	_fade_rect.color    = Color(0.0, 0.0, 0.0, 1.0)
 
 	# Restaurar visibilidad, colisiones y control del jugador
 	visible = true
@@ -807,9 +752,7 @@ func _on_save_loaded(_slot: int) -> void:
 	Globals.playerPlayable = true
 	Globals.playerStay     = false
 
-	var tween := create_tween()
-	tween.tween_property(_fade_rect, "color", Color(0.0, 0.0, 0.0, 0.0), 0.5) \
-		.set_trans(Tween.TRANS_LINEAR)
+	camera.fade_from_black(0.5)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -988,76 +931,18 @@ func _handle_sounds(delta: float) -> void:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# ─── Cámara estilo Cave Story ─────────────────────────────────────────
+# ─── API de cámara (delegates → camera_controller.gd) ─────────────────
 
-func _update_camera(delta: float) -> void:
-	_cam_small_room = Globals.small_room
-
-	if _cam_small_room:
-		_cam_target = Vector2.ZERO
-		_cam_offset = Vector2.ZERO
-		var fixed_offset := -global_position
-
-		if cam_quake:
-			_quake_time += delta * cam_quake_speed
-			_quake_offset.x = sin(_quake_time * 1.1) * cam_quake_intensity
-			_quake_offset.y = sin(_quake_time * 1.7) * cam_quake_intensity
-		else:
-			_quake_offset = _quake_offset.lerp(Vector2.ZERO, 10.0 * delta)
-
-		camera.offset = fixed_offset + _quake_offset
-		return
-
-	if _cam_override_active or _cam_focus_node != null:
-		_cam_target = Vector2.ZERO
-		var dest := Vector2.ZERO
-		if _cam_focus_node != null:
-			dest = to_local(_cam_focus_node.global_position)
-		else:
-			dest = _cam_override_target
-		_cam_offset = _cam_offset.lerp(dest, _cam_override_speed * delta)
-
-	else:
-		if not _is_stayed():
-			var lead_x := CAM_H_LEAD if lastDirection == 0 else -CAM_H_LEAD
-			var lead_y := 0.0
-			if Input.is_action_pressed("Up"):
-				lead_y = -CAM_V_LOOK_UP
-
-			_cam_target.x = lead_x
-			_cam_target.y = lerp(_cam_target.y, lead_y, CAM_LOOK_LERP * delta)
-
-		_cam_offset.x = lerp(_cam_offset.x, _cam_target.x, CAM_H_LERP * delta)
-		_cam_offset.y = lerp(_cam_offset.y, _cam_target.y, CAM_V_LERP * delta)
-
-	if cam_quake:
-		_quake_time += delta * cam_quake_speed
-		_quake_offset.x = sin(_quake_time * 1.1) * cam_quake_intensity
-		_quake_offset.y = sin(_quake_time * 1.7) * cam_quake_intensity
-	else:
-		_quake_offset = _quake_offset.lerp(Vector2.ZERO, 10.0 * delta)
-
-	camera.offset = _cam_offset + _quake_offset
+func camera_focus_on(target: Node2D, speed: float = 5.0) -> void:
+	camera.focus_on(target, speed)
 
 
-# ─── API pública de cámara ────────────────────────────────────────────
-
-func camera_focus_on(target: Node2D, speed: float = CAM_OVERRIDE_LERP) -> void:
-	_cam_focus_node      = target
-	_cam_override_active = true
-	_cam_override_speed  = speed
-
-
-func camera_move_to(offset: Vector2, speed: float = CAM_OVERRIDE_LERP) -> void:
-	_cam_focus_node      = null
-	_cam_override_active = true
-	_cam_override_target = offset
-	_cam_override_speed  = speed
+func camera_move_to(target_offset: Vector2, speed: float = 5.0) -> void:
+	camera.move_to(target_offset, speed)
 
 
 func camera_release() -> void:
-	_cam_focus_node      = null
-	_cam_override_active = false
+	camera.release()
 
 
 func jump_speed() -> float:
@@ -1085,3 +970,16 @@ func _on_damage_detect_body_entered(body: Node2D) -> void:
 	if body.get("damage") != null:
 		amount = body.damage
 	take_damage(amount, body.global_position)
+
+
+func add_weapon_xp(amount: int):
+	weapon_manager._current_weapon.add_xp(amount)
+	
+
+func remove_weapon_xp(amount: int):
+	weapon_manager._current_weapon.remove_xp(amount)
+	
+
+func health(amount: int):
+	currentLife = min(currentLife + amount, PLAYER_MAX_LIFE)
+	
