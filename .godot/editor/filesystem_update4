@@ -1,9 +1,0 @@
-res://data/Tiles/Cave.tres
-res://data/Tiles/moon_base.tres
-res://data/Entities/Misc/health.tscn
-res://data/Scripts/player/player.gd
-res://data/Entities/Misc/health.gd
-res://data/Scripts/Enemies/slime.gd
-res://data/Scenes/cave1.tscn
-res://data/Scenes/First_cave.tscn
-res://data/Entities/player/player.tscn

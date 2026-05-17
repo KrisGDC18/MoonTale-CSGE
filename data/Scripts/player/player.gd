@@ -5,7 +5,7 @@ extends CharacterBody2D
 @export var damage_material: ShaderMaterial
 
 # ─── Velocidad y aceleración en el suelo ─────────────────────────────
-const MAX_SPEED           := 190.0
+const MAX_SPEED           := 210.0
 const JUMP_VELOCITY       := 295.0
 const ACCR                := 1200.0
 const FRICTION            := 1000.0

@@ -8,6 +8,7 @@
 [ext_resource type="AudioStream" uid="uid://chalk28jw1ulm" path="res://data/Sounds/BGM/vivi_loop.ogg" id="6_h4vf1"]
 [ext_resource type="PackedScene" uid="uid://ci31taf705rx5" path="res://data/Entities/npc/test/test_kris_dialogue_01.tscn" id="7_h4vf1"]
 [ext_resource type="PackedScene" uid="uid://b0o2eu6quk0kt" path="res://data/Entities/Enemies/Slime.tscn" id="8_xfcvj"]
+[ext_resource type="PackedScene" uid="uid://bt7cfbj6drgcr" path="res://data/Entities/npc/Karu.tscn" id="9_xptw8"]
 
 [node name="First Cave" type="Node2D" unique_id=1056936284]
 script = ExtResource("1_01qg7")
@@ -59,3 +60,6 @@ position = Vector2(492, -170)
 
 [node name="Slime2" parent="." unique_id=467224623 instance=ExtResource("8_xfcvj")]
 position = Vector2(1266, 17)
+
+[node name="TestKrisDialogue02" parent="." unique_id=974512260 instance=ExtResource("9_xptw8")]
+position = Vector2(113, 11)
