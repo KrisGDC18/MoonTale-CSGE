@@ -115,6 +115,8 @@ func _perseguir():
 		estado_enemigo = StatePhase.ATAQUE
 	if global_position.distance_to(jugador.global_position) >= 200.0:
 		estado_enemigo = StatePhase.ALERTA
+	if is_on_wall() and is_on_floor():
+		velocity.y = -280
 
 
 func _atacar(delta):

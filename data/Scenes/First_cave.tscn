@@ -9,6 +9,10 @@
 [ext_resource type="PackedScene" uid="uid://ci31taf705rx5" path="res://data/Entities/npc/test/test_kris_dialogue_01.tscn" id="7_h4vf1"]
 [ext_resource type="PackedScene" uid="uid://b0o2eu6quk0kt" path="res://data/Entities/Enemies/Slime.tscn" id="8_xfcvj"]
 [ext_resource type="PackedScene" uid="uid://bt7cfbj6drgcr" path="res://data/Entities/npc/Karu.tscn" id="9_xptw8"]
+[ext_resource type="PackedScene" uid="uid://dn2klgbvfhvsu" path="res://data/Entities/npc/Kira.tscn" id="10_jsqyv"]
+[ext_resource type="PackedScene" uid="uid://cke4rfaocv6bi" path="res://data/Entities/npc/Midori.tscn" id="11_0ppor"]
+[ext_resource type="PackedScene" uid="uid://ige73iaa4j4b" path="res://data/Entities/npc/Kyatto.tscn" id="12_ejl7q"]
+[ext_resource type="PackedScene" uid="uid://dhuq5bij0wyjp" path="res://data/Entities/Enemies/Dummy.tscn" id="13_cm38v"]
 
 [node name="First Cave" type="Node2D" unique_id=1056936284]
 script = ExtResource("1_01qg7")
@@ -53,13 +57,25 @@ stream = ExtResource("6_h4vf1")
 
 [node name="TestKrisDialogue01" parent="." unique_id=571265759 instance=ExtResource("7_h4vf1")]
 z_index = -2
-position = Vector2(151, 11)
+position = Vector2(117, 11)
 
 [node name="Slime" parent="." unique_id=805482129 instance=ExtResource("8_xfcvj")]
-position = Vector2(492, -170)
+position = Vector2(492, -176)
 
 [node name="Slime2" parent="." unique_id=467224623 instance=ExtResource("8_xfcvj")]
-position = Vector2(1266, 17)
+position = Vector2(1266, 16)
 
-[node name="TestKrisDialogue02" parent="." unique_id=974512260 instance=ExtResource("9_xptw8")]
-position = Vector2(113, 11)
+[node name="Karu" parent="." unique_id=974512260 instance=ExtResource("9_xptw8")]
+position = Vector2(143, 11)
+
+[node name="Kira" parent="." unique_id=2009076556 instance=ExtResource("10_jsqyv")]
+position = Vector2(91, 11)
+
+[node name="Kira2" parent="." unique_id=1538415013 instance=ExtResource("11_0ppor")]
+position = Vector2(66, 16)
+
+[node name="Midori" parent="." unique_id=1842564802 instance=ExtResource("12_ejl7q")]
+position = Vector2(39, 16)
+
+[node name="Dummy" parent="." unique_id=1962890258 instance=ExtResource("13_cm38v")]
+position = Vector2(174, 11)

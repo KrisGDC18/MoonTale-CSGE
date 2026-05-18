@@ -1,5 +1,5 @@
 72322a848ab928aa5c89f0cb78209805
-::res://::1779038421
+::res://::1779119765
 Moontale icon.png::CompressedTexture2D::5563572194341131588::1778898450::1778898450::1::::<><><>0<>0<>e2fa5f05e07ef64d8a92c8d3294f5102<>res://.godot/imported/Moontale icon.png-3309fbc06a94fce02b63dc995f1e1ed0.ctex::
 ::res://data/::1778898450
 ::res://data/dialogues/::1778898450
@@ -8,9 +8,9 @@ door.tscn::PackedScene::7738306815529673628::1778898450::0::1::::<><><>0<>0<><>:
 ::res://data/Entities/Bullets/::1778900718
 bullet.gd::GDScript::3009230250005093317::1778900718::0::1::::<>Area2D<><>0<>0<><>::
 Bullet.tscn::PackedScene::8688564383367342951::1778898450::0::1::::<><><>0<>0<><>::uid://bi4xt2pcvsoi4::::res://data/Entities/Bullets/bullet.gd<>uid://dw5jgc0d2a6ru::::res://data/Sprites/Bullets/Bullet.png<>uid://pp135ybesnp2::::res://data/Sounds/SFX/Weapons/ID1f_snd_shot_bounce.wav
-::res://data/Entities/Enemies/::1778898450
+::res://data/Entities/Enemies/::1779067462
 Dummy.tscn::PackedScene::7692896622653141121::1778898450::0::1::::<><><>0<>0<><>::uid://bxnyvwbp42p86::::res://data/Scripts/Enemies/Dummy.gd<>uid://blateou06ngo2::::res://data/Sprites/NPC/Dummy.png
-Slime.tscn::PackedScene::4171690664291117211::1778898450::0::1::::<><><>0<>0<><>::uid://dbcchj4rowo8v::::res://data/Sprites/Enemies/Slimes/Slime.png<>uid://ca4vktj65vcmp::::res://data/Scripts/Enemies/slime.gd
+Slime.tscn::PackedScene::4171690664291117211::1779067462::0::1::::<><><>0<>0<><>::uid://dbcchj4rowo8v::::res://data/Sprites/Enemies/Slimes/Slime.png<>uid://ca4vktj65vcmp::::res://data/Scripts/Enemies/slime.gd
 ::res://data/Entities/Misc/::1778979984
 health.gd::GDScript::4204915431601134197::1778978391::0::1::::<>Area2D<><>0<>0<><>::
 health.tscn::PackedScene::1677623438831336605::1778979984::0::1::::<><><>0<>0<><>::uid://b055lwj54snr6::::res://data/Entities/Misc/health.gd<>uid://cjtoqabkrf65e::::res://data/Sprites/Misc/heart.png
@@ -18,8 +18,10 @@ HUD.tscn::PackedScene::3132296107564238046::1778898450::0::1::::<><><>0<>0<><>::
 question_mark.tscn::PackedScene::6548513508868489942::1778898450::0::1::::<><><>0<>0<><>::uid://ci258p7t4s16l::::res://data/Scripts/QuestionMark.gd<>uid://moqn4dmnbv5::::res://data/Sprites/Misc/Caret.png
 xp_point.gd::GDScript::7757152262498091172::1778967384::0::1::::<>RigidBody2D<><>0<>0<><>::
 xp_point.tscn::PackedScene::7201820239833048430::1778967543::0::1::::<><><>0<>0<><>::uid://dirvfucyxcodg::::res://data/Entities/Misc/xp_point.gd<>uid://b6bgjnog7t0qg::::res://data/Sprites/Misc/Sprite-0001.png
-::res://data/Entities/npc/::1779031497
+::res://data/Entities/npc/::1779119965
 Karu.tscn::PackedScene::3786199231740458821::1779031497::0::1::::<><><>0<>0<><>::uid://ddb6fa12fa31d::::res://data/Scripts/test_kris_dialogue_01.gd<>uid://dhdm3nrryy5am::::res://data/Sprites/NPC/Karu.png
+Kira.tscn::PackedScene::8128082349039987508::1779119808::0::1::::<><><>0<>0<><>::uid://ddb6fa12fa31d::::res://data/Scripts/test_kris_dialogue_01.gd<>uid://bhxrmlhq5f6uc::::res://data/Sprites/NPC/Kira.png
+Midori.tscn::PackedScene::5484778729325756334::1779119965::0::1::::<><><>0<>0<><>::uid://ddb6fa12fa31d::::res://data/Scripts/test_kris_dialogue_01.gd<>uid://be815uw2nyocp::::res://data/Sprites/NPC/Midori.png
 ::res://data/Entities/npc/test/::1779031375
 test_kris_dialogue_01.tscn::PackedScene::5393767274712819632::1778898450::0::1::::<><><>0<>0<><>::uid://ddb6fa12fa31d::::res://data/Scripts/test_kris_dialogue_01.gd<>uid://bcv2ad207i3c6::::res://data/Sprites/NPC/Kris.png
 ::res://data/Entities/particles/::1778961536
@@ -47,10 +49,10 @@ monogatari.ttf::FontFile::8313072193192664290::1778898450::1778898450::1::::<><>
 ::res://data/Items/::1778898450
 HealtPod.tres::Resource/ItemData::5003138211242369215::1778898450::0::1::::<><><>0<>0<><>::uid://bbs8lrrtfkco0::::res://data/Scripts/Inventory/ItemData.gd
 jetpack2.tres::Resource/ItemData::2130118649923740492::1778898450::0::1::::<><><>0<>0<><>::uid://dwsdvg2ngdwmr::::res://data/Sprites/Items/Jetpack_Upgraded.png<>uid://bbs8lrrtfkco0::::res://data/Scripts/Inventory/ItemData.gd
-::res://data/Scenes/::1779031497
+::res://data/Scenes/::1779119965
 cave1.tscn::PackedScene::2791968043597708716::1778985213::0::1::::<><><>0<>0<><>::uid://c5i02m7gy0ted::::res://data/Scripts/normal_room.gd<>uid://48ups7a06mvg::::res://data/Tiles/Cave.tres<>uid://diiq1u1doxfaq::::res://data/Entities/door.tscn<>uid://bte1y2qu7als5::::res://data/Sounds/BGM/vivi_intro.ogg<>uid://chalk28jw1ulm::::res://data/Sounds/BGM/vivi_loop.ogg<>uid://by5a3lmi14my4::::res://data/Sprites/Backgrounds/bkBlack.png<>uid://ci31taf705rx5::::res://data/Entities/npc/test/test_kris_dialogue_01.tscn<>uid://dhuq5bij0wyjp::::res://data/Entities/Enemies/Dummy.tscn<>uid://ohj5vt0m2gx4::::res://data/Entities/Scenary/DestructibleBlock.tscn
 first_cave.tscn::PackedScene::4269581438135854874::1778898450::0::1::::<><><>0<>0<><>::uid://c5i02m7gy0ted::::res://data/Scripts/normal_room.gd<>uid://48ups7a06mvg::::res://data/Tiles/Cave.tres<>uid://diiq1u1doxfaq::::res://data/Entities/door.tscn<>uid://bte1y2qu7als5::::res://data/Sounds/BGM/vivi_intro.ogg<>uid://chalk28jw1ulm::::res://data/Sounds/BGM/vivi_loop.ogg
-First_cave.tscn::PackedScene::4326980501954130532::1779031497::0::1::::<><><>0<>0<><>::uid://c5i02m7gy0ted::::res://data/Scripts/normal_room.gd<>uid://48ups7a06mvg::::res://data/Tiles/Cave.tres<>uid://diiq1u1doxfaq::::res://data/Entities/door.tscn<>uid://b5c3gejdo7vqc::::res://data/Tiles/moon_base.tres<>uid://bte1y2qu7als5::::res://data/Sounds/BGM/vivi_intro.ogg<>uid://chalk28jw1ulm::::res://data/Sounds/BGM/vivi_loop.ogg<>uid://ci31taf705rx5::::res://data/Entities/npc/test/test_kris_dialogue_01.tscn<>uid://b0o2eu6quk0kt::::res://data/Entities/Enemies/Slime.tscn<>uid://bt7cfbj6drgcr::::res://data/Entities/npc/Karu.tscn
+First_cave.tscn::PackedScene::4326980501954130532::1779119965::0::1::::<><><>0<>0<><>::uid://c5i02m7gy0ted::::res://data/Scripts/normal_room.gd<>uid://48ups7a06mvg::::res://data/Tiles/Cave.tres<>uid://diiq1u1doxfaq::::res://data/Entities/door.tscn<>uid://b5c3gejdo7vqc::::res://data/Tiles/moon_base.tres<>uid://bte1y2qu7als5::::res://data/Sounds/BGM/vivi_intro.ogg<>uid://chalk28jw1ulm::::res://data/Sounds/BGM/vivi_loop.ogg<>uid://ci31taf705rx5::::res://data/Entities/npc/test/test_kris_dialogue_01.tscn<>uid://b0o2eu6quk0kt::::res://data/Entities/Enemies/Slime.tscn<>uid://bt7cfbj6drgcr::::res://data/Entities/npc/Karu.tscn<>uid://dn2klgbvfhvsu::::res://data/Entities/npc/Kira.tscn<>uid://cke4rfaocv6bi::::res://data/Entities/npc/Midori.tscn
 StartPoint.tscn::PackedScene::3050247471416390787::1778898450::0::1::::<><><>0<>0<><>::uid://dfm6d52vf3idd::::res://data/Scripts/small_room.gd<>uid://by5a3lmi14my4::::res://data/Sprites/Backgrounds/bkBlack.png<>uid://48ups7a06mvg::::res://data/Tiles/Cave.tres<>uid://diiq1u1doxfaq::::res://data/Entities/door.tscn<>uid://chalk28jw1ulm::::res://data/Sounds/BGM/vivi_loop.ogg<>uid://bte1y2qu7als5::::res://data/Sounds/BGM/vivi_intro.ogg
 ::res://data/Scripts/::1778942191
 asset_manager.gd::GDScript::6384872172497799811::1778898450::0::1::::<>Node<><>0<>0<><>::
@@ -75,9 +77,9 @@ test_kris_dialogue_01.gd::GDScript::7373784156891131159::1778898450::0::1::::<>N
 TitleScreen.gd::GDScript::6952075367807795212::1778898450::0::1::::<>CanvasLayer<><>0<>0<><>::
 ::res://data/Scripts/DialogueSystem/::1778898450
 DialogBox.gd::GDScript::5388493095216797885::1778898450::0::1::::<>CanvasLayer<><>0<>0<><>::
-::res://data/Scripts/Enemies/::1778979984
+::res://data/Scripts/Enemies/::1779067462
 Dummy.gd::GDScript::4029096865448893317::1778898450::0::1::::Dummy<>CharacterBody2D<><>0<>0<><>::
-slime.gd::GDScript::4834002250337389143::1778979984::0::1::::<>CharacterBody2D<><>0<>0<><>::
+slime.gd::GDScript::4834002250337389143::1779067462::0::1::::<>CharacterBody2D<><>0<>0<><>::
 ::res://data/Scripts/Inventory/::1778898450
 InventoryMenu.gd::GDScript::6430555822374587095::1778898450::0::1::::<>CanvasLayer<><>0<>0<><>::
 ItemData.gd::GDScript::2495792551427434685::1778898450::0::1::::ItemData<>Resource<><>0<>0<><>::
@@ -167,11 +169,14 @@ Fade.png::CompressedTexture2D::908498247704264976::1778898450::1778898450::1::::
 heart.png::CompressedTexture2D::5444642750078947892::1778977603::1778977605::1::::<><><>0<>0<>31ffa23f77c6a8c6b42f76c6f9dc1fd7<>res://.godot/imported/heart.png-50abdba044ecd0fd4e060fff75de4eaf.ctex::
 NpcSym.png::CompressedTexture2D::32374809069495609::1778898450::1778898450::1::::<><><>0<>0<>6cb66d2f8ed85e88894e5be90eb90ec3<>res://.godot/imported/NpcSym.png-a48b4ed222869b56a2d9aa36ab4e107c.ctex::
 Sprite-0001.png::CompressedTexture2D::4564720293074872802::1778945926::1778945928::1::::<><><>0<>0<>32d5a234fb3660cb68936249b0948b52<>res://.godot/imported/Sprite-0001.png-139e617b7785546da2d36b8bc7aec729.ctex::
-::res://data/Sprites/NPC/::1778943475
+::res://data/Sprites/NPC/::1779120334
 Dummy.png::CompressedTexture2D::3159659497150460423::1778898450::1778898450::1::::<><><>0<>0<>5088f677885bcf4c1356ec0727460462<>res://.godot/imported/Dummy.png-f4b620cce52cd2b703086dd583a244ce.ctex::
 Karu.png::CompressedTexture2D::7657556405820923044::1778943452::1778943475::1::::<><><>0<>0<>00b6a39a284d523b2df30787147b7446<>res://.godot/imported/Karu.png-a401265d932e27b94abbf7d2ec2c21e0.ctex::
+Kira.png::CompressedTexture2D::2926277485244363630::1779119710::1779119721::1::::<><><>0<>0<>d9fc02bb2dbd1c4933b7a8aca1d88773<>res://.godot/imported/Kira.png-6160b61fecf3051459954cb5bb991b44.ctex::
 Kris.png::CompressedTexture2D::2571789863067880563::1778898450::1778898450::1::::<><><>0<>0<>d24fa23f1aeef903bc91a596ee4b1de4<>res://.godot/imported/Kris.png-6088753015a2826ad647e5191194eda7.ctex::
 Kris_test.png::CompressedTexture2D::6425220139712102654::1778898450::1778898450::1::::<><><>0<>0<>cdde090f308fe6ee82e030236839bd96<>res://.godot/imported/Kris_test.png-791b3899971eae2db4fcd1ae85f0bfea.ctex::
+Kyatto.png::CompressedTexture2D::5859156230671850218::1777405938::1779120336::1::::<><><>0<>0<>b9009f08ee6cebc67f732c7c80459df7<>res://.godot/imported/Kyatto.png-bca5c996d4808f687c357da3dc32ed90.ctex::
+Midori.png::CompressedTexture2D::2736933825456066555::1779119880::1779119883::1::::<><><>0<>0<>abcaa569b153d5768b861f53e0f269f0<>res://.godot/imported/Midori.png-ce179704a9b96c44bf1849da0c188f73.ctex::
 npcregu.png::CompressedTexture2D::8957153574697116831::1778898450::1778898450::1::::<><><>0<>0<>c9befa588e3e8f04a784a16a739f6057<>res://.godot/imported/npcregu.png-6333a6bce2ca267ade62a1b4f28fe623.ctex::
 ::res://data/Sprites/particles/::1778940826
 explode.png::CompressedTexture2D::656149914516716278::1778940823::1778940826::1::::<><><>0<>0<>896274e02007463c3ca4e472303bb212<>res://.godot/imported/explode.png-dce146a9611d4804a452fe05624079a9.ctex::
@@ -204,6 +209,6 @@ Icons.png::CompressedTexture2D::8493223971964146047::1778898450::1778898450::1::
 Laser.png::CompressedTexture2D::3429720847364664118::1778898450::1778898450::1::::<><><>0<>0<>fbcbe597a6e5cc71edbd517c3c8582c6<>res://.godot/imported/Laser.png-9a3f5db948b90dfdfa55550f38ac0f96.ctex::
 None.png::CompressedTexture2D::8487188262616347377::1778898450::1778898450::1::::<><><>0<>0<>5bf9f641a0fc93ffef76a8c490298fa6<>res://.godot/imported/None.png-8948515a3e7a57d0ea07f8f4937839ca.ctex::
 Super_Laser.png::CompressedTexture2D::6752280272701829436::1778898450::1778898450::1::::<><><>0<>0<>4082bda7a4024a02cf9bc19bc1de1ab2<>res://.godot/imported/Super_Laser.png-5e03410c318dc022b2039cea6f4a786f.ctex::
-::res://data/Tiles/::1779030551
-Cave.tres::TileSet::2104843053039499784::1779030551::0::1::::<><><>0<>0<><>::uid://ws7ewfbkt48::::res://data/Sprites/Terrain/Cave.png
-moon_base.tres::TileSet::4497925763056020342::1779030551::0::1::::<><><>0<>0<><>::uid://dhbdwjuahvoqo::::res://data/Sprites/Terrain/Moon/moon_base..png
+::res://data/Tiles/::1779067222
+Cave.tres::TileSet::2104843053039499784::1779067222::0::1::::<><><>0<>0<><>::uid://ws7ewfbkt48::::res://data/Sprites/Terrain/Cave.png
+moon_base.tres::TileSet::4497925763056020342::1779067222::0::1::::<><><>0<>0<><>::uid://dhbdwjuahvoqo::::res://data/Sprites/Terrain/Moon/moon_base..png

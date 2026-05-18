@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://cke4rfaocv6bi"]
+
+[ext_resource type="Script" uid="uid://ddb6fa12fa31d" path="res://data/Scripts/test_kris_dialogue_01.gd" id="1_l3b54"]
+[ext_resource type="Texture2D" uid="uid://be815uw2nyocp" path="res://data/Sprites/NPC/Midori.png" id="2_l3b54"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foom0"]
+atlas = ExtResource("2_l3b54")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xixj3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foom0")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 6.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sna75"]
+size = Vector2(14, 26.3125)
+
+[node name="Midori" type="CharacterBody2D" unique_id=571265759]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_l3b54")
+
+[node name="Body" type="AnimatedSprite2D" parent="." unique_id=589740362]
+sprite_frames = SubResource("SpriteFrames_xixj3")
+animation = &"idle"
+frame_progress = 0.35064688
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1340513654]
+visible = false
+collision_layer = 4
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1887667394]
+position = Vector2(0, 8)
+shape = SubResource("RectangleShape2D_sna75")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1361688217]
+visible = false
+position = Vector2(0, 8)
+shape = SubResource("RectangleShape2D_sna75")
+
+[connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
+[connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
