@@ -4,17 +4,17 @@ signal dialog_finished
 signal choice_made(index: int)
 signal block_changed(name: String)
 
-@onready var panel       : NinePatchRect     = $Box
-@onready var portrait          : TextureRect       = $Box/HBoxContainer/Portrait
-@onready var portrait_animated : AnimatedSprite2D  = $Box/HBoxContainer/PortraitAnimated
-@onready var hbox              : HBoxContainer     = $Box/HBoxContainer
-@onready var speaker     : Label             = $Box/SpeakerName
-@onready var text_lbl    : RichTextLabel     = $Box/HBoxContainer/VBoxContainer/Text
-@onready var arrow       : Label             = $Box/Arrow
-@onready var choices     : VBoxContainer     = $Box/ChoicesBG/Choices
-@onready var choices_bg  : TextureRect       = $Box/ChoicesBG
-@onready var item_box    : Control           = $ItemBox
-@onready var item_icon   : TextureRect       = $ItemBox/Icon
+@onready var panel       : NinePatchRect     = $Root/Box
+@onready var portrait    : TextureRect       = $Root/Box/HBoxContainer/Portrait
+@onready var portrait_animated : AnimatedSprite2D  = $Root/Box/HBoxContainer/PortraitAnimated
+@onready var hbox              : HBoxContainer     = $Root/Box/HBoxContainer
+@onready var speaker     : Label             = $Root/Box/SpeakerName
+@onready var text_lbl    : RichTextLabel     = $Root/Box/HBoxContainer/VBoxContainer/Text
+@onready var arrow       : Label             = $Root/Box/Arrow
+@onready var choices     : VBoxContainer     = $Root/Box/ChoicesBG/Choices
+@onready var choices_bg  : TextureRect       = $Root/Box/ChoicesBG
+@onready var item_box    : Control           = $Root/ItemBox
+@onready var item_icon   : TextureRect       = $Root/ItemBox/Icon
 @onready var beep_sfx    : AudioStreamPlayer = $BeepSFX
 @onready var cursor_sfx  : AudioStreamPlayer = $CursorSFX
 @onready var confirm_sfx : AudioStreamPlayer = $ConfirmSFX
@@ -71,32 +71,67 @@ func _ready() -> void:
 	choices_bg.hide()
 	portrait_animated.hide()
 	item_box.hide()
-	$Box/HBoxContainer.resized.connect(_sync_portrait_size)
+	$Root/Box/HBoxContainer.resized.connect(_sync_portrait_size)
+	get_viewport().size_changed.connect(_sync_canvas_scale)
 	# Habilitar BBCode para soporte de colores y efectos de texto
 	text_lbl.bbcode_enabled = true
-	# Capturar la fuente y tamaño del tema del nodo como predeterminados,
-	# solo si no fueron asignados manualmente antes de _ready().
+	# Capturar la fuente y tamaño del tema del nodo como predeterminados.
 	if default_font == null:
 		default_font = text_lbl.get_theme_font("normal_font")
 	if default_font_size <= 0:
-		default_font_size = text_lbl.get_theme_font_size("normal_font_size")
+		default_font_size = 42
 	# Asignar todos los SFX del diálogo al bus "SFX"
 	for sfx in [beep_sfx, cursor_sfx, confirm_sfx]:
 		if sfx != null:
 			sfx.bus = "SFX"
-	# Capturar el stream del nodo BeepSFX como predeterminado,
-	# solo si no fue asignado manualmente antes de _ready().
+	# Capturar el stream del nodo BeepSFX como predeterminado.
 	if default_beep_stream == null and beep_sfx != null:
 		default_beep_stream = beep_sfx.stream
+	# Aplicar escala inicial de fuentes y portrait
+	_sync_canvas_scale()
 
 func _sync_portrait_size() -> void:
-	var h : float = $Box/HBoxContainer.size.y
+	var h : float = $Root/Box/HBoxContainer.size.y
 	portrait.custom_minimum_size = Vector2(h, h)
+
+
+## Sincroniza la escala del CanvasLayer con el factor de estiramiento del viewport.
+## Con stretch mode canvas_items+expand el CanvasLayer no escala solo.
+## Usamos el transform del viewport para obtener el factor real que Godot aplica
+## al canvas 2D y replicarlo en el CanvasLayer.
+func _sync_canvas_scale() -> void:
+	# Con canvas_items+expand el viewport cambia de tamaño junto con la ventana.
+	# get_screen_transform() siempre devuelve 1.0 porque no hay escalado interno.
+	# El factor real es la relación entre la ventana actual y la resolución base.
+	var win : Vector2 = get_viewport().get_visible_rect().size
+	var s   : float   = min(win.x / 1920.0, win.y / 1080.0)
+	print("[DialogBox] win=%s  scale=%.4f" % [win, s])
+	# No tocar self.scale del CanvasLayer — el box ya escala via anchors en Root.
+	# Solo aplicar el factor a fuentes y portrait que no escalan con anchors.
+	_apply_scaled_props(s)
+
+
+func _apply_scaled_props(s: float) -> void:
+	# ── Fuentes ───────────────────────────────────────────────────────
+	var base_text    : int = default_font_size if default_font_size > 0 else 42
+	text_lbl.add_theme_font_size_override("normal_font_size", roundi(base_text * s))
+	speaker.add_theme_font_size_override("font_size",         roundi(42 * s))
+
+	# ── Minimum size del RichTextLabel ────────────────────────────────
+	text_lbl.custom_minimum_size = Vector2(0, roundi(218.0 * s))
+
+	# ── Portrait estático ─────────────────────────────────────────────
+	var ps : float = roundi(120.0 * s)
+	portrait.custom_minimum_size = Vector2(ps, ps)
+
+	# ── Portrait animado ──────────────────────────────────────────────
+	if portrait_animated.visible:
+		_sync_animated_portrait_size()
 
 func _sync_animated_portrait_size(side: String = "left") -> void:
 	# Escala el AnimatedSprite2D para que ocupe el mismo espacio que el TextureRect estático.
 	# Asume que el sprite tiene su origen en el centro (por defecto en Godot).
-	var h     : float   = $Box/HBoxContainer.size.y
+	var h     : float   = $Root/Box/HBoxContainer.size.y
 	var frames          = portrait_animated.sprite_frames
 	if frames == null:
 		return
@@ -111,7 +146,7 @@ func _sync_animated_portrait_size(side: String = "left") -> void:
 		var scale_factor : float = h / tex_size.y
 		portrait_animated.scale  = Vector2(scale_factor, scale_factor)
 	# Posicionar según el lado: izquierda → x = h*0.5, derecha → x = hbox ancho - h*0.5
-	var hbox_w : float = $Box/HBoxContainer.size.x
+	var hbox_w : float = $Root/Box/HBoxContainer.size.x
 	var pos_x  : float = h * 0.5 if side == "left" else hbox_w - h * 0.5
 	portrait_animated.position = Vector2(pos_x, h * 0.5)
 
@@ -120,8 +155,18 @@ func _sync_animated_portrait_size(side: String = "left") -> void:
 # API PÚBLICA
 # ══════════════════════════════════════════════════════════════════════
 
+# Reproduce una pista de música mientras el diálogo esté abierto y restaura
+# la música anterior al cerrarse. Asigna antes de llamar start():
+#   DialogBox.dialog_music = preload("res://music/tema_dialogo.ogg")
+# null = no cambia la música.
+var dialog_music        : AudioStream = null
+var _prev_music_stream  : AudioStream = null
+var _prev_music_pos     : float       = 0.0
+var _music_player       : AudioStreamPlayer = null  # se asigna en start()
+
 func start(bloques: Dictionary, bloque_inicial: String,
-		   release_player_on_close: bool = true) -> void:
+		   release_player_on_close: bool = true,
+		   music_player: AudioStreamPlayer = null) -> void:
 	_blocks                  = bloques
 	_release_player_on_close = release_player_on_close
 	_in_choices              = false
@@ -131,6 +176,15 @@ func start(bloques: Dictionary, bloque_inicial: String,
 	_waiting                 = false
 	panel.show()
 	Globals.playerStay = true
+
+	# Música de diálogo
+	_music_player = music_player
+	if dialog_music != null and _music_player != null:
+		_prev_music_stream = _music_player.stream
+		_prev_music_pos    = _music_player.get_playback_position()
+		_music_player.stream = dialog_music
+		_music_player.play()
+
 	_jump_to_block(bloque_inicial)
 
 
@@ -250,7 +304,6 @@ func _show_page(index: int) -> void:
 	speaker.visible = speaker.text != ""
 
 	# Fuente dinámica por página
-	# Acepta "font" (Font o null) y "font_size" (int o 0) en el diccionario de página.
 	var page_font      : Font = page.get("font",      default_font)
 	var page_font_size : int  = page.get("font_size", default_font_size)
 
@@ -292,7 +345,10 @@ func _show_page(index: int) -> void:
 
 	text_lbl.bbcode_enabled = true
 	text_lbl.text           = _full_text
-	text_lbl.visible_ratio  = 0.0   # ← visible_ratio en lugar de visible_characters
+	text_lbl.visible_ratio  = 0.0
+	# Aplicar escala de fuentes y portrait para la resolución actual
+	var t : Transform2D = get_viewport().get_screen_transform()
+	_apply_scaled_props(t.x.length())
 	arrow.hide()
 	choices.hide()
 	choices_bg.hide()
@@ -332,6 +388,7 @@ func _get_text_page(full: String, sub_page: int) -> String:
 		lines.append(current)
 
 	# Calcular cuántos caracteres planos corresponden al rango de líneas
+	@warning_ignore("shadowed_variable")
 	var start      : int = sub_page * MAX_LINES_PER_PAGE
 	var end_line   : int = mini(start + MAX_LINES_PER_PAGE, lines.size())
 
@@ -454,6 +511,11 @@ func _close() -> void:
 	panel.hide()
 	choices_bg.hide()
 	item_box.hide()
+	# Restaurar música anterior al cerrar el diálogo
+	if dialog_music != null and _music_player != null and _prev_music_stream != null:
+		_music_player.stream = _prev_music_stream
+		_music_player.play(_prev_music_pos)
+		_prev_music_stream = null
 	if _release_player_on_close:
 		Globals.playerStay = false
 	emit_signal("dialog_finished")
@@ -471,10 +533,10 @@ func _show_choices(opts: Array) -> void:
 	choices_bg.show()
 	_clear_choices()
 
+	@warning_ignore("shadowed_variable")
 	var start    : int  = _choice_page * MAX_CHOICES_PER_PAGE
 	var has_more : bool = (start + MAX_CHOICES_PER_PAGE) < opts.size()
 	var end      : int  = mini(start + MAX_CHOICES_PER_PAGE, opts.size())
-
 	for i in range(start, end):
 		var lbl := Label.new()
 		lbl.text = opts[i]
@@ -507,6 +569,7 @@ func _handle_choices() -> void:
 	var page          = block[_page_index]
 	var opts  : Array = page.get("choices", [])
 
+	@warning_ignore("shadowed_variable")
 	var start         : int  = _choice_page * MAX_CHOICES_PER_PAGE
 	var has_more      : bool = (start + MAX_CHOICES_PER_PAGE) < opts.size()
 	var has_back      : bool = _choice_page > 0
@@ -575,6 +638,7 @@ func _refresh_cursor() -> void:
 	var block : Array = _blocks[_current_block]
 	var page          = block[_page_index]
 	var opts  : Array = page.get("choices", [])
+	@warning_ignore("shadowed_variable")
 	var start      : int  = _choice_page * MAX_CHOICES_PER_PAGE
 	var has_more   : bool = (start + MAX_CHOICES_PER_PAGE) < opts.size()
 	var has_back   : bool = _choice_page > 0
@@ -694,6 +758,7 @@ func _apply_valignment(text: String, valign: VerticalAlignment) -> String:
 	if empty_lines <= 0:
 		return text
 
+	@warning_ignore("integer_division")
 	var pad_lines : int = empty_lines / 2 if valign == VERTICAL_ALIGNMENT_CENTER else empty_lines
 	var padding   : String = "\n".repeat(pad_lines)
 

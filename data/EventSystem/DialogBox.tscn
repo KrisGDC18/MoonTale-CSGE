@@ -20,124 +20,176 @@ animations = [{
 layer = 21
 script = ExtResource("1_yoo1p")
 
-[node name="Box" type="NinePatchRect" parent="." unique_id=191388762]
+[node name="Root" type="Control" parent="." unique_id=999000001]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Box" type="NinePatchRect" parent="Root" unique_id=191388762]
 texture_filter = 1
+layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.209
 anchor_top = 0.71900004
 anchor_right = 0.79270834
 anchor_bottom = 0.95100003
-offset_left = -1.2799988
-offset_top = -53.52002
-offset_right = 1.0
-offset_bottom = -0.080078125
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 6
 size_flags_vertical = 10
 texture = ExtResource("2_dqkix")
 
-[node name="ChoicesBG" type="TextureRect" parent="Box" unique_id=1872647275]
-layout_mode = 0
-offset_left = 682.0
-offset_top = -218.0
-offset_right = 1123.0
-offset_bottom = 8.0
+[node name="ChoicesBG" type="TextureRect" parent="Root/Box" unique_id=1872647275]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.62
+anchor_top = -0.94
+anchor_right = 1.02
+anchor_bottom = 0.034
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 0
 texture = ExtResource("3_dqkix")
+metadata/_edit_use_anchors_ = true
 
-[node name="Choices" type="VBoxContainer" parent="Box/ChoicesBG" unique_id=351474473]
-layout_mode = 0
-offset_left = 39.0
-offset_top = 33.0
-offset_right = 395.0
-offset_bottom = 196.0
+[node name="Choices" type="VBoxContainer" parent="Root/Box/ChoicesBG" unique_id=351474473]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.088
+anchor_top = 0.146
+anchor_right = 0.895
+anchor_bottom = 0.867
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
 
-[node name="SelectionBox" type="NinePatchRect" parent="Box/ChoicesBG/Choices" unique_id=1672062327]
+[node name="SelectionBox" type="NinePatchRect" parent="Root/Box/ChoicesBG/Choices" unique_id=1672062327]
 layout_mode = 2
 region_rect = Rect2(150.96107, 48, 85.963486, 31.283249)
 patch_margin_left = 88
 patch_margin_top = 32
 
-[node name="Arrow" type="Label" parent="Box" unique_id=51332319]
-layout_mode = 0
-offset_left = 1062.0
-offset_top = 238.0
-offset_right = 1104.0
-offset_bottom = 278.0
+[node name="Arrow" type="Label" parent="Root/Box" unique_id=51332319]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.965
+anchor_top = 0.85
+anchor_right = 1.003
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
 text = "▼"
+metadata/_edit_use_anchors_ = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Box" unique_id=1913505497]
+[node name="HBoxContainer" type="HBoxContainer" parent="Root/Box" unique_id=1913505497]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.008423866
 anchor_top = 0.08212166
 anchor_right = 0.9897952
 anchor_bottom = 0.921329
-offset_left = -0.460001
-offset_top = 0.034999847
-offset_right = -0.54003906
-offset_bottom = -0.08401489
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 8
 metadata/_edit_use_anchors_ = true
 
-[node name="Portrait" type="TextureRect" parent="Box/HBoxContainer" unique_id=1879875388]
-custom_minimum_size = Vector2(120, 120)
+[node name="Portrait" type="TextureRect" parent="Root/Box/HBoxContainer" unique_id=1879875388]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
 expand_mode = 3
 stretch_mode = 5
 
-[node name="PortraitAnimated" type="AnimatedSprite2D" parent="Box/HBoxContainer" unique_id=952730565]
+[node name="PortraitAnimated" type="AnimatedSprite2D" parent="Root/Box/HBoxContainer" unique_id=952730565]
 visible = false
 sprite_frames = SubResource("SpriteFrames_dqkix")
 animation = &"idle"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Box/HBoxContainer" unique_id=675862167]
+[node name="VBoxContainer" type="VBoxContainer" parent="Root/Box/HBoxContainer" unique_id=675862167]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Text" type="RichTextLabel" parent="Box/HBoxContainer/VBoxContainer" unique_id=1721038307]
+[node name="Text" type="RichTextLabel" parent="Root/Box/HBoxContainer/VBoxContainer" unique_id=1721038307]
 texture_filter = 1
-custom_minimum_size = Vector2(0, 218)
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 theme_override_constants/line_separation = 0
 theme_override_fonts/normal_font = ExtResource("2_03ai2")
 theme_override_font_sizes/normal_font_size = 42
 autowrap_mode = 2
 
-[node name="SpeakerName" type="Label" parent="Box" unique_id=899322137]
-layout_mode = 0
-offset_top = -45.0
-offset_right = 1100.0
-offset_bottom = 16.0
+[node name="SpeakerName" type="Label" parent="Root/Box" unique_id=899322137]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0
+anchor_top = -0.194
+anchor_right = 1.0
+anchor_bottom = 0.069
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 theme_override_fonts/font = ExtResource("2_03ai2")
 theme_override_font_sizes/font_size = 42
 autowrap_mode = 2
+metadata/_edit_use_anchors_ = true
 
-[node name="ItemBox" type="NinePatchRect" parent="." unique_id=124044918]
+[node name="ItemBox" type="NinePatchRect" parent="Root" unique_id=124044918]
+layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.41875
 anchor_top = 0.49814814
 anchor_right = 0.5932292
 anchor_bottom = 0.6333333
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
 texture = ExtResource("3_dqkix")
 metadata/_edit_use_anchors_ = true
 
-[node name="Icon" type="TextureRect" parent="ItemBox" unique_id=160340244]
+[node name="Icon" type="TextureRect" parent="Root/ItemBox" unique_id=160340244]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.14328358
 anchor_top = 0.1849315
 anchor_right = 0.8746269
 anchor_bottom = 0.8356164
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
 metadata/_edit_use_anchors_ = true
 
 [node name="BeepSFX" type="AudioStreamPlayer" parent="." unique_id=140603759]
