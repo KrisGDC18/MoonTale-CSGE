@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bt7cfbj6drgcr"]
 
-[ext_resource type="Script" uid="uid://ddb6fa12fa31d" path="res://data/Scripts/test_kris_dialogue_01.gd" id="1_mprs6"]
+[ext_resource type="Script" uid="uid://bqrhnb4qlolld" path="res://data/Entities/npc/karu.gd" id="1_ekxjm"]
 [ext_resource type="Texture2D" uid="uid://dhdm3nrryy5am" path="res://data/Sprites/NPC/Karu.png" id="2_ekxjm"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0s21g"]
@@ -69,7 +69,7 @@ size = Vector2(14, 26.3125)
 [node name="TestKrisDialogue01" type="CharacterBody2D" unique_id=571265759]
 collision_layer = 0
 collision_mask = 0
-script = ExtResource("1_mprs6")
+script = ExtResource("1_ekxjm")
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=589740362]
 sprite_frames = SubResource("SpriteFrames_xixj3")

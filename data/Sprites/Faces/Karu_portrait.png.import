@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d2cyy7tervfhd"
-path="res://.godot/imported/old_Cave.png-8709756466e86867c6388bb9b1fb75dd.ctex"
+uid="uid://cka1stkqq6d61"
+path="res://.godot/imported/Karu_portrait.png-4035d85c088d18a42377beb8471508a0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://data/Sprites/Terrain/old_Cave.png"
-dest_files=["res://.godot/imported/old_Cave.png-8709756466e86867c6388bb9b1fb75dd.ctex"]
+source_file="res://data/Sprites/Faces/Karu_portrait.png"
+dest_files=["res://.godot/imported/Karu_portrait.png-4035d85c088d18a42377beb8471508a0.ctex"]
 
 [params]
 
