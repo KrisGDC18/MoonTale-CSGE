@@ -43,6 +43,7 @@ window/size/mode=1
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/per_pixel_transparency/allowed=true
+display_server/driver.linuxbsd="wayland"
 window/vsync/vsync_mode=2
 
 [editor_plugins]

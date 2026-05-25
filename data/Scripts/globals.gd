@@ -25,6 +25,17 @@ func _ready():
 	LevelNode    = root.get_child(root.get_child_count() - 1).get_child(0)           # nodo contenedor de niveles
 	current_scene = root.get_child(root.get_child_count() - 1).get_child(0).get_child(0)  # primera escena/sala activa
 	GameRoot     = root.get_child(root.get_child_count() - 1)                         # nodo raíz del juego
+	print(OS.get_name())
+	print(OS.get_version())
+	print(OS.get_processor_name())
+	print(OS.has_feature("64"))
+	var joypads = Input.get_connected_joypads()
+
+	print("Mandos conectados:", joypads)
+
+	for id in joypads:
+		print("ID:", id)
+		print("Nombre:", Input.get_joy_name(id))
 
 
 func _process(delta):

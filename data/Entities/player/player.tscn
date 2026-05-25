@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://bsvyo23xutyy7" path="res://data/Scripts/player/player.gd" id="1_gj1n8"]
 [ext_resource type="PackedScene" uid="uid://c0kfcchm0g70e" path="res://data/Entities/Misc/question_mark.tscn" id="2_llrnl"]
-[ext_resource type="Shader" uid="uid://b4qccg3b8b71j" path="res://data/Entities/player/Shaders/playerCite.gdshader" id="3_akp86"]
 [ext_resource type="Texture2D" uid="uid://bem4ugaunkteb" path="res://data/Sprites/Players/MyChar.png" id="4_i7mxw"]
 [ext_resource type="Texture2D" uid="uid://c4v6vhs1riovw" path="res://data/Sprites/Players/Kiruma.png" id="5_akp86"]
 [ext_resource type="Script" uid="uid://btos1thx1apeb" path="res://data/Scripts/player/weapons/WeaponManager.gd" id="5_uyekh"]
@@ -17,16 +16,17 @@
 [ext_resource type="AudioStream" uid="uid://w1fdejlpkx1j" path="res://data/Sounds/SFX/Player/hurt.wav" id="13_5kum8"]
 [ext_resource type="AudioStream" uid="uid://c4wauark5be5a" path="res://data/Sounds/SFX/Player/dead.wav" id="14_qan51"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_jm4nm"]
-shader = ExtResource("3_akp86")
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_byijp"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_llrnl"]
 atlas = ExtResource("5_akp86")
-region = Rect2(448, 64, 64, 64)
+region = Rect2(448, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uyekh"]
 atlas = ExtResource("5_akp86")
 region = Rect2(192, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_byijp"]
+atlas = ExtResource("5_akp86")
+region = Rect2(448, 64, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eyxe3"]
 atlas = ExtResource("5_akp86")
@@ -204,10 +204,10 @@ region = Rect2(192, 64, 64, 64)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_byijp")
+"texture": SubResource("AtlasTexture_llrnl")
 }],
 "loop": true,
-"name": &"Check",
+"name": &"CheckLeft",
 "speed": 5.0
 }, {
 "frames": [{
@@ -216,6 +216,14 @@ animations = [{
 }],
 "loop": true,
 "name": &"CheckLookUp",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_byijp")
+}],
+"loop": true,
+"name": &"CheckRight",
 "speed": 5.0
 }, {
 "frames": [{
@@ -518,13 +526,11 @@ collision_layer = 2
 script = ExtResource("1_gj1n8")
 qMark = ExtResource("2_llrnl")
 dmg = NodePath("DamageDetect")
-damage_material = SubResource("ShaderMaterial_jm4nm")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1016720795]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_x1tpm")
-animation = &"WalkRight"
-frame_progress = 0.71408486
+animation = &"CheckLeft"
 offset = Vector2(0, -15)
 
 [node name="WeaponManager" type="Node2D" parent="." unique_id=1572819859]

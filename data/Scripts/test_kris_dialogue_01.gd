@@ -11,7 +11,7 @@ var dialogo : Dictionary = {
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
 			"portrait_side": "right",
 			"text": "Hola! Que tal [color=red]Kiruma[/color]? Que te gustaria hacer?",
-			"choices": ["Dame un arma", "Guardar la partida", "Dame el Booster 2.0", "Nada"],
+			"choices": ["[color=red]Dame un arma[/color]", "[color=yellow]Guardar la partida[/color]", "Dame el Booster 2.0", "Nada"],
 			"target_blocks": ["armeria", "guardar", "booster", ""]
 		}
 	],

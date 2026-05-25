@@ -71,8 +71,6 @@ func _ready() -> void:
 	choices_bg.hide()
 	portrait_animated.hide()
 	item_box.hide()
-	$Root/Box/HBoxContainer.resized.connect(_sync_portrait_size)
-	get_viewport().size_changed.connect(_sync_canvas_scale)
 	# Habilitar BBCode para soporte de colores y efectos de texto
 	text_lbl.bbcode_enabled = true
 	# Capturar la fuente y tamaño del tema del nodo como predeterminados.
@@ -87,42 +85,59 @@ func _ready() -> void:
 	# Capturar el stream del nodo BeepSFX como predeterminado.
 	if default_beep_stream == null and beep_sfx != null:
 		default_beep_stream = beep_sfx.stream
-	# Aplicar escala inicial de fuentes y portrait
-	_sync_canvas_scale()
-
-func _sync_portrait_size() -> void:
-	var h : float = $Root/Box/HBoxContainer.size.y
-	portrait.custom_minimum_size = Vector2(h, h)
+	# Conectar cambio de resolución con call_deferred para evitar re-entradas.
+	get_viewport().size_changed.connect(_on_viewport_size_changed)
+	# Aplicar escala inicial diferida para que los nodos estén listos
+	_sync_canvas_scale.call_deferred()
 
 
-## Sincroniza la escala del CanvasLayer con el factor de estiramiento del viewport.
-## Con stretch mode canvas_items+expand el CanvasLayer no escala solo.
-## Usamos el transform del viewport para obtener el factor real que Godot aplica
-## al canvas 2D y replicarlo en el CanvasLayer.
+
+## Último tamaño de viewport procesado — evita recalcular si no cambió.
+var _last_vp_size : Vector2 = Vector2.ZERO
+
+## Llamado cuando la ventana cambia de tamaño. Usa call_deferred para que
+## el layout de Godot termine su ciclo antes de que modifiquemos propiedades,
+## evitando la recursión que crashea el editor.
+func _on_viewport_size_changed() -> void:
+	_sync_canvas_scale.call_deferred()
+
 func _sync_canvas_scale() -> void:
-	# Con canvas_items+expand el viewport cambia de tamaño junto con la ventana.
-	# get_screen_transform() siempre devuelve 1.0 porque no hay escalado interno.
-	# El factor real es la relación entre la ventana actual y la resolución base.
 	var win : Vector2 = get_viewport().get_visible_rect().size
-	var s   : float   = min(win.x / 1920.0, win.y / 1080.0)
-	print("[DialogBox] win=%s  scale=%.4f" % [win, s])
-	# No tocar self.scale del CanvasLayer — el box ya escala via anchors en Root.
-	# Solo aplicar el factor a fuentes y portrait que no escalan con anchors.
+	if win == _last_vp_size:
+		return
+	_last_vp_size        = win
+	_last_applied_scale  = -1.0   # forzar recálculo aunque la escala sea la misma
+	var s : float = min(win.x / 1920.0, win.y / 1080.0)
 	_apply_scaled_props(s)
 
 
+var _last_applied_scale : float = -1.0
+
 func _apply_scaled_props(s: float) -> void:
+	# Ignorar escala inválida — puede ocurrir durante la inicialización
+	# cuando el viewport aún no tiene tamaño.
+	s = clampf(s, 0.1, 10.0)
+
+	# Evitar recalcular si la escala no cambió significativamente
+	if abs(s - _last_applied_scale) < 0.001:
+		return
+	_last_applied_scale = s
+
 	# ── Fuentes ───────────────────────────────────────────────────────
-	var base_text    : int = default_font_size if default_font_size > 0 else 42
-	text_lbl.add_theme_font_size_override("normal_font_size", roundi(base_text * s))
-	speaker.add_theme_font_size_override("font_size",         roundi(42 * s))
+	var base_text : int = max(default_font_size, 42)
+	var fs_text   : int = maxi(1, roundi(base_text * s))
+	var fs_speak  : int = maxi(1, roundi(42 * s))
+	text_lbl.add_theme_font_size_override("normal_font_size", fs_text)
+	speaker.add_theme_font_size_override("font_size", fs_speak)
+	# Forzar minimum size para que el RichTextLabel no colapse a tamaño 0
+	text_lbl.custom_minimum_size = Vector2(0, maxi(1, roundi(218 * s)))
 
-	# ── Minimum size del RichTextLabel ────────────────────────────────
-	text_lbl.custom_minimum_size = Vector2(0, roundi(218.0 * s))
-
-	# ── Portrait estático ─────────────────────────────────────────────
-	var ps : float = roundi(120.0 * s)
-	portrait.custom_minimum_size = Vector2(ps, ps)
+	# ── Fuentes de opciones (si están visibles) ───────────────────────
+	if choices_bg.visible:
+		var choice_fs : int = maxi(1, roundi(29 * s))
+		for lbl in choices.get_children():
+			if lbl is RichTextLabel:
+				lbl.add_theme_font_size_override("normal_font_size", choice_fs)
 
 	# ── Portrait animado ──────────────────────────────────────────────
 	if portrait_animated.visible:
@@ -176,6 +191,10 @@ func start(bloques: Dictionary, bloque_inicial: String,
 	_waiting                 = false
 	panel.show()
 	Globals.playerStay = true
+	# Forzar rescalado al abrir por si la resolución cambió mientras estaba cerrado
+	_last_vp_size       = Vector2.ZERO
+	_last_applied_scale = -1.0
+	_sync_canvas_scale()
 
 	# Música de diálogo
 	_music_player = music_player
@@ -303,19 +322,21 @@ func _show_page(index: int) -> void:
 	speaker.text    = page.get("speaker", "")
 	speaker.visible = speaker.text != ""
 
-	# Fuente dinámica por página
-	var page_font      : Font = page.get("font",      default_font)
-	var page_font_size : int  = page.get("font_size", default_font_size)
-
+	# Fuente dinámica por página — solo la familia de fuente, el tamaño
+	# lo gestiona _apply_scaled_props para respetar la escala de resolución.
+	var page_font : Font = page.get("font", default_font)
 	if page_font != null:
 		text_lbl.add_theme_font_override("normal_font", page_font)
 	else:
 		text_lbl.remove_theme_font_override("normal_font")
 
+	# Si la página define un tamaño de fuente explícito, guardarlo para
+	# que _apply_scaled_props lo use escalado.
+	var page_font_size : int = page.get("font_size", 0)
 	if page_font_size > 0:
-		text_lbl.add_theme_font_size_override("normal_font_size", page_font_size)
+		default_font_size = page_font_size
 	else:
-		text_lbl.remove_theme_font_size_override("normal_font_size")
+		default_font_size = 42
 
 	# Audio de typing por página
 	# Acepta "beep_stream" (AudioStream o null). null = sin sonido para esta página.
@@ -346,9 +367,10 @@ func _show_page(index: int) -> void:
 	text_lbl.bbcode_enabled = true
 	text_lbl.text           = _full_text
 	text_lbl.visible_ratio  = 0.0
-	# Aplicar escala de fuentes y portrait para la resolución actual
-	var t : Transform2D = get_viewport().get_screen_transform()
-	_apply_scaled_props(t.x.length())
+	text_lbl.show()
+	# Forzar aplicación de escala para la página actual
+	_last_applied_scale = -1.0
+	_sync_canvas_scale()
 	arrow.hide()
 	choices.hide()
 	choices_bg.hide()
@@ -388,7 +410,6 @@ func _get_text_page(full: String, sub_page: int) -> String:
 		lines.append(current)
 
 	# Calcular cuántos caracteres planos corresponden al rango de líneas
-	@warning_ignore("shadowed_variable")
 	var start      : int = sub_page * MAX_LINES_PER_PAGE
 	var end_line   : int = mini(start + MAX_LINES_PER_PAGE, lines.size())
 
@@ -533,32 +554,47 @@ func _show_choices(opts: Array) -> void:
 	choices_bg.show()
 	_clear_choices()
 
-	@warning_ignore("shadowed_variable")
 	var start    : int  = _choice_page * MAX_CHOICES_PER_PAGE
 	var has_more : bool = (start + MAX_CHOICES_PER_PAGE) < opts.size()
 	var end      : int  = mini(start + MAX_CHOICES_PER_PAGE, opts.size())
+	var vp             : Vector2 = get_viewport().get_visible_rect().size
+	var s              : float   = min(vp.x / 1920.0, vp.y / 1080.0)
+	var choice_fs      : int     = roundi(29 * s)
+
 	for i in range(start, end):
-		var lbl := Label.new()
-		lbl.text = opts[i]
-		lbl.add_theme_color_override("font_color", Color.WHITE)
-		lbl.add_theme_font_override("font", CHOICE_FONT)
-		lbl.add_theme_font_size_override("font_size", 29)
+		var lbl := RichTextLabel.new()
+		lbl.bbcode_enabled        = true
+		lbl.fit_content           = true
+		lbl.scroll_active         = false
+		lbl.text                  = opts[i]
+		lbl.horizontal_alignment  = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.add_theme_color_override("default_color", Color.WHITE)
+		lbl.add_theme_font_override("normal_font", CHOICE_FONT)
+		lbl.add_theme_font_size_override("normal_font_size", choice_fs)
 		choices.add_child(lbl)
 
 	if _choice_page > 0:
-		var back_lbl := Label.new()
-		back_lbl.text = "← Opciones anteriores"
-		back_lbl.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
-		back_lbl.add_theme_font_override("font", CHOICE_FONT)
-		back_lbl.add_theme_font_size_override("font_size", 29)
+		var back_lbl := RichTextLabel.new()
+		back_lbl.bbcode_enabled       = true
+		back_lbl.fit_content          = true
+		back_lbl.scroll_active        = false
+		back_lbl.text                 = "← Opciones anteriores"
+		back_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		back_lbl.add_theme_color_override("default_color", Color(0.8, 0.8, 0.8))
+		back_lbl.add_theme_font_override("normal_font", CHOICE_FONT)
+		back_lbl.add_theme_font_size_override("normal_font_size", choice_fs)
 		choices.add_child(back_lbl)
 
 	if has_more:
-		var more_lbl := Label.new()
-		more_lbl.text = "Más opciones →"
-		more_lbl.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
-		more_lbl.add_theme_font_override("font", CHOICE_FONT)
-		more_lbl.add_theme_font_size_override("font_size", 29)
+		var more_lbl := RichTextLabel.new()
+		more_lbl.bbcode_enabled       = true
+		more_lbl.fit_content          = true
+		more_lbl.scroll_active        = false
+		more_lbl.text                 = "Más opciones →"
+		more_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		more_lbl.add_theme_color_override("default_color", Color(0.8, 0.8, 0.8))
+		more_lbl.add_theme_font_override("normal_font", CHOICE_FONT)
+		more_lbl.add_theme_font_size_override("normal_font_size", choice_fs)
 		choices.add_child(more_lbl)
 
 	_refresh_cursor()
@@ -569,7 +605,6 @@ func _handle_choices() -> void:
 	var page          = block[_page_index]
 	var opts  : Array = page.get("choices", [])
 
-	@warning_ignore("shadowed_variable")
 	var start         : int  = _choice_page * MAX_CHOICES_PER_PAGE
 	var has_more      : bool = (start + MAX_CHOICES_PER_PAGE) < opts.size()
 	var has_back      : bool = _choice_page > 0
@@ -638,7 +673,6 @@ func _refresh_cursor() -> void:
 	var block : Array = _blocks[_current_block]
 	var page          = block[_page_index]
 	var opts  : Array = page.get("choices", [])
-	@warning_ignore("shadowed_variable")
 	var start      : int  = _choice_page * MAX_CHOICES_PER_PAGE
 	var has_more   : bool = (start + MAX_CHOICES_PER_PAGE) < opts.size()
 	var has_back   : bool = _choice_page > 0
@@ -758,7 +792,6 @@ func _apply_valignment(text: String, valign: VerticalAlignment) -> String:
 	if empty_lines <= 0:
 		return text
 
-	@warning_ignore("integer_division")
 	var pad_lines : int = empty_lines / 2 if valign == VERTICAL_ALIGNMENT_CENTER else empty_lines
 	var padding   : String = "\n".repeat(pad_lines)
 

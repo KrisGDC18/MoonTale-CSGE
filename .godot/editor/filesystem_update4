@@ -1,6 +1,5 @@
-res://data/Scenes/First_cave.tscn
+res://data/Entities/player/player.tscn
 res://data/Tiles/Cave.tres
 res://data/Tiles/moon_base.tres
-res://data/Entities/npc/Karu.tscn
-res://data/Entities/npc/karu.gd
-res://data/Entities/Enemies/Slime.tscn
+res://data/Scripts/player/player.gd
+res://data/Scripts/Enemies/slime.gd
