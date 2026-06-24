@@ -1,5 +1,0 @@
-res://data/Entities/player/player.tscn
-res://data/Tiles/Cave.tres
-res://data/Tiles/moon_base.tres
-res://data/Scripts/player/player.gd
-res://data/Scripts/Enemies/slime.gd
