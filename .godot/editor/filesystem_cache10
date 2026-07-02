@@ -1,5 +1,5 @@
-72322a848ab928aa5c89f0cb78209805
-::res://::1781813074
+9cad1ddce9e5a63143ba340c9520626b
+::res://::1782520579
 Moontale icon.png::CompressedTexture2D::5563572194341131588::1779506838::1779506847::1::::<><><>0<>0<>e2fa5f05e07ef64d8a92c8d3294f5102<>res://.godot/imported/Moontale icon.png-3309fbc06a94fce02b63dc995f1e1ed0.ctex::
 ::res://data/::1779247932
 ::res://data/dialogues/::1779247932
@@ -170,7 +170,7 @@ Karu_portrait.png::CompressedTexture2D::5476341604010010172::1779247932::1779247
 Kris.png::CompressedTexture2D::2461604625817155533::1779247932::1779247932::1::::<><><>0<>0<>6e4ddd8a81f6ff85ba38f8c921c7d27d<>res://.godot/imported/Kris.png-178debee34cbc1a915708eaab3f40bff.ctex::
 ::res://data/Sprites/Items/::1779247932
 Jetpack_Upgraded.png::CompressedTexture2D::8740795420788036185::1779247932::1779247932::1::::<><><>0<>0<>b95a1b5b943819c069c0618205e08374<>res://.godot/imported/Jetpack_Upgraded.png-b240cc436d04761f9ae559bdd95f203b.ctex::
-::res://data/Sprites/Misc/::1779247932
+::res://data/Sprites/Misc/::1781814589
 Caret.png::CompressedTexture2D::25651871405661236::1779247932::1779247932::1::::<><><>0<>0<>89cb91fe78cc642f172ecc333cb002b0<>res://.godot/imported/Caret.png-58da34760b92885ddb65bfd1a3ce86cb.ctex::
 DestructibleBlock.png::CompressedTexture2D::7790990416045078299::1779247932::1779247932::1::::<><><>0<>0<>1952f1e51e0dc8a0330e97b9ea8cd6a3<>res://.godot/imported/DestructibleBlock.png-57221e6bbeeed47ef3d61ba6f002d141.ctex::
 Fade.png::CompressedTexture2D::908498247704264976::1779247932::1779247932::1::::<><><>0<>0<>ce17e075fdeb2db93673d764ab9bdd75<>res://.godot/imported/Fade.png-954a23a9e9b5a772cf76b4cf094ff61d.ctex::
@@ -186,7 +186,7 @@ Kris_test.png::CompressedTexture2D::6425220139712102654::1779247932::1779247932:
 Kyatto.png::CompressedTexture2D::5859156230671850218::1779247932::1779247932::1::::<><><>0<>0<>b9009f08ee6cebc67f732c7c80459df7<>res://.godot/imported/Kyatto.png-bca5c996d4808f687c357da3dc32ed90.ctex::
 Midori.png::CompressedTexture2D::2736933825456066555::1779247932::1779247932::1::::<><><>0<>0<>abcaa569b153d5768b861f53e0f269f0<>res://.godot/imported/Midori.png-ce179704a9b96c44bf1849da0c188f73.ctex::
 npcregu.png::CompressedTexture2D::8957153574697116831::1779247932::1779247932::1::::<><><>0<>0<>c9befa588e3e8f04a784a16a739f6057<>res://.godot/imported/npcregu.png-6333a6bce2ca267ade62a1b4f28fe623.ctex::
-::res://data/Sprites/particles/::1779247932
+::res://data/Sprites/particles/::1781814532
 explode.png::CompressedTexture2D::656149914516716278::1779247932::1779247932::1::::<><><>0<>0<>896274e02007463c3ca4e472303bb212<>res://.godot/imported/explode.png-dce146a9611d4804a452fe05624079a9.ctex::
 ::res://data/Sprites/Players/::1779247932
 Kiruma.png::CompressedTexture2D::6853589890846460328::1779247932::1779247932::1::::<><><>0<>0<>1471ab8d6962e59457bc2093e047ef69<>res://.godot/imported/Kiruma.png-4fc385ca476105dfd276df90b75dce2a.ctex::
@@ -210,7 +210,7 @@ hud_hpbar_background.png::CompressedTexture2D::287753089321156531::1779247932::1
 Kris.png::CompressedTexture2D::6433238473619268082::1779247932::1779247932::1::::<><><>0<>0<>36058d83f4f9a1d070b9ce55e2806409<>res://.godot/imported/Kris.png-c34a52b5c411cdffc1f847ebaa7f39e2.ctex::
 msgbox.png::CompressedTexture2D::238347405035420087::1779247932::1779247932::1::::<><><>0<>0<>0ac642c98ba3450f6a304802aaf6ad01<>res://.godot/imported/msgbox.png-a8c6b56737f1eedefca1c8410cd94dae.ctex::
 TextBox.png::CompressedTexture2D::6221530778387611083::1779247932::1779247932::1::::<><><>0<>0<>cca03f621e21a5916596b7351758842b<>res://.godot/imported/TextBox.png-f72b431060e44a40ee9d38a7c0cc379e.ctex::
-::res://data/Sprites/Weapons/::1779247932
+::res://data/Sprites/Weapons/::1781814565
 Arms.png::CompressedTexture2D::9033868125395324828::1779247932::1779247932::1::::<><><>0<>0<>81d6930c9af63823112e1a1f1189f6eb<>res://.godot/imported/Arms.png-23ef0486f1a84c8ad32e8ff267058ad6.ctex::
 Icons.png::CompressedTexture2D::8493223971964146047::1779247932::1779247932::1::::<><><>0<>0<>8ec26ea185430866b3c9e7788345824b<>res://.godot/imported/Icons.png-dac7fb7fc28cde6114b65f7a25aec32d.ctex::
 Laser.png::CompressedTexture2D::3429720847364664118::1779247932::1779247932::1::::<><><>0<>0<>fbcbe597a6e5cc71edbd517c3c8582c6<>res://.godot/imported/Laser.png-9a3f5db948b90dfdfa55550f38ac0f96.ctex::

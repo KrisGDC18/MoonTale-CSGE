@@ -4,20 +4,30 @@ extends CharacterBody2D
 @export var dmg: Area2D
 @export var damage_material: ShaderMaterial
 
-# ─── Velocidad y aceleración en el suelo (Cave Story exacto) ─────────
-# Quote mide ~16px, tu jugador mide ~41px → escala = 41/16 = 2.5625
-# Valores base Cave Story a 50fps en px/frame, escalados:
-# max_speed: 810/512 px/f × 2.5625 = 4.05 px/f × 60fps = 243 px/s
-# accel:      51/512 px/f² × 2.5625 × 60² = 360 px/s²  (aplicado por frame internamente)
-# friction:   32/512 px/f² × 2.5625 × 60² = 225 px/s²
-const MAX_SPEED           := 243.0
-const JUMP_VELOCITY       := 295.0
-const ACCR                := 360.0
-const FRICTION            := 450.0
+# ─── Velocidad y aceleración en el suelo ─────────────────────────────
+# Valores raw del desmontaje de Cave Story (unidades internas: 1px = 512u)
+# CS corre a 50fps fijos. Factor mundo: 32px/16px = 2.0
+#
+# Fórmula velocidad : raw/512 × 2.0 × 50   = px/s
+# Fórmula aceleración: raw/512 × 2.0 × 50² = px/s²
+#
+# max_speed : 810/512 × 2.0 × 50  = 158 px/s
+# accel     :  51/512 × 2.0 × 2500 = 498 px/s²
+# friction  :  32/512 × 2.0 × 2500 = 313 px/s²
+#
+# JUMP_VELOCITY se sube de 300 a 339 para compensar que el sprite
+# mide 41px vs 16px de Quote: se escala para mantener la misma
+# proporción de "alturas de personaje" que en el original.
+const MAX_SPEED           := 200.0
+const JUMP_VELOCITY       := 354.0
+const ACCR                := 498.0
+const FRICTION            := 313.0
 
 # ─── Velocidad y aceleración en el aire ──────────────────────────────
-const AIR_ACCR            := 380.0
-const AIR_FRICTION        := 180.0
+# air_accel: 20/512 × 2.0 × 2500 = 195 px/s²
+# Cave Story da control aéreo mínimo y casi no frena en el aire.
+const AIR_ACCR            := 195.0
+const AIR_FRICTION        := 50.0
 
 # ─── Movimiento en agua ───────────────────────────────────────────────
 const WATER_MAX_SPEED     := 80.0
@@ -28,10 +38,14 @@ const AIR_TICK            := 0.075
 const AIR_DMG_INTERVAL    := 0.5
 
 # ─── Gravedad ─────────────────────────────────────────────────────────
-const GRAVITY_UP          := 450.0
-const GRAVITY_DOWN        := 980.0
+# grav_hold_jump: 64/512 × 2.0 × 2500  =  625 px/s²  (al mantener Jump)
+# grav_normal  : 128/512 × 2.0 × 2500  = 1250 px/s²  (caída libre)
+# max_fall     : 1600/512 × 2.0 × 50   =  313 px/s   (igual que jump inicial)
+# Con estos valores el salto alcanza ~92px ≈ 2.9 bloques de 32px.
+const GRAVITY_UP          := 625.0
+const GRAVITY_DOWN        := 1250.0
 const GRAVITY_WATER       := 200.0
-const MAX_FALL_SPEED      := 700.0
+const MAX_FALL_SPEED      := 313.0
 
 # ─── Salto variable ───────────────────────────────────────────────────
 const JUMP_CUT_MULTIPLIER := 0.35
@@ -75,9 +89,7 @@ const POST_STAY_COOLDOWN  := 0.20
 signal death_positive_chosen
 var death_dialog_positive_action : Callable = Callable()
 
-# ─── FIX: enum para dirección vertical del booster2 ──────────────────
-# Antes se usaban floats 1.0 / -1.0 / 0.0 como enum implícito,
-# lo cual es frágil con comparaciones de punto flotante.
+# ─── enum para dirección vertical del booster2 ───────────────────────
 enum BoostVert { NONE, UP, DOWN }
 
 # ─── Nodos ────────────────────────────────────────────────────────────
@@ -95,7 +107,6 @@ enum BoostVert { NONE, UP, DOWN }
 @onready var booster2_sfx    : AudioStreamPlayer = $booster2_sfx
 @onready var weapon_manager = $WeaponManager
 
-# ─── FIX: fuente precargada (antes se hacía load() en cada golpe) ─────
 var _damage_font := preload("res://data/Fonts/monogatari.ttf")
 
 # ─── Variables de booster ─────────────────────────────────────────────
@@ -106,7 +117,6 @@ var jetpack_gas_max     : float = BOOSTER_GAS_MAX
 var _booster1_active    : bool  = false
 var _booster2_active    : bool  = false
 var _booster2_locked_dir  : float     = 0.0
-# FIX: ahora es un enum en lugar de float 1.0 / -1.0 / 0.0
 var _booster2_locked_vert : BoostVert = BoostVert.NONE
 var _jump_grace_frame   : bool  = false
 
@@ -132,9 +142,6 @@ var playerDead          := false
 # ─── Variables de movimiento ──────────────────────────────────────────
 var currentGravity      := GRAVITY_DOWN
 var allowMovement       := true
-# FIX: corregido typo "wamder" → "inWater" (nombre más descriptivo)
-# Alias de compatibilidad: hud.gd y otros scripts externos aún leen "wamder".
-# Cuando los actualices, elimina este alias y deja solo inWater.
 var inWater             := false
 var wamder              : bool:
 	get: return inWater
@@ -151,6 +158,8 @@ var _jump_buffer_timer  := 0.0
 var _prev_position : Vector2 = Vector2.ZERO
 var _post_stay_timer    : float = 0.0
 var _prev_player_stay   : bool  = false
+# Congela la física mientras el jugador está bloqueado (diálogo, menú)
+var _was_stayed         : bool  = false
 
 # ─── Variables de agua ────────────────────────────────────────────────
 var airSupply           : float = AIR_MAX
@@ -200,6 +209,8 @@ func _physics_process(delta):
 
 	var anim = "IdleRight"
 
+	_update_stayed_freeze()
+
 	_update_coyote_time(delta)
 	_update_jump_buffer(delta)
 	_apply_gravity(delta)
@@ -234,7 +245,6 @@ func _physics_process(delta):
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# ─── FIX: lógica de reset de muerte extraída a función propia ─────────
 func _reset_after_death() -> void:
 	canContinue          = false
 	_is_invincible       = false
@@ -255,7 +265,6 @@ func _reset_after_death() -> void:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# ─── FIX: reset de booster centralizado (antes estaba duplicado 4 veces)
 func _reset_booster_state() -> void:
 	_booster1_active     = false
 	_booster2_active     = false
@@ -265,19 +274,11 @@ func _reset_booster_state() -> void:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# ─── Step-up: escala bordes de 1–4 px para no atascarse ───────────────
-#
-# Collider Bottom: RectangleShape2D 5.5×14 con scale(2,1) → 11×14 px
-# Centro en y=+10 → pie en y=+17 desde el origen del nodo.
-# El raycast sale desde y=+13 (3px sobre el pie) para detectar solo
-# obstáculos pequeños pegados al suelo.
-
-const STEP_UP_HEIGHT : float = 4.0  # máximo px a escalar
-const STEP_UP_SKIN   : float = 0.5  # margen para no quedar empotrado
-
-# Medidas del collider (sincronizadas con la escena)
-const _COLLIDER_HALF_WIDTH : float = 5.5   # 11px / 2
-const _COLLIDER_FOOT_Y     : float = 17.0  # pie desde el origen del nodo
+# ─── Step-up ──────────────────────────────────────────────────────────
+const STEP_UP_HEIGHT : float = 4.0
+const STEP_UP_SKIN   : float = 0.5
+const _COLLIDER_HALF_WIDTH : float = 5.5
+const _COLLIDER_FOOT_Y     : float = 17.0
 
 func _move_with_step_up(_delta: float) -> void:
 	move_and_slide()
@@ -285,7 +286,6 @@ func _move_with_step_up(_delta: float) -> void:
 	if velocity.x == 0.0 or not is_on_floor() or get_slide_collision_count() == 0:
 		return
 
-	# Verificar colisión horizontal real
 	var has_h_col := false
 	for i in get_slide_collision_count():
 		if abs(get_slide_collision(i).get_normal().x) > 0.5:
@@ -296,12 +296,10 @@ func _move_with_step_up(_delta: float) -> void:
 
 	var dir      : float = sign(velocity.x)
 	var foot_y   : float = global_position.y + _COLLIDER_FOOT_Y
-	# Origen del rayo: justo al lado del collider, a STEP_UP_HEIGHT px sobre el pie
 	var ray_from := Vector2(
 		global_position.x + dir * (_COLLIDER_HALF_WIDTH + 1.0),
 		foot_y - STEP_UP_HEIGHT
 	)
-	# Destino: el pie exacto
 	var ray_to   := Vector2(ray_from.x, foot_y)
 
 	var space  := get_world_2d().direct_space_state
@@ -309,24 +307,20 @@ func _move_with_step_up(_delta: float) -> void:
 	query.exclude = [self]
 	var result := space.intersect_ray(query)
 
-	# Sin obstáculo en ese rango → no hay borde pequeño que escalar
 	if not result:
 		return
 
 	var obstacle_height := foot_y - (result["position"] as Vector2).y
 
-	# Si el obstáculo es mayor al umbral, es una pared real
 	if obstacle_height > STEP_UP_HEIGHT or obstacle_height <= 0.0:
 		return
 
-	# Subir exactamente lo necesario
 	var saved_pos := global_position
 	var saved_vel := velocity
 	global_position.y -= obstacle_height + STEP_UP_SKIN
 	velocity = saved_vel
 	move_and_slide()
 
-	# Si sigue bloqueado horizontalmente, revertir
 	for i in get_slide_collision_count():
 		if abs(get_slide_collision(i).get_normal().x) > 0.5:
 			global_position = saved_pos
@@ -336,15 +330,45 @@ func _move_with_step_up(_delta: float) -> void:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# ─── Helper: ¿está el jugador bloqueado por diálogo o cooldown? ───────
+# ─── Congelado de física durante diálogos / menús ────────────────────
+# Al entrar en stayed: velocity se pone a cero (sin inercia acumulada).
+# Al salir de stayed: velocity.x queda en 0 (sin salir disparado),
+#                     velocity.y se restaura solo si estaba en el aire
+#                     para que la gravedad no se pierda.
+
 func _is_stayed() -> bool:
 	return Globals.playerStay or _post_stay_timer > 0.0
+
+func _update_stayed_freeze() -> void:
+	var stayed_now := _is_stayed()
+
+	if stayed_now and not _was_stayed:
+		# Flanco de entrada: congelar
+		velocity = Vector2.ZERO
+		if booster_sfx.playing:  booster_sfx.stop()
+		if booster2_sfx.playing: booster2_sfx.stop()
+		_reset_booster_state()
+		_coyote_timer      = 0.0
+		_jump_buffer_timer = 0.0
+		_is_jumping        = false
+
+	elif not stayed_now and _was_stayed:
+		# Flanco de salida: limpiar inercia horizontal, mantener vertical
+		# solo si el jugador está en el aire (para que no flote ni caiga raro)
+		velocity.x = 0.0
+		if is_on_floor():
+			velocity.y = 0.0
+
+	_was_stayed = stayed_now
 
 
 # ═══════════════════════════════════════════════════════════════════════
 # ─── Gravedad ─────────────────────────────────────────────────────────
 
 func _apply_gravity(delta: float) -> void:
+	if _is_stayed():
+		return
+
 	if inWater:
 		velocity.y += GRAVITY_WATER * delta
 		return
@@ -380,7 +404,7 @@ func _handle_jump() -> void:
 		_coyote_timer      = 0.0
 		_jump_buffer_timer = 0.0
 		_reset_booster_state()
-		_jump_grace_frame  = true   # FIX: _reset_booster_state pone esto a false, lo reactivamos
+		_jump_grace_frame  = true
 		jump_sfx.play()
 		return
 
@@ -457,7 +481,6 @@ func _handle_booster2(delta: float) -> void:
 	if _booster2_locked_dir != 0.0:
 		velocity.x = _booster2_locked_dir * BOOSTER2_SPEED_X
 
-	# FIX: comparaciones con enum en lugar de floats 1.0 / -1.0
 	if _booster2_locked_vert == BoostVert.DOWN:
 		velocity.x  = 0.0
 		velocity.y += (GRAVITY_DOWN + BOOSTER2_DOWN_FORCE) * delta
@@ -489,56 +512,55 @@ func _handle_booster2(delta: float) -> void:
 
 # ═══════════════════════════════════════════════════════════════════════
 # ─── Movimiento horizontal ────────────────────────────────────────────
+# Usa move_toward + delta de forma consistente en todos los casos.
+# Cave Story frena primero al cambiar de dirección en el suelo,
+# y da muy poco control aéreo (AIR_FRICTION mínima).
 
 func _handle_horizontal(delta: float) -> void:
 	if _booster2_active:
 		return
 	if _is_stayed():
-		velocity.x = move_toward(velocity.x, 0, FRICTION * delta)
+		velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
 		return
+
 	var direction = Input.get_axis("Left", "Right")
 	@warning_ignore("narrowing_conversion")
 	currentDirection = direction
 
-	var accel : float
-	var fric  : float
+	var accel        : float
+	var fric         : float
+	var target_speed : float
 
 	if inWater:
-		accel = WATER_ACCR
-		fric  = WATER_ACCR
+		accel        = WATER_ACCR
+		fric         = WATER_ACCR
+		target_speed = WATER_MAX_SPEED
 	elif is_on_floor():
-		accel = ACCR
-		fric  = FRICTION
+		accel        = ACCR
+		fric         = FRICTION
+		target_speed = MAX_SPEED
 	else:
-		accel = AIR_ACCR
-		fric  = AIR_FRICTION
-
-	var target_speed := WATER_MAX_SPEED if inWater else MAX_SPEED
+		accel        = AIR_ACCR
+		fric         = AIR_FRICTION
+		target_speed = MAX_SPEED
 
 	if direction != 0:
-		if is_on_floor() and not inWater and sign(velocity.x) != sign(direction) and velocity.x != 0.0:
-			# Cave Story: al cambiar dirección, frena primero antes de acelerar
-			velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
-		else:
-			# Aceleración progresiva estilo Cave Story:
-			# se suma una cantidad fija por frame, independiente del delta,
-			# igual que el motor original que corre a 50fps fijos.
-			var accel_per_frame := ACCR / 50.0
-			velocity.x += direction * accel_per_frame
-			velocity.x  = clamp(velocity.x, -target_speed, target_speed)
-	else:
-		# Fricción: también por frame fijo, no por delta
-		var friction_per_frame := FRICTION / 50.0
-		if abs(velocity.x) <= friction_per_frame:
+		# En suelo sin saltar ni caer: cancela inercia al cambiar de dirección
+		# para respuesta inmediata al input. En el aire conserva la inercia.
+		if is_on_floor() and not inWater and not _is_jumping and not _is_falling \
+				and sign(velocity.x) != sign(direction) and velocity.x != 0.0:
 			velocity.x = 0.0
-		else:
-			velocity.x -= sign(velocity.x) * friction_per_frame
+		velocity.x = move_toward(velocity.x, direction * target_speed, accel * delta)
+	else:
+		velocity.x = move_toward(velocity.x, 0.0, fric * delta)
 
 
 # ═══════════════════════════════════════════════════════════════════════
 # ─── Coyote time y jump buffer ────────────────────────────────────────
 
 func _update_coyote_time(delta: float) -> void:
+	if _is_stayed():
+		return
 	if is_on_floor():
 		_coyote_timer = COYOTE_TIME
 	else:
@@ -546,6 +568,9 @@ func _update_coyote_time(delta: float) -> void:
 
 
 func _update_jump_buffer(delta: float) -> void:
+	if _is_stayed():
+		_jump_buffer_timer = 0.0
+		return
 	if Input.is_action_just_pressed("Jump"):
 		_jump_buffer_timer = JUMP_BUFFER_TIME
 	elif _jump_buffer_timer > 0.0:
@@ -626,8 +651,6 @@ func _die(is_drowning: bool = false) -> void:
 		animator.modulate  = Color(1.0, 0.0, 0.0, 1.0)
 		death_sfx.play()
 
-	# FIX: quitado print("jugador muerto") de producción
-
 
 func _apply_knockback(source_global_pos: Vector2) -> void:
 	var knock_dir : float = signf(global_position.x - source_global_pos.x)
@@ -649,7 +672,6 @@ func _spawn_damage_label(amount: int) -> void:
 	var label := Label.new()
 	label.text = "-%d" % amount
 	label.add_theme_color_override("font_color", Color(1.0, 0.12, 0.12))
-	# FIX: usa la fuente precargada en lugar de load() en cada llamada
 	label.add_theme_font_override("font", _damage_font)
 	label.add_theme_font_size_override("font_size", 20)
 	label.z_index        = 10
@@ -698,7 +720,6 @@ func _update_death_flash(delta: float) -> void:
 
 	if _death_phase == 1:
 		var t : float = min(_death_flash_timer / 0.3, 1.0)
-		# Ahogamiento: fade de azul a blanco. Normal: fade de rojo a blanco.
 		if _iframes_drowning:
 			animator.modulate = Color(t, t, 1.0, 1.0)
 		else:
@@ -765,9 +786,6 @@ func _on_map_changed(_map_name: String) -> void:
 
 
 func _apply_spawn_iframes() -> void:
-	# FIX: espera vía señal del árbol en lugar de 3 awaits manuales de frame.
-	# Si SaveSystem expone una señal "restore_completed", conéctate a ella aquí.
-	# Por ahora se mantiene el patrón de frames pero documentado explícitamente.
 	await get_tree().process_frame
 	await get_tree().process_frame
 	await get_tree().process_frame
@@ -861,7 +879,6 @@ func _handle_check_action() -> void:
 
 	if checking and not able_to_interact and not hasChecked:
 		hasChecked = true
-		# FIX: usa el @export qMark en lugar de load() en runtime
 		if qMark:
 			var mark = qMark.instantiate()
 			mark.position = self.position
@@ -880,10 +897,13 @@ func _process(_delta):
 
 
 func move_state():
-	if Input.is_action_pressed("Right"):
-		lastDirection = 0
-	elif Input.is_action_pressed("Left"):
-		lastDirection = 1
+	# No actualizar lastDirection mientras stayed: evita que el sprite
+	# voltee al presionar direcciones durante un diálogo o menú.
+	if not _is_stayed():
+		if Input.is_action_pressed("Right"):
+			lastDirection = 0
+		elif Input.is_action_pressed("Left"):
+			lastDirection = 1
 
 	if _booster2_active and _booster2_locked_dir != 0:
 		lastDirection = 1 if _booster2_locked_dir < 0 else 0
@@ -899,7 +919,6 @@ func handle_animation(anim):
 		return
 
 	if _is_stayed():
-		# FIX: antes ambas ramas devolvían "Check" (copy-paste olvidado)
 		var idle := "CheckLeft" if lastDirection == 1 else "CheckRight"
 		if _current_anim != idle:
 			_current_anim = idle
@@ -925,7 +944,6 @@ func handle_animation(anim):
 	if playerJump:
 		var jump_base := "JumpLeft" if lastDirection == 1 else "JumpRight"
 
-		# FIX: booster1 y booster2 compartían bloque idéntico, ahora fusionados
 		if _booster1_active or _booster2_active:
 			anim = jump_base
 			if Input.is_action_pressed("Up"):
@@ -970,16 +988,22 @@ func handle_animation(anim):
 # ─── Sonidos ──────────────────────────────────────────────────────────
 
 func _handle_sounds(delta: float) -> void:
+	# Durante stayed: mantener estado de floor/ceiling actualizado
+	# pero no reproducir ningún sonido ni avanzar el timer de pasos.
+	_was_on_ceiling = is_on_ceiling()
+	_was_on_floor   = is_on_floor()
+	if _is_stayed():
+		_step_timer = STEP_INTERVAL
+		return
+
 	var input_dir := Input.get_axis("Left", "Right")
 
 	if not _was_on_ceiling and is_on_ceiling():
 		bonk_sfx.play()
-	_was_on_ceiling = is_on_ceiling()
 
 	if not _was_on_floor and is_on_floor():
 		land_sfx.play()
 		_step_timer = STEP_INTERVAL
-	_was_on_floor = is_on_floor()
 
 	if is_on_floor() and input_dir != 0 and not checking:
 		_step_timer -= delta
@@ -994,7 +1018,7 @@ func _handle_sounds(delta: float) -> void:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# ─── API de cámara (delegates → camera_controller.gd) ─────────────────
+# ─── API de cámara ────────────────────────────────────────────────────
 
 func camera_focus_on(target: Node2D, speed: float = 5.0) -> void:
 	camera.focus_on(target, speed)
