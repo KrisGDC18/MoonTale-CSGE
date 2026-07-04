@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="VoiceCatalog" format=3 uid="uid://cun540hbijpca"]
+
+[ext_resource type="Script" uid="uid://bvhtqeux6sj1q" path="res://data/Scripts/DialogueSystem/VoiceCatalog.gd" id="1_hpewt"]
+[ext_resource type="Script" uid="uid://thoratfn0215" path="res://data/Scripts/DialogueSystem/VoicePreset.gd" id="2_bffen"]
+[ext_resource type="AudioStream" uid="uid://b4cgk7e6n0uhu" path="res://data/Sounds/SFX/Player/land.wav" id="3_csnib"]
+[ext_resource type="FontFile" uid="uid://dqo6c4v5cqvos" path="res://data/Fonts/monogatari.ttf" id="4_p6w64"]
+
+[sub_resource type="Resource" id="Resource_csnib"]
+script = ExtResource("2_bffen")
+voice_name = "Kiruma"
+font = ExtResource("4_p6w64")
+font_size = 42
+type_speed = -14.0
+beep_stream = ExtResource("3_csnib")
+
+[resource]
+script = ExtResource("1_hpewt")
+voices = Array[ExtResource("2_bffen")]([SubResource("Resource_csnib")])

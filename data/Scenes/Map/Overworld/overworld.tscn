@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://crd6lh5l7mm0e"]
+
+[ext_resource type="Script" uid="uid://bekcwtw0x1hdh" path="res://data/Scripts/Map/Main/Overworld.gd" id="1_tqgde"]
+[ext_resource type="PackedScene" uid="uid://nt25lvtoagij" path="res://data/Scenes/Map/Overworld/DebugRooms/DebugRoom1.tscn" id="3_w3r1p"]
+[ext_resource type="PackedScene" uid="uid://3vmxbneyqhfd" path="res://data/Scenes/Map/Overworld/DebugRooms/DebugRoom2.tscn" id="4_3aw84"]
+
+[node name="Overworld" type="Node2D" unique_id=417716705]
+script = ExtResource("1_tqgde")
+
+[node name="Screens" type="Node2D" parent="." unique_id=1080588655]
+
+[node name="Layout" type="Node2D" parent="." unique_id=1568263964]
+
+[node name="DebugRoom1" parent="Layout" unique_id=1591636882 instance=ExtResource("3_w3r1p")]
+
+[node name="DebugRoom2" parent="Layout" unique_id=1816338676 instance=ExtResource("4_3aw84")]
+position = Vector2(32, 640)

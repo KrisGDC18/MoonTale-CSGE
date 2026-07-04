@@ -7,16 +7,18 @@ var dialogo : Dictionary = {
 	"inicio": [
 		{
 			"speaker": "Kris:",
+			"voice": "Kiruma",
 			"text_valignment": VERTICAL_ALIGNMENT_CENTER,
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
 			"portrait_side": "right",
 			"text": "Hola! Que tal [color=red]Kiruma[/color]? Que te gustaria hacer?",
-			"choices": ["[color=red]Dame un arma[/color]", "[color=yellow]Guardar la partida[/color]", "Dame el Booster 2.0", "Nada"],
-			"target_blocks": ["armeria", "guardar", "booster", ""]
+			"choices": ["[color=red]Dame un arma[/color]", "[color=yellow]Guardar la partida[/color]", "Dame el Booster 2.0", "Test de pagina", "Nada"],
+			"target_blocks": ["armeria", "guardar", "booster", "Test de pagina", ""]
 		}
 	],
 	"armeria": [
 		{
+			"voice": "Kiruma",
 			"speaker": "Kris:",
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
 			"text": "Que arma quieres?",
@@ -55,6 +57,14 @@ var dialogo : Dictionary = {
 			"item_texture": preload("res://data/Sprites/Items/Jetpack_Upgraded.png"),
 			"text": "Aqui tienes el Booster 2.0.",
 			"action": func(): _give_item(preload("res://data/Items/jetpack2.tres"))
+		}
+	],
+	"Test de pagina": [
+		{
+			"voice": "Kiruma",
+			"speaker": "Kris:",
+			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
+			"text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dignissim finibus justo, ac finibus libero tincidunt quis. Ut varius varius augue, ullamcorper aliquet dui. Vivamus odio augue, rutrum id pharetra vitae, condimentum sit amet ligula. Sed vel nisi in nisi euismod sodales. Suspendisse varius condimentum sapien eu molestie. Nulla laoreet, dui nec cursus feugiat, mi sapien dictum sem, id ultrices est mauris quis mi. In non finibus ipsum, ac dapibus nisl. Fusce consectetur arcu eget nulla dapibus, sed rhoncus velit auctor. Praesent nulla nisl, pretium sit amet turpis id, pellentesque volutpat est. Maecenas commodo facilisis ipsum. ",
 		}
 	],
 }

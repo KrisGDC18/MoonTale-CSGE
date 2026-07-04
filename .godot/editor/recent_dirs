@@ -1,3 +1,7 @@
+res://data/
+res://data/Scenes/Map/Overworld/
+res://data/Scenes/Map/Overworld/DebugRooms/
+res://data/Scenes/
 res://data/Sprites/Players/
 res://data/Sprites/NPC/
 res://data/Sprites/Misc/
@@ -8,4 +12,3 @@ res://data/Scripts/Inventory/
 res://data/Scripts/Settings menu/
 res://data/Items/
 res://data/EventSystem/
-res://data/Scenes/

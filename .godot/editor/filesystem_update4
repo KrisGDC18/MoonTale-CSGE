@@ -1,5 +1,7 @@
-res://data/Scripts/Enemies/slime.gd
-res://data/Entities/player/player.tscn
+res://data/Scenes/Map/Overworld/overworld.tscn
 res://data/Tiles/Cave.tres
 res://data/Tiles/moon_base.tres
-res://data/Scripts/player/player.gd
+res://data/Scripts/DialogueSystem/DialogBox.gd
+res://data/EventSystem/DialogBox.tscn
+res://data/voice_typers.tres
+res://data/Scripts/test_kris_dialogue_01.gd

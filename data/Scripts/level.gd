@@ -54,7 +54,14 @@ func _load_map(map_scene: PackedScene, spawn_point: String) -> void:
 	add_child(_current_map)
 
 	if spawn_point != "":
-		var point : Node = _current_map.get_node_or_null(spawn_point)
+		var point : Node = null
+		if _current_map.has_method("get_spawn_point"):
+			# el mapa sabe resolver spawns que aún no están cargados
+			# (ej. Overworld con streaming de pantallas)
+			point = _current_map.get_spawn_point(spawn_point)
+		else:
+			point = _current_map.find_child(spawn_point, true, false)
+
 		if point:
 			var player = get_tree().get_first_node_in_group("player")
 			if player:

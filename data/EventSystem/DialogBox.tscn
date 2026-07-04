@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://ci1hxujl6dyjd" path="res://data/Scripts/DialogueSystem/DialogBox.gd" id="1_yoo1p"]
 [ext_resource type="FontFile" uid="uid://dqo6c4v5cqvos" path="res://data/Fonts/monogatari.ttf" id="2_03ai2"]
 [ext_resource type="Texture2D" uid="uid://dnpsui34jucl" path="res://data/Sprites/UI/msgbox.png" id="2_dqkix"]
+[ext_resource type="Resource" uid="uid://cun540hbijpca" path="res://data/voice_typers.tres" id="2_l4rlu"]
 [ext_resource type="AudioStream" uid="uid://dgvo0pf15afx3" path="res://data/Sounds/SFX/Player/Beep.wav" id="3_btt7u"]
 [ext_resource type="Texture2D" uid="uid://x8n4h4rjmcy8" path="res://data/Sprites/UI/ChoiceBox.png" id="3_dqkix"]
 [ext_resource type="AudioStream" uid="uid://b4dw3wlhk0nr2" path="res://data/Sounds/SFX/Player/Cursor.wav" id="4_03ai2"]
@@ -11,7 +12,7 @@
 [sub_resource type="SpriteFrames" id="SpriteFrames_dqkix"]
 animations = [{
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 5.0
 }]
@@ -19,6 +20,7 @@ animations = [{
 [node name="DialogBox" type="CanvasLayer" unique_id=1282337130]
 layer = 21
 script = ExtResource("1_yoo1p")
+voice_catalog = ExtResource("2_l4rlu")
 
 [node name="Root" type="Control" parent="." unique_id=999000001]
 layout_mode = 3
@@ -28,6 +30,23 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="HistoryLog" type="Control" parent="Root" unique_id=1036323796]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+metadata/_edit_use_anchors_ = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Root/HistoryLog" unique_id=889272312]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+metadata/_edit_use_anchors_ = true
+
+[node name="HistoryList" type="VBoxContainer" parent="Root/HistoryLog/ScrollContainer" unique_id=1867072615]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Box" type="NinePatchRect" parent="Root" unique_id=191388762]
 texture_filter = 1

@@ -79,3 +79,9 @@ position = Vector2(39, 16)
 
 [node name="Dummy" parent="." unique_id=1962890258 instance=ExtResource("13_cm38v")]
 position = Vector2(174, 11)
+
+[node name="OverOut" parent="." unique_id=718988644 instance=ExtResource("3_m8epk")]
+position = Vector2(-272, 8)
+scale = Vector2(2, 2)
+target_map = "uid://crd6lh5l7mm0e"
+target_spawn = "Door"
