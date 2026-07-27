@@ -7,12 +7,12 @@
 [ext_resource type="AudioStream" uid="uid://bte1y2qu7als5" path="res://data/Sounds/BGM/vivi_intro.ogg" id="5_01qg7"]
 [ext_resource type="AudioStream" uid="uid://chalk28jw1ulm" path="res://data/Sounds/BGM/vivi_loop.ogg" id="6_h4vf1"]
 [ext_resource type="PackedScene" uid="uid://ci31taf705rx5" path="res://data/Entities/npc/test/test_kris_dialogue_01.tscn" id="7_h4vf1"]
-[ext_resource type="PackedScene" uid="uid://b0o2eu6quk0kt" path="res://data/Entities/Enemies/Slime.tscn" id="8_xfcvj"]
+[ext_resource type="PackedScene" uid="uid://b0o2eu6quk0kt" path="res://data/Entities/enemies/Slime.tscn" id="8_xfcvj"]
 [ext_resource type="PackedScene" uid="uid://bt7cfbj6drgcr" path="res://data/Entities/npc/Karu.tscn" id="9_xptw8"]
 [ext_resource type="PackedScene" uid="uid://dn2klgbvfhvsu" path="res://data/Entities/npc/Kira.tscn" id="10_jsqyv"]
 [ext_resource type="PackedScene" uid="uid://cke4rfaocv6bi" path="res://data/Entities/npc/Midori.tscn" id="11_0ppor"]
 [ext_resource type="PackedScene" uid="uid://ige73iaa4j4b" path="res://data/Entities/npc/Kyatto.tscn" id="12_ejl7q"]
-[ext_resource type="PackedScene" uid="uid://dhuq5bij0wyjp" path="res://data/Entities/Enemies/Dummy.tscn" id="13_cm38v"]
+[ext_resource type="PackedScene" uid="uid://dhuq5bij0wyjp" path="res://data/Entities/enemies/Dummy.tscn" id="13_cm38v"]
 
 [node name="First Cave" type="Node2D" unique_id=1056936284]
 script = ExtResource("1_01qg7")

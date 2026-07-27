@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://b2x0uirq4sf0v"]
+
+[ext_resource type="Texture2D" uid="uid://b3ii7s3d7u74j" path="res://data/Sprites/Backgrounds/bkBlue.0.png" id="1_mrcnv"]
+
+[node name="BgElfVillage" type="Node2D" unique_id=1530067052]
+
+[node name="Parallax2D" type="Parallax2D" parent="." unique_id=1999249133]
+z_index = -100
+scroll_scale = Vector2(0.3, 0.3)
+repeat_size = Vector2(128, 128)
+repeat_times = 20
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D" unique_id=1998612438]
+position = Vector2(951, 592)
+scale = Vector2(2, 2)
+texture = ExtResource("1_mrcnv")
+region_rect = Rect2(0, 0, 2000, 1080)

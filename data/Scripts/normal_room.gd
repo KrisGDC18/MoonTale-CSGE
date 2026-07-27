@@ -26,7 +26,7 @@ func _ready() -> void:
 	var intro = intro_bgm
 	var loop  = loop_bgm
 	# play() verifica si ya está sonando → no se reinicia al volver a la escena
-	Audiomanager.play(intro, loop)
+	AudioManager.play(intro, loop)
 
 	# si la escena no tiene intro:
 	# MusicManager.play_loop_only(load("res://Audio/Music/pueblo_loop.ogg"))

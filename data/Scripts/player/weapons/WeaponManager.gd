@@ -33,9 +33,42 @@ func _add_weapon(scene: PackedScene, play_sound: bool = true) -> void:
 	weapon.init(_player)
 	weapon.weapon_id = scene.resource_path   # ← id estable para guardar/cargar
 	weapon.visible = false
+	_connect_weapon_signals(weapon)
 	_weapons.append(weapon)
 	_owned_scenes.append(scene)
 	_equip(_weapons.size() - 1, play_sound)
+
+
+## Punto 9/10: conecta las señales de nivel/XP de esta arma a los textos
+## flotantes, mostrados sobre el jugador (no sobre el arma, que suele
+## estar oculta/rotada). Se llama una sola vez por instancia de arma,
+## así que cubre armas de inicio, pickups y armas restauradas al cargar
+## partida sin duplicar conexiones.
+func _connect_weapon_signals(weapon: Node2D) -> void:
+	weapon.leveled_up.connect(_on_weapon_leveled_up)
+	weapon.leveled_down.connect(_on_weapon_leveled_down)
+	weapon.max_level_reached.connect(_on_weapon_max_level_reached)
+	weapon.xp_gained.connect(_on_weapon_xp_gained)
+
+
+func _on_weapon_leveled_up(_new_level: int) -> void:
+	if _player != null:
+		FloatingTextManager.show_text(_player, "LEVEL UP", FloatingTextManager.Style.LEVEL_UP)
+
+
+func _on_weapon_leveled_down(_new_level: int) -> void:
+	if _player != null:
+		FloatingTextManager.show_text(_player, "LEVEL DOWN", FloatingTextManager.Style.LEVEL_DOWN)
+
+
+func _on_weapon_max_level_reached() -> void:
+	if _player != null:
+		FloatingTextManager.show_text(_player, "MAX LEVEL", FloatingTextManager.Style.MAX_LEVEL)
+
+
+func _on_weapon_xp_gained(amount: int) -> void:
+	if _player != null:
+		FloatingTextManager.show_xp_gain(_player, amount)
 
 
 func _equip(index: int, play_sound: bool = true) -> void:
@@ -62,6 +95,12 @@ func _process(delta: float) -> void:
 
 	_handle_weapon_switch()
 	_current_weapon.weapon_process(delta)
+
+	# Lógica de fondo (ej. recarga de munición) para las armas que el
+	# jugador tiene pero NO tiene equipadas en este momento.
+	for w in _weapons:
+		if w != _current_weapon:
+			w.idle_process(delta)
 
 
 func _handle_weapon_switch() -> void:

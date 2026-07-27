@@ -17,7 +17,7 @@ func _ready():
 
 @warning_ignore("unused_parameter")
 func _process(delta):
-	if Input.is_action_just_pressed("Down") and interactable and not _transitioning and !Globals.playerStay:
+	if Input.is_action_just_pressed("Down") and interactable and not _transitioning and !Globals.playerStay and player.is_on_floor():
 		_transitioning = true
 		_do_transition()
 
@@ -72,7 +72,7 @@ func _do_transition() -> void:
 	Globals.needs_fade_in = true
 
 	if intro != null or loop != null:
-		Audiomanager.play(intro, loop)
+		AudioManager.play(intro, loop)
 
 	level.change_map(map, spawn)
 

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://h1gvbqqqnqej"]
+
+[ext_resource type="Script" uid="uid://p1pbicpm4e8h" path="res://data/Scripts/Particles/bonk_dot.gd" id="1_saqme"]
+
+[node name="BonkDot" type="Node2D" unique_id=1199921111]
+script = ExtResource("1_saqme")

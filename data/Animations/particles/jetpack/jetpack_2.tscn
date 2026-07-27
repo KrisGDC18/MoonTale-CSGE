@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://cdoq1al5k0tdk"]
+
+[ext_resource type="Script" uid="uid://b52a2huymo4vx" path="res://data/Scripts/Particles/jetpack_puff.gd" id="1_x7s44"]
+[ext_resource type="Texture2D" uid="uid://d2ux6ot4a2dgq" path="res://data/Sprites/particles/jetpack_2_puff.png" id="2_kunhc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x7s44"]
+atlas = ExtResource("2_kunhc")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kunhc"]
+atlas = ExtResource("2_kunhc")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_abqa6"]
+atlas = ExtResource("2_kunhc")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_35kac"]
+atlas = ExtResource("2_kunhc")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x37xq"]
+atlas = ExtResource("2_kunhc")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bf0wc"]
+atlas = ExtResource("2_kunhc")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7gkqa"]
+atlas = ExtResource("2_kunhc")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vlm82"]
+atlas = ExtResource("2_kunhc")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_i0fn3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x7s44")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kunhc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_abqa6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_35kac")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x37xq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bf0wc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7gkqa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vlm82")
+}],
+"loop": 1,
+"name": &"puff",
+"speed": 12.0
+}]
+
+[node name="Jetpack2" type="Node2D" unique_id=1810304517]
+script = ExtResource("1_x7s44")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=324337593]
+sprite_frames = SubResource("SpriteFrames_i0fn3")
+animation = &"puff"
+frame_progress = 0.6503837

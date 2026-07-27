@@ -7,7 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://chalk28jw1ulm" path="res://data/Sounds/BGM/vivi_loop.ogg" id="5_t27gg"]
 [ext_resource type="Texture2D" uid="uid://by5a3lmi14my4" path="res://data/Sprites/Backgrounds/bkBlack.png" id="6_t27gg"]
 [ext_resource type="PackedScene" uid="uid://ci31taf705rx5" path="res://data/Entities/npc/test/test_kris_dialogue_01.tscn" id="7_3rmmu"]
-[ext_resource type="PackedScene" uid="uid://dhuq5bij0wyjp" path="res://data/Entities/Enemies/Dummy.tscn" id="8_117qx"]
+[ext_resource type="PackedScene" uid="uid://dhuq5bij0wyjp" path="res://data/Entities/enemies/Dummy.tscn" id="8_117qx"]
 [ext_resource type="PackedScene" uid="uid://ohj5vt0m2gx4" path="res://data/Entities/Scenary/DestructibleBlock.tscn" id="9_xkv8h"]
 
 [node name="First Cave" type="Node2D" unique_id=982632796]

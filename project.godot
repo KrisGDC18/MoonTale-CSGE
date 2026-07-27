@@ -24,7 +24,7 @@ config/icon="uid://cljbhrx02ncrc"
 player="*uid://sniu0w5cff26"
 Globals="*res://data/Scripts/globals.gd"
 AssetManager="*res://data/Scripts/asset_manager.gd"
-Audiomanager="*uid://co26fyvsg3pjc"
+AudioManager="*uid://co26fyvsg3pjc"
 HealSystem="*uid://clyrac4onqmqh"
 CamaraResize="*uid://dyggt8jkxabv4"
 PlayerInventory="*uid://s8glxqg0w8yk"
@@ -34,12 +34,14 @@ SaveSystem="*uid://cjn6205gers6g"
 GameFlags="*uid://c0dtnfnv7skqj"
 ItemRegistry="*uid://qs4je8idlhbm"
 CameraController="*uid://bmtn6reeou7nw"
+FloatingTextManager="*uid://dh1me0lw7lpli"
+DropSystem="*uid://btln4o381rhd6"
 
 [display]
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/size/mode=1
+window/size/mode=2
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/per_pixel_transparency/allowed=true
@@ -195,6 +197,7 @@ locale/translations_pot_files=PackedStringArray("res://data/dialogues/test_01.di
 textures/canvas_textures/default_texture_filter=0
 textures/canvas_textures/default_texture_repeat=1
 textures/vram_compression/import_etc2_astc=true
+lights_and_shadows/use_physical_light_units=true
 viewport/hdr_2d=true
 2d/snap/snap_2d_transforms_to_pixel=true
 2d/snap/snap_2d_vertices_to_pixel=true

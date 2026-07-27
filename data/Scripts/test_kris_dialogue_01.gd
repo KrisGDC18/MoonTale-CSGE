@@ -11,7 +11,7 @@ var dialogo : Dictionary = {
 			"text_valignment": VERTICAL_ALIGNMENT_CENTER,
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
 			"portrait_side": "right",
-			"text": "Hola! Que tal [color=red]Kiruma[/color]? Que te gustaria hacer?",
+			"text": "Hola! Que tal [color=red][wave intensity=500][speed=2]Kiruma[/wave][/speed][/color]? Que te gustaria [rainbow spread=1.0 speed=2]hacer[/rainbow]?",
 			"choices": ["[color=red]Dame un arma[/color]", "[color=yellow]Guardar la partida[/color]", "Dame el Booster 2.0", "Test de pagina", "Nada"],
 			"target_blocks": ["armeria", "guardar", "booster", "Test de pagina", ""]
 		}
@@ -19,11 +19,11 @@ var dialogo : Dictionary = {
 	"armeria": [
 		{
 			"voice": "Kiruma",
-			"speaker": "Kris:",
+			"speaker": "Kris:",  
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
 			"text": "Que arma quieres?",
-			"choices": ["Polar Star", "Spur", "Ninguna"],
-			"target_blocks": ["dar_polar", "dar_spur", ""]
+			"choices": ["Polar Star", "Spur", "Fireball", "machinegun", "Ninguna"],
+			"target_blocks": ["dar_polar", "dar_spur", "dar_fireball", "dar_machinegun", ""]
 		}
 	],
 	"dar_polar": [
@@ -40,6 +40,22 @@ var dialogo : Dictionary = {
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
 			"text": "Aqui tienes.",
 			"action": func(): _give_weapon(preload("res://data/Entities/Weapons/Spur.tscn"))
+		}
+	],
+	"dar_machinegun": [
+		{
+			"speaker": "Kris:",
+			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
+			"text": "Aqui tienes.",
+			"action": func(): _give_weapon(preload("res://data/Entities/Weapons/machinegun.tscn"))
+		}
+	],
+	"dar_fireball": [
+		{
+			"speaker": "Kris:",
+			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
+			"text": "Aqui tienes.",
+			"action": func(): _give_weapon(preload("res://data/Entities/Weapons/fireball.tscn"))
 		}
 	],
 	"guardar": [
@@ -73,5 +89,6 @@ func _ready():
 	anim.play("idle")
 
 func _physics_process(_delta: float):
-	if Input.is_action_just_pressed("Down") and interactable and !Globals.playerStay:
+	
+	if Input.is_action_just_pressed("Down") and interactable and !Globals.playerStay and player.is_on_floor():
 		dialog_box.start(dialogo, "inicio")

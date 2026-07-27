@@ -38,5 +38,6 @@ func _ready():
 		print("Nombre:", Input.get_joy_name(id))
 
 
+@warning_ignore("unused_parameter")
 func _process(delta):
 	pass  # sin lógica por frame; reservado para uso futuro

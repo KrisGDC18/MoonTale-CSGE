@@ -142,13 +142,38 @@ func toggle_mute_sfx() -> void:
 # ═══════════════════════════════════════════════════════════════════════
 # ─── API PÚBLICA — REPRODUCCIÓN ───────────────────────────────────────
 
-func play(intro_src, loop_src) -> void:
+var _fade_tween : Tween = null
+
+
+func play(intro_src, loop_src, fade_time: float = 0.0) -> void:
 	var intro : AudioStream = _to_stream(intro_src)
 	var loop  : AudioStream = _to_stream(loop_src)
 
 	if _current_loop == loop and _is_playing:
 		return
 
+	if _fade_tween and _fade_tween.is_valid():
+		_fade_tween.kill()
+		_fade_tween = null
+
+	# sin fundido, o no había nada sonando todavía: comportamiento de
+	# siempre, cambio inmediato
+	if fade_time <= 0.0 or not _is_playing:
+		_play_immediate(intro, loop)
+		return
+
+	# con fundido: bajar el volumen de lo que está sonando ahora mismo,
+	# y recién cuando termine de desvanecerse arrancar la nueva pista
+	# (intro, y de ahí al loop, como siempre)
+	var active_player := _loop_player if _loop_player.playing else _intro_player
+	_fade_tween = create_tween()
+	_fade_tween.tween_property(active_player, "volume_db", -80.0, fade_time)
+	_fade_tween.tween_callback(func():
+		_play_immediate(intro, loop)
+	)
+
+
+func _play_immediate(intro: AudioStream, loop: AudioStream) -> void:
 	_current_intro = intro
 	_current_loop  = loop
 	_intro_done    = false
@@ -156,6 +181,8 @@ func play(intro_src, loop_src) -> void:
 
 	_intro_player.stop()
 	_loop_player.stop()
+	_intro_player.volume_db = 0.0
+	_loop_player.volume_db  = 0.0
 
 	if intro != null:
 		_intro_player.stream = intro
@@ -164,12 +191,17 @@ func play(intro_src, loop_src) -> void:
 		_intro_done = true
 		_start_loop()
 
-func play_loop_only(loop: AudioStream) -> void:
-	play(null, loop)
+func play_loop_only(loop: AudioStream, fade_time: float = 0.0) -> void:
+	play(null, loop, fade_time)
 
 func stop() -> void:
+	if _fade_tween and _fade_tween.is_valid():
+		_fade_tween.kill()
+		_fade_tween = null
 	_intro_player.stop()
 	_loop_player.stop()
+	_intro_player.volume_db = 0.0
+	_loop_player.volume_db  = 0.0
 	_is_playing    = false
 	_intro_done    = false
 	_current_intro = null
@@ -177,6 +209,34 @@ func stop() -> void:
 
 func is_playing_track(loop: AudioStream) -> bool:
 	return _current_loop == loop and _is_playing
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# ─── API PÚBLICA — SFX POSICIONAL (ataque, salto, daño, pisadas, etc) ──
+# Pensado para usarse desde Enemy (enemy_base.gd) y cualquier otro
+# script que necesite un sonido puntual en un punto del mundo, sin tener
+# que manejar sus propios AudioStreamPlayer2D para cada evento.
+#
+##   AudioManager.play_sfx(mi_stream, global_position)
+#
+# Crea un AudioStreamPlayer2D temporal en el bus SFX, lo reproduce en la
+# posición indicada, y se autodestruye solo al terminar. No hace falta
+# guardarlo ni liberarlo a mano.
+func play_sfx(stream: AudioStream, global_pos: Vector2 = Vector2.ZERO, volume_db: float = 0.0, pitch_variation: float = 0.0) -> void:
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer2D.new()
+	player.stream       = stream
+	player.bus          = BUS_SFX
+	player.volume_db    = volume_db
+	player.global_position = global_pos
+	if pitch_variation > 0.0:
+		player.pitch_scale = 1.0 + randf_range(-pitch_variation, pitch_variation)
+
+	get_tree().current_scene.add_child(player)
+	player.play()
+	player.finished.connect(player.queue_free)
 
 
 # ═══════════════════════════════════════════════════════════════════════

@@ -1,0 +1,167 @@
+[gd_scene format=3 uid="uid://dti0c0il4o4h8"]
+
+[ext_resource type="Script" uid="uid://djeaupsjthc1" path="res://data/Scripts/Weapons/Bullets/NormalBullet.gd" id="1_ui7jk"]
+[ext_resource type="Texture2D" uid="uid://dw5jgc0d2a6ru" path="res://data/Sprites/Bullets/Bullet.png" id="2_lusuc"]
+[ext_resource type="AudioStream" uid="uid://pp135ybesnp2" path="res://data/Sounds/SFX/Weapons/ID1f_snd_shot_bounce.wav" id="3_ncj71"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_js4lu"]
+atlas = ExtResource("2_lusuc")
+region = Rect2(288, 64, 32, 31)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_12vv6"]
+atlas = ExtResource("2_lusuc")
+region = Rect2(256, 64, 32, 31)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xwail"]
+atlas = ExtResource("2_lusuc")
+region = Rect2(352, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_055lc"]
+atlas = ExtResource("2_lusuc")
+region = Rect2(320, 64, 32, 31)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26suq"]
+atlas = ExtResource("2_lusuc")
+region = Rect2(288, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_utagy"]
+atlas = ExtResource("2_lusuc")
+region = Rect2(256, 95, 32, 31)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_p4r18"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_js4lu")
+}],
+"loop": 1,
+"name": &"lv1_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_12vv6")
+}],
+"loop": 1,
+"name": &"lv1_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_12vv6")
+}],
+"loop": 1,
+"name": &"lv1_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_js4lu")
+}],
+"loop": 1,
+"name": &"lv1_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xwail")
+}],
+"loop": 1,
+"name": &"lv2_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_055lc")
+}],
+"loop": 1,
+"name": &"lv2_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_055lc")
+}],
+"loop": 1,
+"name": &"lv2_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xwail")
+}],
+"loop": 1,
+"name": &"lv2_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26suq")
+}],
+"loop": 1,
+"name": &"lv3_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_utagy")
+}],
+"loop": 1,
+"name": &"lv3_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_utagy")
+}],
+"loop": 1,
+"name": &"lv3_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26suq")
+}],
+"loop": 1,
+"name": &"lv3_up",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1smg0"]
+
+[sub_resource type="Gradient" id="Gradient_ui7jk"]
+offsets = PackedFloat32Array(0, 0.05978261, 0.46195653)
+colors = PackedColorArray(0.88392854, 0.88392854, 0.88392854, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ui7jk"]
+gradient = SubResource("Gradient_ui7jk")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.517094, 0.5)
+fill_to = Vector2(0, 1)
+
+[node name="Bullet" type="Area2D" unique_id=1184505046]
+script = ExtResource("1_ui7jk")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=357772817]
+sprite_frames = SubResource("SpriteFrames_p4r18")
+animation = &"lv3_down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1737994866]
+shape = SubResource("RectangleShape2D_1smg0")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=831933098]
+
+[node name="WallHitSound" type="AudioStreamPlayer2D" parent="." unique_id=1228954382]
+stream = ExtResource("3_ncj71")
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=2051653344]
+position = Vector2(0, 7.6293945e-06)
+scale = Vector2(0.59912115, 0.5217285)
+color = Color(1.3022159, 1.7175884, 2.0899997, 1)
+energy = 0.59
+shadow_enabled = true
+shadow_filter = 2
+shadow_filter_smooth = 10.5
+texture = SubResource("GradientTexture2D_ui7jk")

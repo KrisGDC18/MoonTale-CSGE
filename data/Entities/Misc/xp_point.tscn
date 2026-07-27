@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dauu6r10gkeeg"]
 
-[ext_resource type="Script" uid="uid://dirvfucyxcodg" path="res://data/Entities/Misc/xp_point.gd" id="1_ni6i0"]
+[ext_resource type="Script" uid="uid://dirvfucyxcodg" path="res://data/Scripts/drop_system/xp_point.gd" id="1_ni6i0"]
 [ext_resource type="Texture2D" uid="uid://b6bgjnog7t0qg" path="res://data/Sprites/Misc/Sprite-0001.png" id="2_3tbot"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ni6i0"]

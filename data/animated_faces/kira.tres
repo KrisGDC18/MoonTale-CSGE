@@ -1,0 +1,51 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://qh4de1o1svwl"]
+
+[ext_resource type="Texture2D" uid="uid://1ftm5q2i68b6" path="res://data/Sprites/Faces/Kira/Kira.png" id="2_tvdff"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8waju"]
+atlas = ExtResource("2_tvdff")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_61jdj"]
+atlas = ExtResource("2_tvdff")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iudcj"]
+atlas = ExtResource("2_tvdff")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wsw0f"]
+atlas = ExtResource("2_tvdff")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_etvos"]
+atlas = ExtResource("2_tvdff")
+region = Rect2(384, 0, 96, 96)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8waju")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_61jdj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iudcj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wsw0f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_etvos")
+}],
+"loop": 1,
+"name": &"talk",
+"speed": 8.0
+}]

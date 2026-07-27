@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bt7cfbj6drgcr"]
 
-[ext_resource type="Script" uid="uid://bqrhnb4qlolld" path="res://data/Entities/npc/karu.gd" id="1_ekxjm"]
+[ext_resource type="Script" uid="uid://bqrhnb4qlolld" path="res://data/Scripts/npc/karu.gd" id="1_ekxjm"]
 [ext_resource type="Texture2D" uid="uid://dhdm3nrryy5am" path="res://data/Sprites/NPC/Karu.png" id="2_ekxjm"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0s21g"]
@@ -58,7 +58,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0s21g")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 6.0
 }]
@@ -66,7 +66,7 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sna75"]
 size = Vector2(14, 26.3125)
 
-[node name="TestKrisDialogue01" type="CharacterBody2D" unique_id=571265759]
+[node name="Karu_Sakusei" type="CharacterBody2D" unique_id=571265759]
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1_ekxjm")

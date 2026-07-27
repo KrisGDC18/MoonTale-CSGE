@@ -1,0 +1,129 @@
+[gd_scene format=3 uid="uid://dhvcyu0g7mjl5"]
+
+[ext_resource type="Script" uid="uid://donp821l2pyhi" path="res://data/Scripts/Weapons/fireball.gd" id="1_baqy2"]
+[ext_resource type="PackedScene" uid="uid://droj1jeoy2e01" path="res://data/Entities/Weapons/Bullets/fireball_bullet.tscn" id="2_ogwej"]
+[ext_resource type="Texture2D" uid="uid://bo4nabp27meiw" path="res://data/Sprites/Weapons/Laser.png" id="3_5amku"]
+[ext_resource type="PackedScene" uid="uid://d3rg0vc0u3jxa" path="res://data/Animations/Weapons/Starlaser/muzzle_flash_StarLaser.tscn" id="4_lik0f"]
+[ext_resource type="PackedScene" uid="uid://blkqi8too4ry4" path="res://data/Animations/Weapons/Starlaser/bullet_hit_default.tscn" id="5_vl76h"]
+[ext_resource type="Texture2D" uid="uid://d1ycqukwujxlc" path="res://data/Sprites/Weapons/Arms.png" id="6_alg4i"]
+[ext_resource type="AudioStream" uid="uid://bl681rgwqicvl" path="res://data/Sounds/SFX/Weapons/ID20_snd_polar_star_l1_2.wav" id="7_1fyt0"]
+[ext_resource type="AudioStream" uid="uid://cnxhhbjlh0sqo" path="res://data/Sounds/SFX/Weapons/ID31_snd_polar_star_l3.wav" id="8_mjvib"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_baqy2"]
+atlas = ExtResource("6_alg4i")
+region = Rect2(149, 0, 46, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ogwej"]
+atlas = ExtResource("6_alg4i")
+region = Rect2(149, 128, 46, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5amku"]
+atlas = ExtResource("6_alg4i")
+region = Rect2(141, 64, 47, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lik0f"]
+atlas = ExtResource("6_alg4i")
+region = Rect2(141, 32, 47, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vl76h"]
+atlas = ExtResource("6_alg4i")
+region = Rect2(149, 96, 46, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vq2nj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_baqy2")
+}],
+"loop": 1,
+"name": &"idle_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ogwej")
+}],
+"loop": 1,
+"name": &"idle_left_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5amku")
+}],
+"loop": 1,
+"name": &"idle_left_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lik0f")
+}],
+"loop": 1,
+"name": &"idle_right",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"idle_right_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl76h")
+}],
+"loop": 1,
+"name": &"idle_right_up",
+"speed": 5.0
+}]
+
+[node name="fireball" type="Node2D" unique_id=1630933231]
+script = ExtResource("1_baqy2")
+bounces_by_level = Array[int]([7, 10, 14])
+weapon_name = "Polar Star"
+bullet_scene = ExtResource("2_ogwej")
+icon = ExtResource("3_5amku")
+xp_to_level = Array[int]([30, 40, 10, 20])
+bullet_range_by_level = Array[float]([128.0, 192.0, 256.0])
+damage_by_level = Array[int]([1, 2, 4])
+speed_by_level = Array[float]([1028.0, 1028.0, 1028.0])
+muzzle_flash_default = ExtResource("4_lik0f")
+bullet_despawn_default = ExtResource("4_lik0f")
+bullet_hit_default = ExtResource("5_vl76h")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=254855722]
+sprite_frames = SubResource("SpriteFrames_vq2nj")
+animation = &"idle_right_up"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="AnimatedSprite2D" unique_id=1854531203]
+sprite_frames = SubResource("SpriteFrames_vq2nj")
+animation = &"idle_right_up"
+
+[node name="ShootAudio1" type="AudioStreamPlayer2D" parent="." unique_id=1238778250]
+stream = ExtResource("7_1fyt0")
+volume_db = 1.0
+pitch_scale = 0.5
+
+[node name="ShootAudio2" type="AudioStreamPlayer2D" parent="." unique_id=40927678]
+stream = ExtResource("7_1fyt0")
+
+[node name="ShootAudio3" type="AudioStreamPlayer2D" parent="." unique_id=1065353125]
+stream = ExtResource("8_mjvib")
+
+[node name="BulletOrigin_right_up" type="Marker2D" parent="." unique_id=1095907207]
+position = Vector2(3, -14)
+
+[node name="BulletOrigin_left" type="Marker2D" parent="." unique_id=1323718291]
+position = Vector2(-22, 7)
+
+[node name="BulletOrigin_left_down" type="Marker2D" parent="." unique_id=833292683]
+position = Vector2(-5, 14)
+
+[node name="BulletOrigin_right_down" type="Marker2D" parent="." unique_id=655358079]
+position = Vector2(5, 14)
+
+[node name="BulletOrigin_left_up" type="Marker2D" parent="." unique_id=1244310072]
+position = Vector2(-5, -14)
+
+[node name="BulletOrigin_right" type="Marker2D" parent="." unique_id=1689849458]
+position = Vector2(22, 7)

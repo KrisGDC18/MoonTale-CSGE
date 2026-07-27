@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://x5whife77omn"]
 
-[ext_resource type="Script" uid="uid://b055lwj54snr6" path="res://data/Entities/Misc/health.gd" id="1_f4vrp"]
+[ext_resource type="Script" uid="uid://b055lwj54snr6" path="res://data/Scripts/drop_system/health.gd" id="1_f4vrp"]
 [ext_resource type="Texture2D" uid="uid://cjtoqabkrf65e" path="res://data/Sprites/Misc/heart.png" id="1_pj68y"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f4vrp"]
@@ -28,7 +28,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_b5e4j")
 }],
-"loop": true,
+"loop": 1,
 "name": &"big",
 "speed": 7.0
 }, {
@@ -39,7 +39,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rt6c5")
 }],
-"loop": true,
+"loop": 1,
 "name": &"small",
 "speed": 7.0
 }]

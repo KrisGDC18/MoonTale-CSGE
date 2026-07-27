@@ -7,8 +7,23 @@ signal history_toggled(is_open: bool)
 
 @onready var panel       : NinePatchRect     = $Root/Box
 @onready var portrait    : TextureRect       = $Root/Box/HBoxContainer/Portrait
-@onready var portrait_animated : AnimatedSprite2D  = $Root/Box/HBoxContainer/PortraitAnimated
-@onready var hbox              : HBoxContainer     = $Root/Box/HBoxContainer
+# El retrato animado usa un TextureRect (igual que "portrait"), NO un
+# AnimatedSprite2D. Un AnimatedSprite2D es un Node2D: los Container de
+# Godot (HBoxContainer, etc.) solo miden y posicionan a sus hijos que sean
+# Control, así que un Node2D metido ahí queda directamente ignorado por el
+# layout (no reserva espacio, y move_child() solo cambia el orden de
+# dibujado, no la posición real) — eso era lo que rompía tanto el
+# realineado a la derecha como el acomodo del texto. Usando un TextureRect
+# como este, el retrato "animado" es un Control real: el HBoxContainer lo
+# mide, lo posiciona y le hace lugar exactamente igual que a "portrait",
+# sin necesitar ningún nodo intermedio. La animación se reproduce a mano
+# (ver _anim_play/_anim_process/_anim_update_texture más abajo), sacando
+# cada frame directamente del recurso SpriteFrames y asignándolo a
+# ".texture". Configurá en el editor el mismo expand_mode/stretch_mode/
+# custom_minimum_size que uses en "portrait", para que ambos ocupen el
+# mismo espacio dentro del HBoxContainer.
+@onready var portrait_animated  : TextureRect       = $Root/Box/HBoxContainer/PortraitAnimated
+@onready var hbox               : HBoxContainer     = $Root/Box/HBoxContainer
 @onready var speaker     : Label             = $Root/Box/SpeakerName
 @onready var text_lbl    : RichTextLabel     = $Root/Box/HBoxContainer/VBoxContainer/Text
 @onready var arrow       : Label             = $Root/Box/Arrow
@@ -56,6 +71,7 @@ const RTLWaveScript     := preload("res://data/Scripts/effects/RTLWave.gd")
 const RTLBounceInScript := preload("res://data/Scripts/effects/RTLBounceIn.gd")
 const RTLTypeWaveScript := preload("res://data/Scripts/effects/RTLTypeWave.gd")
 const RTLGlitchScript   := preload("res://data/Scripts/effects/RTLGlitch.gd")
+const RTLRainbowScript  := preload("res://data/Scripts/effects/RTLRainbow.gd")
 
 # Fuente y tamaño por defecto del texto del diálogo.
 # Se pueden sobreescribir por página con las claves "font" y "font_size".
@@ -83,6 +99,14 @@ var _current_line_spacing : int = 0
 # "type_speed": 15, y un texto urgente/rápido "type_speed": 80.
 @export var default_chars_per_second : float = 40.0
 var _current_chars_per_second : float = 40.0
+
+# Rangos de velocidad custom por fragmento, definidos con la etiqueta
+# [speed=N]...[/speed] dentro del "text" de una página (ver
+# _extract_speed_ranges). Cada elemento: { "start": int, "end": int,
+# "speed": float }, con "start"/"end" en posiciones de caracteres PLANOS
+# (índices dentro de _full_text ignorando el resto del BBCode). Se
+# recalcula en cada _show_page().
+var _speed_ranges : Array = []
 
 # ── Presets de "voz" por personaje (estilo Undertale/Deltarune) ────────
 # En vez de repetir font/font_size/type_speed/beep_stream en cada página
@@ -173,6 +197,42 @@ var _release_player_on_close : bool = true
 # Se leen de las claves "portrait_anim_typing" y "portrait_anim_idle" de cada página.
 var _portrait_anim_typing : String = ""
 var _portrait_anim_idle   : String = ""
+
+# ── Reproducción manual de la animación del retrato (TextureRect) ─────
+# Como portrait_animated ahora es un TextureRect (no un AnimatedSprite2D),
+# no existe un player de animaciones nativo: estas variables llevan a mano
+# el estado de reproducción (qué animación, qué frame, cuánto tiempo
+# acumulado) y _anim_process() las usa cada frame para decidir cuándo
+# avanzar de frame y actualizar la textura mostrada.
+var _anim_sprite_frames : SpriteFrames = null
+var _anim_current_name  : String       = ""
+var _anim_current_frame : int          = 0
+var _anim_frame_timer   : float        = 0.0
+var _anim_playing       : bool         = false
+
+# ── Emociones del retrato animado + tag de texto [face=NOMBRE] ────────
+# "portrait_emotions" (opcional, por página) define variantes de
+# animación con nombre, cada una con su propio estado "talk"/"idle":
+#
+#   "portrait_emotions": {
+#       "default": { "talk": "idle_talk", "idle": "idle_idle" },
+#       "happy":   { "talk": "happy_talk", "idle": "happy_idle" },
+#       "sad":     { "talk": "sad_talk",   "idle": "sad_idle" },
+#   },
+#   "portrait_emotion": "default",  # emoción base de toda la página
+#
+# Además, cualquier palabra del "text" puede envolverse en
+# [face=NOMBRE]...[/face] para que el retrato cambie a esa emoción SOLO
+# mientras esa palabra se está tipeando, y vuelva sola a la emoción base
+# de la página apenas se termine de tipear esa palabra — igual que un
+# efecto de texto más, pero afectando al retrato en vez de al texto.
+# Si no se define "portrait_emotions", todo esto se ignora y el sistema
+# sigue funcionando exactamente como antes (con "portrait_anim_typing"/
+# "portrait_anim_idle"/"portrait_anim" planos).
+var _portrait_emotions     : Dictionary = {}
+var _portrait_base_emotion : String     = "default"
+var _face_ranges           : Array      = []
+var _current_face_applied  : String     = ""
 
 # Audio de typing por defecto. Se captura automáticamente en _ready() desde el nodo
 # BeepSFX. Puede sobreescribirse globalmente asignando esta variable, o por página
@@ -330,6 +390,7 @@ func _ready() -> void:
 	text_lbl.install_effect(RTLWaveScript.new())
 	text_lbl.install_effect(RTLBounceInScript.new())
 	text_lbl.install_effect(RTLGlitchScript.new())
+	text_lbl.install_effect(RTLRainbowScript.new())
 	_typewave_effect = RTLTypeWaveScript.new()
 	text_lbl.install_effect(_typewave_effect)
 
@@ -438,30 +499,86 @@ func _apply_scaled_props(s: float) -> void:
 				lbl.add_theme_font_size_override("normal_font_size", choice_fs)
 
 	# ── Portrait animado ──────────────────────────────────────────────
-	if portrait_animated.visible:
-		_sync_animated_portrait_size()
+	# Nada que hacer acá: portrait_animated es un TextureRect normal, así
+	# que el HBoxContainer ya lo mide y escala solo con el mismo criterio
+	# (expand_mode/stretch_mode/custom_minimum_size) que configuraste en el
+	# editor para "portrait" — exactamente como funciona el retrato
+	# estático, sin ningún cálculo manual de tamaño ni posición.
 
-func _sync_animated_portrait_size(side: String = "left") -> void:
-	# Escala el AnimatedSprite2D para que ocupe el mismo espacio que el TextureRect estático.
-	# Asume que el sprite tiene su origen en el centro (por defecto en Godot).
-	var h     : float   = $Root/Box/HBoxContainer.size.y
-	var frames          = portrait_animated.sprite_frames
-	if frames == null:
+
+## Reproduce, a mano, la animación "anim_name" del SpriteFrames asignado
+## en _anim_sprite_frames sobre portrait_animated (un TextureRect). No usa
+## AnimatedSprite2D.play() porque portrait_animated no es un
+## AnimatedSprite2D — ver el comentario junto a su declaración @onready.
+func _anim_play(anim_name: String) -> void:
+	if _anim_sprite_frames == null or not _anim_sprite_frames.has_animation(anim_name):
 		return
-	var anim  : String  = portrait_animated.animation
-	if not frames.has_animation(anim) or frames.get_frame_count(anim) == 0:
+	_anim_current_name  = anim_name
+	_anim_current_frame = 0
+	_anim_frame_timer   = 0.0
+	_anim_playing       = true
+	_anim_update_texture()
+
+
+## Detiene la reproducción manual (no borra la textura actual, para que el
+## último frame mostrado quede congelado en pantalla, igual que
+## AnimatedSprite2D.stop()).
+func _anim_stop() -> void:
+	_anim_playing = false
+
+
+## Avanza, si corresponde, el frame de la animación actual según su
+## velocidad (fps) y la duración individual de cada frame definida en el
+## SpriteFrames, respetando el loop de esa animación. Se llama una vez por
+## frame desde _process().
+func _anim_process(delta: float) -> void:
+	if not _anim_playing or _anim_sprite_frames == null or _anim_current_name == "":
 		return
-	var tex   : Texture2D = frames.get_frame_texture(anim, 0)
-	if tex == null:
+	if not _anim_sprite_frames.has_animation(_anim_current_name):
 		return
-	var tex_size : Vector2 = tex.get_size()
-	if tex_size.x > 0 and tex_size.y > 0:
-		var scale_factor : float = h / tex_size.y
-		portrait_animated.scale  = Vector2(scale_factor, scale_factor)
-	# Posicionar según el lado: izquierda → x = h*0.5, derecha → x = hbox ancho - h*0.5
-	var hbox_w : float = $Root/Box/HBoxContainer.size.x
-	var pos_x  : float = h * 0.5 if side == "left" else hbox_w - h * 0.5
-	portrait_animated.position = Vector2(pos_x, h * 0.5)
+
+	var frame_count : int = _anim_sprite_frames.get_frame_count(_anim_current_name)
+	if frame_count <= 1:
+		return
+
+	var fps : float = _anim_sprite_frames.get_animation_speed(_anim_current_name)
+	if fps <= 0.0:
+		return
+
+	_anim_frame_timer += delta * fps
+	var frame_duration : float = _anim_sprite_frames.get_frame_duration(_anim_current_name, _anim_current_frame)
+	if frame_duration <= 0.0:
+		frame_duration = 1.0
+
+	var advanced : bool = false
+	while _anim_frame_timer >= frame_duration:
+		_anim_frame_timer -= frame_duration
+		_anim_current_frame += 1
+		advanced = true
+		if _anim_current_frame >= frame_count:
+			if _anim_sprite_frames.get_animation_loop(_anim_current_name):
+				_anim_current_frame = 0
+			else:
+				_anim_current_frame = frame_count - 1
+				_anim_playing = false
+				break
+		frame_duration = _anim_sprite_frames.get_frame_duration(_anim_current_name, _anim_current_frame)
+		if frame_duration <= 0.0:
+			frame_duration = 1.0
+
+	if advanced:
+		_anim_update_texture()
+
+
+## Asigna al TextureRect la textura del frame actual de la animación
+## actual. Se llama al arrancar una animación (_anim_play) y cada vez que
+## _anim_process avanza de frame.
+func _anim_update_texture() -> void:
+	if _anim_sprite_frames == null or _anim_current_name == "":
+		return
+	if not _anim_sprite_frames.has_animation(_anim_current_name):
+		return
+	portrait_animated.texture = _anim_sprite_frames.get_frame_texture(_anim_current_name, _anim_current_frame)
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -638,51 +755,55 @@ func _show_page(index: int) -> void:
 	#       "portrait_anim_typing" : animación mientras se escribe el texto
 	#       "portrait_anim_idle"   : animación al terminar de escribir
 	#       "portrait_anim"        : fallback si no se definen typing/idle
+	#     ...o, si se definió "portrait_emotions", esas claves planas pasan
+	#     a ser el fallback de la emoción "portrait_emotion" (ver arriba).
 	#   • null / ausente → oculta ambos nodos
-	_portrait_anim_typing = ""
-	_portrait_anim_idle   = ""
+	_portrait_anim_typing  = ""
+	_portrait_anim_idle    = ""
+	_portrait_emotions     = page.get("portrait_emotions", {})
+	_portrait_base_emotion = page.get("portrait_emotion", "default")
+	_current_face_applied  = _portrait_base_emotion
 
 	var portrait_value = page.get("portrait", null)
 	var portrait_flip  : bool = page.get("portrait_flip_h", false)
 
 	if portrait_value is SpriteFrames:
 		portrait.hide()
-		portrait_animated.sprite_frames = portrait_value
-		portrait_animated.flip_h        = portrait_flip
+		_anim_sprite_frames     = portrait_value
+		portrait_animated.flip_h = portrait_flip
 
 		# Resolver nombres de animación con fallbacks en cascada
 		var fallback : String = page.get("portrait_anim", "")
 		if fallback == "" or not portrait_value.has_animation(fallback):
 			fallback = portrait_value.get_animation_names()[0]
 
-		var anim_typing : String = page.get("portrait_anim_typing", fallback)
-		if not portrait_value.has_animation(anim_typing):
-			anim_typing = fallback
-
-		var anim_idle : String = page.get("portrait_anim_idle", fallback)
-		if not portrait_value.has_animation(anim_idle):
-			anim_idle = fallback
+		var anim_typing : String = _resolve_face_anim("talk", _portrait_base_emotion, portrait_value, page, fallback)
+		var anim_idle   : String = _resolve_face_anim("idle", _portrait_base_emotion, portrait_value, page, fallback)
 
 		_portrait_anim_typing = anim_typing
 		_portrait_anim_idle   = anim_idle
 
 		# Arrancar con la animación de typing
-		portrait_animated.play(_portrait_anim_typing)
+		_anim_play(_portrait_anim_typing)
 		portrait_animated.show()
-		_sync_animated_portrait_size(page.get("portrait_side", "left"))
 	elif portrait_value is Texture2D:
-		portrait_animated.stop()
+		_anim_stop()
 		portrait_animated.hide()
 		portrait.texture  = portrait_value
 		portrait.flip_h   = portrait_flip
 		portrait.show()
 	else:
 		portrait.hide()
-		portrait_animated.stop()
+		_anim_stop()
 		portrait_animated.hide()
 
 	# Lado del portrait — "portrait_side": "left" (default) o "right"
-	# Mueve tanto el TextureRect como el AnimatedSprite2D al índice correcto del HBoxContainer.
+	# Mueve tanto el TextureRect estático como el TextureRect animado al
+	# índice correcto del HBoxContainer. Ambos son Control, así que el
+	# HBoxContainer los reordena y les asigna un rect real de verdad,
+	# empujando al VBoxContainer del texto en consecuencia — exactamente
+	# el mismo mecanismo que ya usaba "portrait", sin ningún cálculo manual
+	# de posición en píxeles.
 	var portrait_side : String = page.get("portrait_side", "left")
 	var portrait_index : int   = 0 if portrait_side == "left" else hbox.get_child_count() - 1
 	hbox.move_child(portrait,          portrait_index)
@@ -750,6 +871,27 @@ func _show_page(index: int) -> void:
 	var raw_text : String = _translate_page_text(page)
 	if page.has("text_page"):
 		raw_text = _get_text_page(raw_text, page.get("text_page", 0))
+
+	# Extraer las etiquetas custom [speed=N]...[/speed] del texto. NO son
+	# BBCode real (el RichTextLabel no las reconoce, así que si las
+	# dejáramos se verían literalmente como texto) — se sacan del texto
+	# que se muestra, y se guarda aparte en qué rango de posiciones
+	# "planas" (ignorando el resto del BBCode, mismo criterio que
+	# _get_plain_length/_bbcode_substr) aplica cada velocidad custom.
+	var extracted : Dictionary = _extract_speed_ranges(raw_text)
+	raw_text      = extracted["text"]
+	_speed_ranges = extracted["ranges"]
+
+	# Igual que con [speed=N], pero para [face=NOMBRE]...[/face]: le indica
+	# al retrato animado que cambie de emoción SOLO mientras se tipea la
+	# palabra/tramo envuelto, y encadenado sobre el texto YA sin los tags
+	# de [speed], para que los índices de ambos sistemas queden
+	# consistentes entre sí (ninguno de los dos tags es BBCode real, así
+	# que ambos se sacan del texto final).
+	var extracted_face : Dictionary = _extract_face_ranges(raw_text)
+	raw_text     = extracted_face["text"]
+	_face_ranges = extracted_face["ranges"]
+
 	_full_text = raw_text
 
 	# Registrar esta página en el historial de diálogo, con el texto ya
@@ -761,7 +903,22 @@ func _show_page(index: int) -> void:
 
 	# Aplicar valineación solo si el contenido cabe sin necesitar scroll
 	# (si hace falta scroll, el autoscroll ya deja el texto pegado abajo).
+	var text_before_valign : String = _full_text
 	_full_text = _apply_valignment_if_fits(_full_text, page.get("text_valignment", default_text_valignment))
+
+	# La valineación puede agregar "\n" al principio (padding). Como los
+	# rangos de _speed_ranges se calcularon sobre el texto SIN ese
+	# padding, hay que correrlos la misma cantidad de caracteres, o
+	# quedarían aplicados a las letras equivocadas.
+	var padding_len : int = _full_text.length() - text_before_valign.length()
+	if padding_len > 0 and _speed_ranges.size() > 0:
+		for i in _speed_ranges.size():
+			_speed_ranges[i]["start"] += padding_len
+			_speed_ranges[i]["end"]   += padding_len
+	if padding_len > 0 and _face_ranges.size() > 0:
+		for i in _face_ranges.size():
+			_face_ranges[i]["start"] += padding_len
+			_face_ranges[i]["end"]   += padding_len
 
 	_chars_shown  = 0
 	_timer        = 0.0
@@ -896,6 +1053,11 @@ func _process(delta: float) -> void:
 	if _typewave_effect != null:
 		_typewave_effect.current_time = Time.get_ticks_msec() / 1000.0
 
+	# Avanzar la animación manual del retrato (ver _anim_process). Se llama
+	# siempre que _process sigue corriendo (panel visible o historial
+	# abierto), igual criterio que el resto de la lógica de arriba.
+	_anim_process(delta)
+
 	# Autoscroll progresivo: SOLO se actualiza mientras el scroll sigue
 	# bloqueado (es decir, mientras se está tipeando). Si se llamara siempre,
 	# cada frame arrastraría el scroll de vuelta hacia abajo y el jugador
@@ -948,23 +1110,44 @@ func _process(delta: float) -> void:
 
 func _tick(delta: float) -> void:
 	_timer += delta
-	var add := int(_timer * _current_chars_per_second)
-	if add < 1:
-		return
-	_timer = 0.0
 
 	var plain_len : int = _get_plain_length(_full_text)
-	var now : float = Time.get_ticks_msec() / 1000.0
+	var now       : float = Time.get_ticks_msec() / 1000.0
+	var revealed_any : bool = false
 
-	for i in add:
-		if _chars_shown >= plain_len:
+	# En vez de calcular un lote fijo de caracteres por frame con una
+	# única velocidad global ("add = timer * speed"), se revela de a un
+	# caracter por vez, cada uno consumiendo su propio costo en segundos
+	# (1 / velocidad_de_ese_caracter) del acumulador _timer. Esto es lo
+	# que permite que un rango marcado con [speed=N] tipee más rápido o
+	# más lento que el resto de la misma página, sin afectar al resto del
+	# texto. Con una sola velocidad para toda la página, el resultado es
+	# matemáticamente equivalente al esquema anterior (mismo frame-rate
+	# independence), así que no cambia el comportamiento por defecto.
+	while _chars_shown < plain_len:
+		var speed : float = _get_speed_for_index(_chars_shown)
+		if speed <= 0.0:
+			speed = _current_chars_per_second
+		var cost : float = 1.0 / speed
+		if _timer < cost:
 			break
+		_timer -= cost
+
 		var ch : String = _get_plain_char(_full_text, _chars_shown)
 		# Registrar el momento exacto en que este caracter se reveló,
 		# usado por el efecto [typewave] para animar solo letras recién escritas.
 		if _typewave_effect != null:
 			_typewave_effect.reveal_times[_chars_shown] = now
 		_chars_shown += 1
+		revealed_any = true
+
+		# Reflejar en el retrato animado la emoción marcada con
+		# [face=NOMBRE] (si la hay) para el caracter recién revelado —
+		# se resuelve por caracter (no una vez por _tick) para que el
+		# cambio de cara ocurra justo cuando arranca la palabra marcada,
+		# incluso si varios caracteres se revelan en el mismo frame.
+		_apply_word_face(_get_face_for_index(_chars_shown - 1))
+
 		if ch not in SKIP_CHARS:
 			_beep_counter += 1
 			if _beep_counter >= BEEP_EVERY:
@@ -977,7 +1160,8 @@ func _tick(delta: float) -> void:
 	# visible_ratio): así el RichTextLabel solo calcula el alto del contenido
 	# ya escrito, y el scroll únicamente reacciona cuando una línea nueva
 	# efectivamente se sale del cuadro — no desde el primer frame de la página.
-	text_lbl.text = _bbcode_substr(_full_text, 0, _chars_shown)
+	if revealed_any:
+		text_lbl.text = _bbcode_substr(_full_text, 0, _chars_shown)
 
 	if _chars_shown >= plain_len:
 		_typing       = false
@@ -1050,11 +1234,85 @@ func _on_end() -> void:
 			arrow.show()
 
 
-## Cambia el portrait animado a la animación idle si está activo.
+## Cambia el portrait animado a la animación idle si está activo. Al
+## terminar de tipear, el retrato siempre vuelve a la emoción BASE de la
+## página (nunca se queda "trabado" en la emoción de la última palabra
+## marcada con [face=...] — ese tag solo afecta mientras esa palabra en
+## particular se está tipeando).
 func _portrait_play_idle() -> void:
+	_current_face_applied = _portrait_base_emotion
 	if portrait_animated.visible and _portrait_anim_idle != "":
-		if portrait_animated.animation != _portrait_anim_idle:
-			portrait_animated.play(_portrait_anim_idle)
+		if _anim_current_name != _portrait_anim_idle:
+			_anim_play(_portrait_anim_idle)
+
+
+## Resuelve el nombre de animación a usar para una emoción + estado
+## ("talk" o "idle") puntuales, con esta prioridad:
+##   1. "portrait_emotions"[emotion][state], si la página definió ese
+##      diccionario, esa emoción existe en él, y la animación existe de
+##      verdad en el SpriteFrames del retrato.
+##   2. El otro estado de esa MISMA emoción (talk<->idle), por si solo se
+##      definió uno de los dos — mejor mostrar algo de esa emoción que
+##      nada.
+##   3. Las claves planas "legacy" ("portrait_anim_typing"/"_idle"), pero
+##      SOLO si "emotion" es la emoción base de la página (no tendría
+##      sentido que una palabra con [face=triste] cayera en la animación
+##      de typing genérica de la página en vez de directamente al
+##      fallback general).
+##   4. "fallback_anim" (el fallback general ya resuelto en _show_page,
+##      típicamente "portrait_anim" o la primera animación del SpriteFrames).
+func _resolve_face_anim(state: String, emotion: String, sprite_frames: SpriteFrames, page: Dictionary, fallback_anim: String) -> String:
+	var emotions : Dictionary = page.get("portrait_emotions", {})
+
+	if emotions.has(emotion):
+		var entry : Dictionary = emotions[emotion]
+		if entry.has(state) and sprite_frames.has_animation(entry[state]):
+			return entry[state]
+		var other_state : String = "idle" if state == "talk" else "talk"
+		if entry.has(other_state) and sprite_frames.has_animation(entry[other_state]):
+			return entry[other_state]
+
+	if emotion == _portrait_base_emotion or emotion == "":
+		var legacy_key  : String = "portrait_anim_typing" if state == "talk" else "portrait_anim_idle"
+		var legacy_anim : String = page.get(legacy_key, "")
+		if legacy_anim != "" and sprite_frames.has_animation(legacy_anim):
+			return legacy_anim
+
+	return fallback_anim
+
+
+## Aplica, si corresponde, la animación de "talk" de una emoción puntual
+## sobre el retrato animado — usado por _tick() para reflejar los tags
+## [face=NOMBRE] a medida que se van tipeando. No hace nada si el retrato
+## actual no es animado, o si "emotion" ya es la que está aplicada (evita
+## reiniciar la animación en cada frame sin necesidad).
+func _apply_word_face(emotion: String) -> void:
+	if not portrait_animated.visible:
+		return
+	if emotion == _current_face_applied:
+		return
+
+	var block : Array      = _blocks[_current_block]
+	var page  : Dictionary = block[_page_index]
+	var sprite_frames : SpriteFrames = _anim_sprite_frames
+	if sprite_frames == null:
+		return
+
+	var anim : String = _resolve_face_anim("talk", emotion, sprite_frames, page, _portrait_anim_typing)
+	_current_face_applied = emotion
+	if anim != "" and _anim_current_name != anim:
+		_anim_play(anim)
+
+
+## Devuelve el nombre de la emoción que corresponde al caracter plano en
+## la posición "idx" de _full_text, según _face_ranges. Si "idx" no cae
+## dentro de ningún [face=...] activo, devuelve _portrait_base_emotion
+## (la emoción normal de la página).
+func _get_face_for_index(idx: int) -> String:
+	for r in _face_ranges:
+		if idx >= r["start"] and idx < r["end"]:
+			return r["face"]
+	return _portrait_base_emotion
 
 
 func _advance() -> void:
@@ -1592,6 +1850,145 @@ func _clear_choices() -> void:
 # ══════════════════════════════════════════════════════════════════════
 # HELPERS BBCODE
 # ══════════════════════════════════════════════════════════════════════
+
+## Recorre "raw" y saca las etiquetas custom [speed=N]...[/speed] (no son
+## BBCode real: el RichTextLabel no las reconoce, así que hay que
+## quitarlas del texto que se termina mostrando). Devuelve un Dictionary:
+##   { "text": <texto sin las etiquetas [speed]>, "ranges": Array }
+## donde "ranges" es un Array de { "start": int, "end": int, "speed": float},
+## con "start"/"end" en posiciones de caracteres PLANOS del texto de
+## salida ("text"), es decir, ignorando cualquier OTRO tag BBCode que
+## haya quedado (mismo criterio de conteo que _get_plain_length).
+## Cualquier otro tag ([color], [wave], [shake], etc.) se deja intacto en
+## el texto de salida — solo se procesan específicamente "[speed=...]" y
+## "[/speed]". Soporta anidado simple vía una pila, aunque el uso típico
+## es un solo nivel por fragmento.
+func _extract_speed_ranges(raw: String) -> Dictionary:
+	var cleaned     : String = ""
+	var ranges      : Array  = []
+	var speed_stack : Array  = []
+	var plain_index : int    = 0
+	var i           : int    = 0
+	var n           : int    = raw.length()
+
+	while i < n:
+		var ch : String = raw[i]
+
+		if ch == "[":
+			var close_idx : int = raw.find("]", i)
+			if close_idx == -1:
+				# "[" suelto sin cierre: se trata como texto plano normal.
+				cleaned += ch
+				plain_index += 1
+				i += 1
+				continue
+
+			var tag_content : String = raw.substr(i + 1, close_idx - i - 1)
+			var tag_lower   : String = tag_content.to_lower()
+
+			if tag_lower.begins_with("speed="):
+				var speed_val : float = tag_content.substr(6).to_float()
+				speed_stack.append({ "speed": speed_val, "start": plain_index })
+				i = close_idx + 1
+				continue
+
+			if tag_lower == "/speed":
+				if speed_stack.size() > 0:
+					var entry : Dictionary = speed_stack.pop_back()
+					if plain_index > entry["start"]:
+						ranges.append({ "start": entry["start"], "end": plain_index, "speed": entry["speed"] })
+				i = close_idx + 1
+				continue
+
+			# Cualquier otro tag BBCode se conserva tal cual en la salida,
+			# y no cuenta para plain_index (mismo criterio que el resto de
+			# los helpers BBCode de más abajo).
+			cleaned += raw.substr(i, close_idx - i + 1)
+			i = close_idx + 1
+			continue
+
+		cleaned += ch
+		plain_index += 1
+		i += 1
+
+	# Si quedó algún [speed=...] sin su [/speed] de cierre, se cierra
+	# igual al final del texto, en vez de perder silenciosamente el rango.
+	while speed_stack.size() > 0:
+		var entry : Dictionary = speed_stack.pop_back()
+		if plain_index > entry["start"]:
+			ranges.append({ "start": entry["start"], "end": plain_index, "speed": entry["speed"] })
+
+	return { "text": cleaned, "ranges": ranges }
+
+
+## Análogo a _extract_speed_ranges, pero para el tag [face=NOMBRE]...[/face]
+## (usado por el sistema de emociones del retrato animado, ver arriba).
+## Saca esos tags del texto (no son BBCode real) y devuelve, además del
+## texto limpio, los rangos { "start", "end", "face" } donde cada uno
+## indica qué emoción debe mostrar el retrato mientras se tipea ese tramo.
+func _extract_face_ranges(raw: String) -> Dictionary:
+	var cleaned     : String  = ""
+	var ranges      : Array   = []
+	var face_stack  : Array   = []
+	var plain_index : int     = 0
+	var i           : int     = 0
+	var n           : int     = raw.length()
+
+	while i < n:
+		var ch : String = raw[i]
+
+		if ch == "[":
+			var close_idx : int = raw.find("]", i)
+			if close_idx == -1:
+				cleaned += ch
+				plain_index += 1
+				i += 1
+				continue
+
+			var tag_content : String = raw.substr(i + 1, close_idx - i - 1)
+			var tag_lower   : String = tag_content.to_lower()
+
+			if tag_lower.begins_with("face="):
+				var face_name : String = tag_content.substr(5)
+				face_stack.append({ "face": face_name, "start": plain_index })
+				i = close_idx + 1
+				continue
+
+			if tag_lower == "/face":
+				if face_stack.size() > 0:
+					var entry : Dictionary = face_stack.pop_back()
+					if plain_index > entry["start"]:
+						ranges.append({ "start": entry["start"], "end": plain_index, "face": entry["face"] })
+				i = close_idx + 1
+				continue
+
+			cleaned += raw.substr(i, close_idx - i + 1)
+			i = close_idx + 1
+			continue
+
+		cleaned += ch
+		plain_index += 1
+		i += 1
+
+	while face_stack.size() > 0:
+		var entry : Dictionary = face_stack.pop_back()
+		if plain_index > entry["start"]:
+			ranges.append({ "start": entry["start"], "end": plain_index, "face": entry["face"] })
+
+	return { "text": cleaned, "ranges": ranges }
+
+
+## Devuelve la velocidad de tipeo (caracteres/seg) que corresponde al
+## caracter plano en la posición "idx" de _full_text, según _speed_ranges.
+## Si "idx" no cae dentro de ningún rango custom, devuelve
+## _current_chars_per_second (la velocidad normal de la página/voz).
+func _get_speed_for_index(idx: int) -> float:
+	for r in _speed_ranges:
+		if idx >= r["start"] and idx < r["end"]:
+			var s : float = r["speed"]
+			return s if s > 0.0 else _current_chars_per_second
+	return _current_chars_per_second
+
 
 ## Elimina todos los tags BBCode y devuelve el texto plano.
 func _strip_bbcode(text: String) -> String:

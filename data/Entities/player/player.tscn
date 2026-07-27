@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bsvyo23xutyy7" path="res://data/Scripts/player/player.gd" id="1_gj1n8"]
 [ext_resource type="PackedScene" uid="uid://c0kfcchm0g70e" path="res://data/Entities/Misc/question_mark.tscn" id="2_llrnl"]
+[ext_resource type="PackedScene" uid="uid://cdoq1al5k0tdk" path="res://data/Animations/particles/jetpack/jetpack_2.tscn" id="3_akp86"]
+[ext_resource type="AudioStream" uid="uid://dqy5potjrggb3" path="res://data/Sounds/SFX/Player/Jump.wav" id="3_jknpg"]
 [ext_resource type="Texture2D" uid="uid://bem4ugaunkteb" path="res://data/Sprites/Players/MyChar.png" id="4_i7mxw"]
 [ext_resource type="Texture2D" uid="uid://c4v6vhs1riovw" path="res://data/Sprites/Players/Kiruma.png" id="5_akp86"]
 [ext_resource type="Script" uid="uid://btos1thx1apeb" path="res://data/Scripts/player/weapons/WeaponManager.gd" id="5_uyekh"]
@@ -9,12 +11,15 @@
 [ext_resource type="PackedScene" uid="uid://bk31ogs2o2jkm" path="res://data/Entities/Weapons/PolarStar.tscn" id="7_v1emx"]
 [ext_resource type="AudioStream" uid="uid://b4dw3wlhk0nr2" path="res://data/Sounds/SFX/Player/Cursor.wav" id="8_jknpg"]
 [ext_resource type="Script" uid="uid://bmtn6reeou7nw" path="res://data/Scripts/camera_controller.gd" id="9_llrnl"]
-[ext_resource type="AudioStream" uid="uid://dhlruiji2rswi" path="res://data/Sounds/SFX/Player/jump.wav" id="9_mljut"]
 [ext_resource type="AudioStream" uid="uid://bqhdgwvcky0jw" path="res://data/Sounds/SFX/Player/headbonk.wav" id="10_el42n"]
+[ext_resource type="AudioStream" uid="uid://k7rl22ngsg7x" path="res://data/Sounds/SFX/Player/snd_health_refill.wav" id="10_mljut"]
 [ext_resource type="AudioStream" uid="uid://b4cgk7e6n0uhu" path="res://data/Sounds/SFX/Player/land.wav" id="11_1mg3p"]
+[ext_resource type="AudioStream" uid="uid://dpkrr05n5kd53" path="res://data/Sounds/SFX/Weapons/snd_level_up.wav" id="11_el42n"]
 [ext_resource type="AudioStream" uid="uid://xnamdeki48on" path="res://data/Sounds/SFX/Player/step.wav" id="12_u2uub"]
 [ext_resource type="AudioStream" uid="uid://w1fdejlpkx1j" path="res://data/Sounds/SFX/Player/hurt.wav" id="13_5kum8"]
 [ext_resource type="AudioStream" uid="uid://c4wauark5be5a" path="res://data/Sounds/SFX/Player/dead.wav" id="14_qan51"]
+[ext_resource type="AudioStream" uid="uid://cvt7v4jrfxd6q" path="res://data/Sounds/SFX/Player/jetpack.wav" id="17_i7mxw"]
+[ext_resource type="PackedScene" uid="uid://h1gvbqqqnqej" path="res://data/Animations/particles/bonk_dot.tscn" id="18_uyekh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_llrnl"]
 atlas = ExtResource("5_akp86")
@@ -520,12 +525,37 @@ size = Vector2(18, 25.672527)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kspwo"]
 size = Vector2(15, 34)
 
+[sub_resource type="Gradient" id="Gradient_llrnl"]
+offsets = PackedFloat32Array(0, 0.7282609)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_axqt5"]
+gradient = SubResource("Gradient_llrnl")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.525641, 0.4957265)
+fill_to = Vector2(0.025641026, 0.96581197)
+
 [node name="player" type="CharacterBody2D" unique_id=1798523650 node_paths=PackedStringArray("dmg")]
 z_index = 1
 collision_layer = 2
 script = ExtResource("1_gj1n8")
 qMark = ExtResource("2_llrnl")
 dmg = NodePath("DamageDetect")
+jump_sfx = ExtResource("3_jknpg")
+step_sfx = ExtResource("12_u2uub")
+land_sfx = ExtResource("11_1mg3p")
+bonk_sfx = ExtResource("10_el42n")
+hurt_sfx = ExtResource("13_5kum8")
+death_sfx = ExtResource("14_qan51")
+booster_sfx = ExtResource("17_i7mxw")
+booster2_sfx = ExtResource("17_i7mxw")
+heal_sfx = ExtResource("10_mljut")
+weapon_level_up_sfx = ExtResource("11_el42n")
+booster_particle_scene = ExtResource("3_akp86")
+booster2_particle_scene = ExtResource("3_akp86")
+bonk_particle_scene = ExtResource("18_uyekh")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1016720795]
 texture_filter = 1
@@ -544,7 +574,21 @@ visible = false
 
 [node name="Spur" parent="WeaponManager" unique_id=1284685379 instance=ExtResource("6_2g7is")]
 visible = false
+quick_shot_damage = null
+quick_shot_speed = null
+laser_speed = null
 weapon_name = "Spur"
+max_level = null
+shoot_pitch_variance = null
+xp_to_level = null
+infinite_ammo = null
+max_ammo = null
+speed_by_level = null
+muzzle_flash_by_level = null
+bullet_despawn_by_level = null
+bullet_hit_by_level = null
+max_bullets_on_screen = null
+bullet_spawn_offset = null
 
 [node name="switch_sfx" type="AudioStreamPlayer" parent="WeaponManager" unique_id=1204701420]
 stream = ExtResource("8_jknpg")
@@ -607,37 +651,18 @@ collision_mask = 8
 [node name="Damage_col" type="CollisionShape2D" parent="DamageDetect" unique_id=1786964420]
 shape = SubResource("RectangleShape2D_kspwo")
 
-[node name="jump_sfx" type="AudioStreamPlayer" parent="." unique_id=820140430]
-stream = ExtResource("9_mljut")
-
-[node name="bonk_sfx" type="AudioStreamPlayer" parent="." unique_id=1930589260]
-stream = ExtResource("10_el42n")
-
-[node name="land_sfx" type="AudioStreamPlayer" parent="." unique_id=238209823]
-stream = ExtResource("11_1mg3p")
-
-[node name="water_sfx" type="AudioStreamPlayer" parent="." unique_id=25011371]
-
-[node name="step_sfx" type="AudioStreamPlayer" parent="." unique_id=459217647]
-stream = ExtResource("12_u2uub")
-
-[node name="hurt_sfx" type="AudioStreamPlayer" parent="." unique_id=307617984]
-stream = ExtResource("13_5kum8")
-
-[node name="death_sfx" type="AudioStreamPlayer" parent="." unique_id=1837028717]
-stream = ExtResource("14_qan51")
-
-[node name="death_drown_sfx" type="AudioStreamPlayer" parent="." unique_id=1419141869]
-stream = ExtResource("11_1mg3p")
-
-[node name="booster_sfx" type="AudioStreamPlayer" parent="." unique_id=2121917197]
-
-[node name="booster2_sfx" type="AudioStreamPlayer" parent="." unique_id=536417516]
-
 [node name="Label" type="Label" parent="." unique_id=843853101]
 offset_left = -45.0
 offset_top = -23.0
 offset_right = -5.0
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1143975867]
+light_mask = 2
+visibility_layer = 2
+position = Vector2(-1.1368684e-13, 4.7683716e-07)
+scale = Vector2(1.5117189, 1.3925781)
+shadow_item_cull_mask = 2
+texture = SubResource("GradientTexture2D_axqt5")
 
 [connection signal="area_entered" from="WaterDetect" to="." method="_on_water_detect_area_entered"]
 [connection signal="area_exited" from="WaterDetect" to="." method="_on_water_detect_area_exited"]

@@ -1,2 +1,3 @@
+SpriteFrames
 VoiceCatalog
 ItemData

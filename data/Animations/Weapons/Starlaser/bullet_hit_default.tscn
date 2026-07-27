@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://blkqi8too4ry4"]
+
+[ext_resource type="Texture2D" uid="uid://og8sollx53v7" path="res://data/Sprites/Bullets/Puffs/StarLaser/Hit.png" id="1_1exjw"]
+[ext_resource type="Script" uid="uid://dixwfjspf5bst" path="res://data/Scripts/player/weapons/OneShotVFX.gd" id="2_oneshot"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lukd1"]
+atlas = ExtResource("1_1exjw")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qtnvp"]
+atlas = ExtResource("1_1exjw")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rdtq5"]
+atlas = ExtResource("1_1exjw")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k3dbg"]
+atlas = ExtResource("1_1exjw")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4h7n7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lukd1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qtnvp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rdtq5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k3dbg")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 7.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_ui7jk"]
+offsets = PackedFloat32Array(0, 0.05978261, 0.46195653)
+colors = PackedColorArray(0.88392854, 0.88392854, 0.88392854, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_yg8mo"]
+gradient = SubResource("Gradient_ui7jk")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.517094, 0.5)
+fill_to = Vector2(0, 1)
+
+[node name="BulletHitDefault" type="AnimatedSprite2D" unique_id=2093695222]
+sprite_frames = SubResource("SpriteFrames_4h7n7")
+frame_progress = 0.70762956
+script = ExtResource("2_oneshot")
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1164462615]
+position = Vector2(0, 7.6293945e-06)
+scale = Vector2(0.59912115, 0.5217285)
+color = Color(1.3022159, 1.7175884, 2.0899997, 1)
+energy = 0.59
+shadow_enabled = true
+shadow_filter = 2
+shadow_filter_smooth = 10.5
+texture = SubResource("GradientTexture2D_yg8mo")

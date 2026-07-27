@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dn2klgbvfhvsu"]
 
-[ext_resource type="Script" uid="uid://ddb6fa12fa31d" path="res://data/Scripts/test_kris_dialogue_01.gd" id="1_ptlgd"]
+[ext_resource type="Script" uid="uid://b3pl3osg1qnk" path="res://data/Scripts/npc/kira.gd" id="1_ptlgd"]
 [ext_resource type="Texture2D" uid="uid://bhxrmlhq5f6uc" path="res://data/Sprites/NPC/Kira.png" id="2_qdffe"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nv4ny"]
@@ -13,7 +13,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_nv4ny")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 6.0
 }]

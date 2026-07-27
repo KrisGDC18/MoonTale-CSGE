@@ -3,15 +3,31 @@
 [ext_resource type="Script" uid="uid://bekcwtw0x1hdh" path="res://data/Scripts/Map/Main/Overworld.gd" id="1_tqgde"]
 [ext_resource type="PackedScene" uid="uid://nt25lvtoagij" path="res://data/Scenes/Map/Overworld/DebugRooms/DebugRoom1.tscn" id="3_w3r1p"]
 [ext_resource type="PackedScene" uid="uid://3vmxbneyqhfd" path="res://data/Scenes/Map/Overworld/DebugRooms/DebugRoom2.tscn" id="4_3aw84"]
+[ext_resource type="Script" uid="uid://bp07gfwxsuaa7" path="res://data/Scripts/Map/Main/ParallaxBackgroundManager.gd" id="4_nls35"]
+[ext_resource type="PackedScene" uid="uid://gnomm8wd463b" path="res://data/Scenes/Map/Overworld/DebugRooms/DebugRoom3.tscn" id="4_w3r1p"]
 
 [node name="Overworld" type="Node2D" unique_id=417716705]
 script = ExtResource("1_tqgde")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=1262956679]
+color = Color(0.77345175, 0.77439463, 0.8271652, 1)
 
 [node name="Screens" type="Node2D" parent="." unique_id=1080588655]
 
 [node name="Layout" type="Node2D" parent="." unique_id=1568263964]
 
 [node name="DebugRoom1" parent="Layout" unique_id=1591636882 instance=ExtResource("3_w3r1p")]
+position = Vector2(197, 361)
 
 [node name="DebugRoom2" parent="Layout" unique_id=1816338676 instance=ExtResource("4_3aw84")]
-position = Vector2(32, 640)
+position = Vector2(773, 201)
+
+[node name="DebugRoom4" parent="Layout" unique_id=1007916582 instance=ExtResource("3_w3r1p")]
+position = Vector2(-539, 361)
+
+[node name="DebugRoom3" parent="Layout" unique_id=1751435570 instance=ExtResource("4_w3r1p")]
+position = Vector2(229, 1001)
+
+[node name="Backgrounds" type="Node2D" parent="." unique_id=767076382]
+position = Vector2(-10, 9)
+script = ExtResource("4_nls35")

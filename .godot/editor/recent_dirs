@@ -1,14 +1,23 @@
+res://data/Sprites/Faces/Kira/
+/home/kris/Escritorio/Moontale/
+res://data/Sprites/Bullets/
+res://data/Sprites/Weapons/
+res://data/Sprites/Misc/
+res://data/animated_faces/
+res://data/Sprites/particles/
+res://data/Scripts/drop_system/
+res://data/Sprites/Bullets/enemies/
+res://data/Scripts/effects/
+res://data/Scripts/player/weapons/
+res://data/Sprites/Bullets/Puffs/StarLaser/
 res://data/
 res://data/Scenes/Map/Overworld/
 res://data/Scenes/Map/Overworld/DebugRooms/
 res://data/Scenes/
 res://data/Sprites/Players/
 res://data/Sprites/NPC/
-res://data/Sprites/Misc/
-res://data/Sprites/particles/
 res://data/Scripts/
 res://data/Sprites/Enemies/Slimes/
 res://data/Scripts/Inventory/
 res://data/Scripts/Settings menu/
 res://data/Items/
-res://data/EventSystem/
