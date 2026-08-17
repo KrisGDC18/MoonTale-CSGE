@@ -2,12 +2,22 @@
 
 [ext_resource type="Script" uid="uid://ci1hxujl6dyjd" path="res://data/Scripts/DialogueSystem/DialogBox.gd" id="1_yoo1p"]
 [ext_resource type="FontFile" uid="uid://dqo6c4v5cqvos" path="res://data/Fonts/monogatari.ttf" id="2_03ai2"]
-[ext_resource type="Texture2D" uid="uid://dnpsui34jucl" path="res://data/Sprites/UI/msgbox.png" id="2_dqkix"]
 [ext_resource type="Resource" uid="uid://cun540hbijpca" path="res://data/voice_typers.tres" id="2_l4rlu"]
 [ext_resource type="AudioStream" uid="uid://dgvo0pf15afx3" path="res://data/Sounds/SFX/Player/Beep.wav" id="3_btt7u"]
 [ext_resource type="Texture2D" uid="uid://x8n4h4rjmcy8" path="res://data/Sprites/UI/ChoiceBox.png" id="3_dqkix"]
+[ext_resource type="Script" uid="uid://bqpmc7pwf8v4k" path="res://data/Scripts/WindowSkin/RMWindowSkinPanel.gd" id="3_mlf27"]
 [ext_resource type="AudioStream" uid="uid://b4dw3wlhk0nr2" path="res://data/Sounds/SFX/Player/Cursor.wav" id="4_03ai2"]
+[ext_resource type="Script" uid="uid://dm7sqmq1mqvs1" path="res://data/Scripts/WindowSkin/RMWindowSkin.gd" id="4_754i5"]
 [ext_resource type="AudioStream" uid="uid://mvrc01e43j2n" path="res://data/Sounds/SFX/Player/ok.wav" id="5_dqkix"]
+[ext_resource type="Texture2D" uid="uid://dxd3olt86bd04" path="res://data/Sprites/windowskin/windowskin_moontale.png" id="5_hfu17"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mlf27"]
+atlas = ExtResource("5_hfu17")
+
+[sub_resource type="Resource" id="Resource_i0fn3"]
+script = ExtResource("4_754i5")
+texture = SubResource("AtlasTexture_mlf27")
+metadata/_custom_type_script = "uid://dm7sqmq1mqvs1"
 
 [node name="DialogBox" type="CanvasLayer" unique_id=1282337130]
 layer = 21
@@ -40,10 +50,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Box" type="NinePatchRect" parent="Root" unique_id=191388762]
+[node name="Box" type="Control" parent="Root" unique_id=817264882]
 texture_filter = 1
 layout_mode = 1
-anchors_preset = -1
 anchor_left = 0.209
 anchor_top = 0.71900004
 anchor_right = 0.79270834
@@ -52,19 +61,38 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 6
 size_flags_vertical = 10
-texture = ExtResource("2_dqkix")
 
-[node name="ChoicesBG" type="TextureRect" parent="Root/Box" unique_id=1872647275]
+[node name="WindowSkinBG" type="Control" parent="Root/Box" unique_id=1208113418]
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_mlf27")
+skin = SubResource("Resource_i0fn3")
+background_alpha = 0.53
+
+[node name="ChoicesBG" type="Control" parent="Root/Box" unique_id=1888106369]
+layout_mode = 1
 anchor_left = 0.62
 anchor_top = -0.94
 anchor_right = 1.02
 anchor_bottom = 0.034
 grow_horizontal = 2
 grow_vertical = 0
-texture = ExtResource("3_dqkix")
 metadata/_edit_use_anchors_ = true
+
+[node name="WindowSkinBG" type="Control" parent="Root/Box/ChoicesBG" unique_id=607063385]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_mlf27")
+skin = SubResource("Resource_i0fn3")
+background_alpha = 0.53
 
 [node name="Choices" type="VBoxContainer" parent="Root/Box/ChoicesBG" unique_id=351474473]
 layout_mode = 1
@@ -97,38 +125,43 @@ size_flags_vertical = 8
 text = "▼"
 metadata/_edit_use_anchors_ = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Root/Box" unique_id=1913505497]
+[node name="MarginContainer" type="MarginContainer" parent="Root/Box" unique_id=2072000350]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.008423866
-anchor_top = 0.08212166
-anchor_right = 0.9897952
-anchor_bottom = 0.921329
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Root/Box/MarginContainer" unique_id=1913505497]
+layout_mode = 2
 theme_override_constants/separation = 8
 metadata/_edit_use_anchors_ = true
 
-[node name="Portrait" type="TextureRect" parent="Root/Box/HBoxContainer" unique_id=1879875388]
+[node name="Portrait" type="TextureRect" parent="Root/Box/MarginContainer/HBoxContainer" unique_id=1879875388]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
 expand_mode = 3
 stretch_mode = 5
 
-[node name="PortraitAnimated" type="TextureRect" parent="Root/Box/HBoxContainer" unique_id=267582181]
+[node name="PortraitAnimated" type="TextureRect" parent="Root/Box/MarginContainer/HBoxContainer" unique_id=267582181]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
 expand_mode = 3
 stretch_mode = 5
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Root/Box/HBoxContainer" unique_id=675862167]
+[node name="VBoxContainer" type="VBoxContainer" parent="Root/Box/MarginContainer/HBoxContainer" unique_id=675862167]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Text" type="RichTextLabel" parent="Root/Box/HBoxContainer/VBoxContainer" unique_id=1721038307]
+[node name="Text" type="RichTextLabel" parent="Root/Box/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1721038307]
 texture_filter = 1
 layout_mode = 2
 theme_override_constants/line_separation = 0
@@ -154,9 +187,9 @@ metadata/_edit_use_anchors_ = true
 [node name="ItemBox" type="NinePatchRect" parent="Root" unique_id=124044918]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.41875
+anchor_left = 0.44270834
 anchor_top = 0.49814814
-anchor_right = 0.5932292
+anchor_right = 0.5765625
 anchor_bottom = 0.6333333
 texture = ExtResource("3_dqkix")
 metadata/_edit_use_anchors_ = true
@@ -164,11 +197,16 @@ metadata/_edit_use_anchors_ = true
 [node name="Icon" type="TextureRect" parent="Root/ItemBox" unique_id=160340244]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.14328358
-anchor_top = 0.1849315
-anchor_right = 0.8746269
-anchor_bottom = 0.8356164
-metadata/_edit_use_anchors_ = true
+anchor_left = 0.31100002
+anchor_top = 0.15100001
+anchor_right = 0.70000005
+anchor_bottom = 0.836
+offset_left = 0.07299042
+offset_top = -0.046001434
+offset_right = 0.099990845
+offset_bottom = -0.056007385
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="BeepSFX" type="AudioStreamPlayer" parent="." unique_id=140603759]
 stream = ExtResource("3_btt7u")

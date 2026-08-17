@@ -30,6 +30,15 @@ extends Control
 ## Maker, donde el fondo estirado no llega hasta el filo externo del borde.
 @export var background_inset : int = 4
 
+## Transparencia del FONDO del windowskin (0 = invisible, 1 = opaco). Afecta
+## solo al fondo, no al borde ni al cursor — pensado para diálogos o menús
+## semitransparentes sin perder la nitidez del marco. Ajustable en vivo
+## desde el Inspector o por código con set_background_alpha().
+@export_range(0.0, 1.0, 0.01) var background_alpha : float = 1.0 :
+	set(value):
+		background_alpha = clampf(value, 0.0, 1.0)
+		_apply_background_alpha()
+
 var _bg     : TextureRect   = null
 var _border : NinePatchRect = null
 var _cursor : NinePatchRect = null
@@ -58,16 +67,37 @@ func _rebuild() -> void:
 	_bg.stretch_mode      = TextureRect.STRETCH_SCALE
 	_bg.mouse_filter      = Control.MOUSE_FILTER_IGNORE
 	add_child(_bg)
+	_apply_background_alpha()
 
 	_border = NinePatchRect.new()
 	_border.name                     = "Border"
 	_border.texture                  = skin.get_border_texture()
+	# FIX: NinePatchRect no siempre respeta la región de un AtlasTexture al
+	# tilear los bordes (bug conocido de Godot) — sin esto, el 9-slice usa
+	# como referencia la textura COMPLETA (128x128) en vez del recorte real
+	# (64x64), y el marco se ve comprimido/mal ubicado sin importar el
+	# tamaño del panel. Fijar region_rect explícitamente lo soluciona.
+	if _border.texture != null:
+		_border.region_rect = Rect2(Vector2.ZERO, _border.texture.get_size())
 	_border.patch_margin_left        = RMWindowSkin.NINE_SLICE_MARGIN
 	_border.patch_margin_right       = RMWindowSkin.NINE_SLICE_MARGIN
 	_border.patch_margin_top         = RMWindowSkin.NINE_SLICE_MARGIN
 	_border.patch_margin_bottom      = RMWindowSkin.NINE_SLICE_MARGIN
+	# STRETCH en vez de TILE: es el modo más simple y confiable de 9-slice
+	# en Godot. TILE es el que más problemas viene dando — lo sacamos de
+	# la ecuación para garantizar que el marco se expanda correctamente.
+	# Si querés volver al look "punteado" clásico de RPG Maker más
+	# adelante, cambiá estas dos líneas de vuelta a
+	# NinePatchRect.AXIS_STRETCH_MODE_TILE una vez confirmado que esto
+	# funciona.
 	_border.axis_stretch_horizontal  = NinePatchRect.AXIS_STRETCH_MODE_TILE
 	_border.axis_stretch_vertical    = NinePatchRect.AXIS_STRETCH_MODE_TILE
+	# El centro (32x32) de tu textura de borde tiene contenido propio (no
+	# transparente), y en modo TILE ese centro también se dibuja/repite
+	# para rellenar el interior — tapando todo con ese patrón. Como el
+	# fondo real ya lo pinta _bg por debajo, directamente no dibujamos el
+	# centro del borde.
+	_border.draw_center              = false
 	_border.mouse_filter             = Control.MOUSE_FILTER_IGNORE
 	add_child(_border)
 
@@ -77,12 +107,17 @@ func _rebuild() -> void:
 	_cursor = NinePatchRect.new()
 	_cursor.name                     = "Cursor"
 	_cursor.texture                  = skin.get_cursor_texture()
+	# Mismo fix que en _border: forzar region_rect para que el 9-slice use
+	# el recorte real del cursor (64x64) y no la textura completa.
+	if _cursor.texture != null:
+		_cursor.region_rect = Rect2(Vector2.ZERO, _cursor.texture.get_size())
 	_cursor.patch_margin_left        = RMWindowSkin.NINE_SLICE_MARGIN
 	_cursor.patch_margin_right       = RMWindowSkin.NINE_SLICE_MARGIN
 	_cursor.patch_margin_top         = RMWindowSkin.NINE_SLICE_MARGIN
 	_cursor.patch_margin_bottom      = RMWindowSkin.NINE_SLICE_MARGIN
 	_cursor.axis_stretch_horizontal  = NinePatchRect.AXIS_STRETCH_MODE_TILE
 	_cursor.axis_stretch_vertical    = NinePatchRect.AXIS_STRETCH_MODE_TILE
+	_cursor.draw_center              = false
 	_cursor.mouse_filter             = Control.MOUSE_FILTER_IGNORE
 	_cursor.hide()
 	add_child(_cursor)
@@ -96,10 +131,22 @@ func _rebuild() -> void:
 ## propósito: su posición/tamaño los controla show_cursor_at().
 func _layout_children() -> void:
 	if _border != null:
-		_border.set_anchors_preset(Control.PRESET_FULL_RECT)
+		# Seteo manual y explícito en vez de set_anchors_preset(): así no
+		# depende de cómo esa función decida (o no) resetear los offsets.
+		_border.anchor_left   = 0.0
+		_border.anchor_top    = 0.0
+		_border.anchor_right  = 1.0
+		_border.anchor_bottom = 1.0
+		_border.offset_left   = 0.0
+		_border.offset_top    = 0.0
+		_border.offset_right  = 0.0
+		_border.offset_bottom = 0.0
 
 	if _bg != null:
-		_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_bg.anchor_left   = 0.0
+		_bg.anchor_top    = 0.0
+		_bg.anchor_right  = 1.0
+		_bg.anchor_bottom = 1.0
 		_bg.offset_left   = background_inset
 		_bg.offset_top    = background_inset
 		_bg.offset_right  = -background_inset
@@ -121,6 +168,21 @@ func show_cursor_at(local_rect: Rect2) -> void:
 func hide_cursor() -> void:
 	if _cursor != null:
 		_cursor.hide()
+
+
+## Aplica "background_alpha" al color de modulación del fondo (solo el
+## fondo — el borde y el cursor quedan siempre 100% opacos).
+func _apply_background_alpha() -> void:
+	if _bg != null:
+		_bg.modulate.a = background_alpha
+
+
+## Cambia la transparencia del fondo en tiempo real (0.0 a 1.0). Útil para
+## fades por código, por ejemplo:
+##   var t := create_tween()
+##   t.tween_method(set_background_alpha, 1.0, 0.3, 0.4)
+func set_background_alpha(value: float) -> void:
+	background_alpha = value  # dispara el setter -> _apply_background_alpha()
 
 
 # ══════════════════════════════════════════════════════════════════════

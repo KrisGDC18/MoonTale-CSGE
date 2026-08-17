@@ -48,43 +48,58 @@ const NINE_SLICE_MARGIN  := 16
 @export var arrow_right_rect : Rect2 = Rect2(88, 80, 8, 8)
 
 
-func _make_atlas(region: Rect2) -> AtlasTexture:
+func _make_atlas(region: Rect2) -> Texture2D:
 	if texture == null:
 		return null
-	var at := AtlasTexture.new()
-	at.atlas  = texture
-	at.region = region
-	return at
+
+	# NOTA: antes esto devolvía un AtlasTexture (un recorte "virtual" que
+	# sigue apuntando a la imagen grande). NinePatchRect puede calcular mal
+	# el 9-slice/tileado con AtlasTexture, usando como referencia el
+	# tamaño de la imagen COMPLETA en vez del recorte. Para evitarlo del
+	# todo, generamos acá un recorte REAL e independiente (una imagen
+	# nueva de exactamente el tamaño del cuadrante).
+	var src_img := texture.get_image()
+	if src_img == null:
+		return null
+	src_img = src_img.duplicate()
+	if src_img.is_compressed():
+		src_img.decompress()
+
+	var w := int(region.size.x)
+	var h := int(region.size.y)
+	var cropped := Image.create(w, h, false, src_img.get_format())
+	cropped.blit_rect(src_img, region, Vector2i.ZERO)
+	return ImageTexture.create_from_image(cropped)
 
 
 ## Sub-textura del fondo (0,0,64,64), pensada para estirarse dentro del
 ## panel (ver RMWindowSkinPanel.gd).
-func get_background_texture() -> AtlasTexture:
+func get_background_texture() -> Texture2D:
 	return _make_atlas(Rect2(0, 0, QUADRANT_SIZE, QUADRANT_SIZE))
 
 
 ## Sub-textura del borde (64,0,64,64). Pensada para un NinePatchRect con
 ## patch_margin_* = NINE_SLICE_MARGIN (16) en los cuatro lados, y
 ## axis_stretch en modo TILE para el look clásico de RPG Maker.
-func get_border_texture() -> AtlasTexture:
+func get_border_texture() -> Texture2D:
 	return _make_atlas(Rect2(QUADRANT_SIZE, 0, QUADRANT_SIZE, QUADRANT_SIZE))
 
 
 ## Sub-textura del cursor de selección (0,64,64,64), mismo esquema de
 ## 9-slice tileado que el borde.
-func get_cursor_texture() -> AtlasTexture:
+func get_cursor_texture() -> Texture2D:
 	return _make_atlas(Rect2(0, QUADRANT_SIZE, QUADRANT_SIZE, QUADRANT_SIZE))
 
 
 ## Ícono de "pausa" (el indicador de espera de input, similar al Arrow
 ## que ya usa DialogBox — este es el equivalente "estilo RPG Maker").
-func get_pause_texture() -> AtlasTexture:
+func get_pause_texture() -> Texture2D:
 	return _make_atlas(pause_rect)
 
 
 ## Ícono de flecha direccional. direction: "up" | "down" | "left" | "right".
 ## Devuelve null si "direction" no es uno de esos cuatro valores.
-func get_arrow_texture(direction: String) -> AtlasTexture:
+func get_arrow_texture(direction: String) -> Texture2D:
 	match direction:
 		"up":
 			return _make_atlas(arrow_up_rect)

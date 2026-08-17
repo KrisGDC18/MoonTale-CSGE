@@ -5,8 +5,13 @@ signal choice_made(index: int)
 signal block_changed(name: String)
 signal history_toggled(is_open: bool)
 
-@onready var panel       : NinePatchRect     = $Root/Box
-@onready var portrait    : TextureRect       = $Root/Box/HBoxContainer/Portrait
+@onready var panel       : Control           = $Root/Box
+## Referencia al fondo/borde estilo windowskin (ver RMWindowSkinPanel.gd),
+## para poder ocultarlo/mostrarlo desde el script de diálogo con la clave
+## de página opcional "windowskin_visible". get_node_or_null: si todavía
+## no migraste Box a este sistema, esto no rompe nada, solo queda null.
+@onready var windowskin_bg : Control          = get_node_or_null("Root/Box/WindowSkinBG")
+@onready var portrait    : TextureRect       = $Root/Box/MarginContainer/HBoxContainer/Portrait
 # El retrato animado usa un TextureRect (igual que "portrait"), NO un
 # AnimatedSprite2D. Un AnimatedSprite2D es un Node2D: los Container de
 # Godot (HBoxContainer, etc.) solo miden y posicionan a sus hijos que sean
@@ -22,13 +27,16 @@ signal history_toggled(is_open: bool)
 # ".texture". Configurá en el editor el mismo expand_mode/stretch_mode/
 # custom_minimum_size que uses en "portrait", para que ambos ocupen el
 # mismo espacio dentro del HBoxContainer.
-@onready var portrait_animated  : TextureRect       = $Root/Box/HBoxContainer/PortraitAnimated
-@onready var hbox               : HBoxContainer     = $Root/Box/HBoxContainer
+@onready var portrait_animated  : TextureRect       = $Root/Box/MarginContainer/HBoxContainer/PortraitAnimated
+@onready var hbox               : HBoxContainer     = $Root/Box/MarginContainer/HBoxContainer
 @onready var speaker     : Label             = $Root/Box/SpeakerName
-@onready var text_lbl    : RichTextLabel     = $Root/Box/HBoxContainer/VBoxContainer/Text
+@onready var text_lbl    : RichTextLabel     = $Root/Box/MarginContainer/HBoxContainer/VBoxContainer/Text
 @onready var arrow       : Label             = $Root/Box/Arrow
 @onready var choices     : VBoxContainer     = $Root/Box/ChoicesBG/Choices
-@onready var choices_bg  : TextureRect       = $Root/Box/ChoicesBG
+@onready var choices_bg  : Control           = $Root/Box/ChoicesBG
+## Igual que "windowskin_bg" pero para el fondo de ChoicesBG. Ver la nota
+## de migración al final del archivo para los pasos de escena necesarios.
+@onready var choices_windowskin_bg : Control = get_node_or_null("Root/Box/ChoicesBG/ChoicesWindowSkinBG")
 @onready var item_box    : Control           = $Root/ItemBox
 @onready var item_icon   : TextureRect       = $Root/ItemBox/Icon
 @onready var beep_sfx    : AudioStreamPlayer = $BeepSFX
@@ -684,6 +692,21 @@ func get_voice(voice_name: String) -> Dictionary:
 	return _voice_presets.get(voice_name, {}).duplicate(true)
 
 
+## Muestra/oculta el gráfico del windowskin (fondo+borde+cursor) por
+## código, en cualquier momento — no hace falta que sea parte de una
+## página del script de diálogo. No falla si Box todavía no usa este
+## sistema (windowskin_bg == null).
+func set_windowskin_visible(value: bool) -> void:
+	if windowskin_bg != null:
+		windowskin_bg.visible = value
+
+
+## Consulta el estado actual. Devuelve true también si Box no usa
+## windowskin (nada que ocultar = "visible" por convención).
+func is_windowskin_visible() -> bool:
+	return windowskin_bg == null or windowskin_bg.visible
+
+
 ## Resuelve el valor efectivo de una propiedad "de voz" (font, font_size,
 ## type_speed, beep_stream) para la página actual, con esta prioridad:
 ##   1. Valor explícito definido en la propia página (page[key]).
@@ -748,6 +771,13 @@ func _show_page(index: int) -> void:
 				panel.position = Vector2(panel.position.x, vp.y * 0.5 - panel.size.y * 0.5)
 			"bottom":
 				panel.position = Vector2(panel.position.x, vp.y * 0.85)
+
+	# Mostrar/ocultar el gráfico del windowskin (fondo+borde+cursor) para
+	# esta página en particular. Por defecto siempre visible; el script de
+	# diálogo puede pedir "windowskin_visible": false para un texto sin
+	# panel de fondo (por ejemplo, narración flotante sobre la escena).
+	if windowskin_bg != null:
+		windowskin_bg.visible = page.get("windowskin_visible", true)
 
 	# Portrait — soporta tres modos según el valor de "portrait":
 	#   • Texture2D    → imagen estática (TextureRect)
@@ -2093,3 +2123,23 @@ func _apply_valignment(text: String, valign: VerticalAlignment) -> String:
 			return padding + text
 		_:
 			return text
+
+
+# ══════════════════════════════════════════════════════════════════════
+# Nota de migración: ChoicesBG con windowskin (mismo patrón que Box)
+#
+# 1. Seleccionar "ChoicesBG" en el árbol → Change Type... → Control.
+#    (Pierde su textura propia de TextureRect, que de todos modos se
+#    reemplaza por el sistema de windowskin.)
+# 2. Agregar un hijo nuevo dentro de "ChoicesBG", PRIMERO en la lista
+#    (para que quede detrás de "Choices"), tipo Control, con el script
+#    RMWindowSkinPanel.gd. Nombrarlo "ChoicesWindowSkinBG" — el
+#    @onready de arriba ya apunta a esa ruta exacta.
+# 3. Anclarlo en Full Rect dentro de ChoicesBG (Layout → Anchors Preset).
+# 4. Asignarle un recurso RMWindowSkin en su campo "Skin" (puede ser el
+#    mismo .tres que ya usa WindowSkinBG, o uno distinto).
+# 5. No hace falta ningún cambio de código más: choices_bg.show()/hide()
+#    ya siguen funcionando igual (son de Control), y como
+#    ChoicesWindowSkinBG es su hijo, se muestra/oculta solo junto con
+#    ChoicesBG — sin necesidad de tocarlo aparte.
+# ══════════════════════════════════════════════════════════════════════

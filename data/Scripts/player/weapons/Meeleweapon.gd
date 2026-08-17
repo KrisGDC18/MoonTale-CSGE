@@ -8,7 +8,7 @@ extends Weapon
 
 @export var active_window   : float = 0.12   ## segundos que el hitbox está "caliente"
 @export var swing_cooldown  : float = 0.25   ## tiempo mínimo entre golpes
-@export var damage_by_level : Array[int] = [2, 3, 4]  ## debe tener max_level elementos
+## @export var damage_by_level : Array[int] = [2, 3, 4]  ## debe tener max_level elementos
 
 var _hitbox        : Area2D = null
 var _hit_this_swing : Array[Node] = []   ## evita pegar 2 veces al mismo enemigo en un swing

@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bb3i6dgt6dnxs" path="res://data/Backgrounds/Moon/Caves/bk_laboratory.tscn" id="4_suimj"]
 [ext_resource type="PackedScene" uid="uid://bt7cfbj6drgcr" path="res://data/Entities/npc/Karu.tscn" id="5_jxc4n"]
 [ext_resource type="PackedScene" uid="uid://dn2klgbvfhvsu" path="res://data/Entities/npc/Kira.tscn" id="6_qfi5c"]
+[ext_resource type="PackedScene" uid="uid://ci31taf705rx5" path="res://data/Entities/npc/test/test_kris_dialogue_01.tscn" id="7_23grk"]
 
 [sub_resource type="Gradient" id="Gradient_ui7jk"]
 offsets = PackedFloat32Array(0, 0.0054347827, 0.6956522, 0.70652175)
@@ -98,3 +99,6 @@ texture = SubResource("GradientTexture2D_suimj")
 
 [node name="Kira" parent="." unique_id=907776160 instance=ExtResource("6_qfi5c")]
 position = Vector2(240, 107)
+
+[node name="TestKrisDialogue01" parent="." unique_id=505696199 instance=ExtResource("7_23grk")]
+position = Vector2(324, 107)

@@ -54,7 +54,7 @@ func _on_area_2d_area_exited(area):
 	Globals.needs_fade_in = true
 
 	if next_music_intro != null or next_music_loop != null:
-		MusicManager.play(next_music_intro, next_music_loop)
+		AudioManager.play(next_music_intro, next_music_loop)
 
 	# CAMBIO: guardar la referencia al árbol ANTES del cambio de escena
 	# después de change_scene_to_file get_tree() puede ser null en el nodo actual

@@ -9,6 +9,7 @@ var dialogo : Dictionary = {
 			"speaker": "Kris:",
 			"voice": "Kiruma",
 			"text_valignment": VERTICAL_ALIGNMENT_CENTER,
+			"windowskin_visible": false,
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
 			"portrait_side": "right",
 			"text": "Hola! Que tal [color=red][wave intensity=500][speed=2]Kiruma[/wave][/speed][/color]? Que te gustaria [rainbow spread=1.0 speed=2]hacer[/rainbow]?",
@@ -22,7 +23,7 @@ var dialogo : Dictionary = {
 			"speaker": "Kris:",  
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
 			"text": "Que arma quieres?",
-			"choices": ["Polar Star", "Spur", "Fireball", "machinegun", "Ninguna"],
+			"choices": ["Star-Gun", "Stelar-Gun", "Fireball", "Machine Gun", "Ninguna"],
 			"target_blocks": ["dar_polar", "dar_spur", "dar_fireball", "dar_machinegun", ""]
 		}
 	],
@@ -31,6 +32,7 @@ var dialogo : Dictionary = {
 			"speaker": "Kris:",
 			"portrait": preload("res://data/Sprites/Faces/Kris.png"),
 			"text": "Aqui tienes.",
+			"item_texture": preload("res://data/Sprites/Weapons/Laser.png"),
 			"action": func(): _give_weapon(preload("res://data/Entities/Weapons/PolarStar.tscn"))
 		}
 	],
